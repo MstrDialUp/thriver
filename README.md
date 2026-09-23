@@ -2,7 +2,7 @@
 
 A 3D bullet heaven survivors-like set in a vertical urban environment, where you collect weapons, skills, and perk items to overcome large amounts of enemies.
 
-*Working title. Nothing here is built yet — this repository currently holds design research and a living design document.*
+*Working title. This repository holds design research, a living design document, and a throwaway browser grey box for the central design question (Q1).*
 
 ---
 
@@ -11,6 +11,8 @@ A 3D bullet heaven survivors-like set in a vertical urban environment, where you
 **[`docs/research/00-synthesis.md`](docs/research/00-synthesis.md)** — the argument. What we take from each inspiration, where those inspirations conflict, and the open questions that must be answered before content work begins.
 
 **[`docs/design/design-doc.md`](docs/design/design-doc.md)** — the living design document. Currently seeded with the pitch, research-derived pillars, the first round of design decisions (see its §15 decision log), and open questions. Most sections are still unfilled.
+
+**[`prototype/greybox/`](prototype/greybox/README.md)** — the Q1 grey box. Run `python3 -m http.server 8000` in that folder and open `http://localhost:8000`.
 
 ---
 
@@ -27,6 +29,8 @@ docs/
 │   └── risk-of-rain-2.md      # The 2D→3D translation; scaling and director math
 └── design/
     └── design-doc.md          # Living design document
+prototype/
+└── greybox/                   # Q1 grey box (browser, Three.js) — throwaway
 ```
 
 ## The inspirations

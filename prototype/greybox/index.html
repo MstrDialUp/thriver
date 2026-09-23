@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thriver Grey Box</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #9fb4c8; font: 13px/1.35 system-ui, sans-serif; color: #fff; }
+  canvas { display: block; width: 100vw; height: 100vh; }
+  .hud { position: fixed; pointer-events: none; text-shadow: 0 1px 2px #000a; }
+  #top { top: 10px; left: 50%; transform: translateX(-50%); text-align: center; }
+  #clock { font: 700 34px/1 ui-monospace, monospace; }
+  #clock.neg { color: #ff5555; }
+  #tier { font-size: 15px; letter-spacing: 1px; }
+  #left { top: 12px; left: 12px; width: 260px; }
+  .bar { height: 10px; background: #0006; border-radius: 3px; overflow: hidden; margin: 4px 0; }
+  #hpfill { height: 100%; background: #e74c3c; width: 100%; }
+  #xpfill { height: 100%; background: #3cff9e; width: 0; }
+  #bosses { white-space: pre; margin-top: 8px; color: #ffd0d0; }
+  #metrics { bottom: 12px; left: 12px; white-space: pre; font: 12px/1.4 ui-monospace, monospace; background: #0005; padding: 6px 8px; border-radius: 4px; }
+  #fps { bottom: 12px; right: 12px; font: 12px ui-monospace, monospace; }
+  #move { bottom: 34px; right: 12px; font: 12px ui-monospace, monospace; }
+  #toast { top: 30%; left: 50%; transform: translateX(-50%); font: 700 26px system-ui; opacity: 0; transition: opacity .4s; }
+  #zone { top: 62%; left: 50%; transform: translateX(-50%); width: 240px; display: none; text-align: center; }
+  #zonefill { height: 100%; width: 0; background: #40c4ff; }
+  #crosshair { top: 50%; left: 50%; width: 4px; height: 4px; margin: -2px; background: #fff8; border-radius: 50%; }
+  #flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+  #overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #0009; }
+  #overlay .card { background: #1d2127; padding: 24px 28px; border-radius: 8px; max-width: 560px; }
+  #overlay h1 { margin: 0 0 8px; font-size: 22px; }
+  #overlay pre { white-space: pre-wrap; font: 12px/1.45 ui-monospace, monospace; color: #cfd6de; }
+  #overlay button { font: inherit; padding: 8px 14px; margin: 8px 8px 0 0; border: 0; border-radius: 4px; background: #40c4ff; color: #000; cursor: pointer; }
+  #overlay button.alt { background: #555; color: #fff; }
+  kbd { background: #333; border-radius: 3px; padding: 0 4px; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@0.19.2/dist/lil-gui.esm.min.js"
+} }
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="hud" id="top"><div id="clock">30:00</div><div id="tier"></div></div>
+<div class="hud" id="left">
+  <div id="level">Lv 1</div>
+  <div class="bar"><div id="hpfill"></div></div>
+  <div class="bar"><div id="xpfill"></div></div>
+  <div id="bosses"></div>
+</div>
+<div class="hud" id="metrics"></div>
+<div class="hud" id="move"></div>
+<div class="hud" id="fps"></div>
+<div class="hud" id="toast"></div>
+<div class="hud" id="zone">holding zone<div class="bar"><div id="zonefill"></div></div></div>
+<div class="hud" id="crosshair"></div>
+<div id="flash"></div>
+
+<div id="overlay"><div class="card">
+  <h1>Thriver — Q1 grey box</h1>
+  <pre>Can the horde threaten a player with this movement kit?
+
+Move        WASD            / left stick
+Camera      mouse           / right stick
+Jump        Space           / A      (again in air: double jump)
+Glide       hold Space while falling
+Wall run    jump into a wall and keep pushing into it (runs up);
+            jump alongside a wall while moving (runs along)
+Wall jump   Space while touching a wall
+Dash        Shift           / RB or X
+Slide       Ctrl or C       / B      (while moving)
+Pause       P               / Start
+Restart     R               / Back
+Debug panel ` or Tab
+
+Gold beams = rooftop caches (A). Blue beams = hold zones (B).
+Red beams = bosses. Purple pads = rooftop monster closets.</pre>
+  <button id="play">Click to play</button>
+</div></div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

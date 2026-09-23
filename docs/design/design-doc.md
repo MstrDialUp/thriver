@@ -268,7 +268,12 @@ Also available (research, undecided):
 
 ## 11. Technical
 
-`UNFILLED`
+`UNFILLED` — except for the prototype platform below.
+
+**✅ Decided (Rich, 2026-09-22) — the Q1 grey box runs in the browser.** Three.js with plain JavaScript modules, no build step, served as static files ([`../../prototype/greybox/`](../../prototype/greybox/README.md)). Chosen because it's the most accessible option: it runs on Rich's Linux desktop with no install, it's easy to hand to other testers, and the grey-box city is just boxes, so no engine features are needed.
+
+- **It is throwaway, and it is not the production engine.** It answers Q1 (and helps with Q6 and Q13). **It does not answer Q2 or Q8**: browser performance says nothing about a native engine's entity ceiling. That keeps us clear of Crackdown's hazard, because nothing built here carries into production.
+- **What transfers:** tuning numbers (movement speeds, jump heights, reward placement, horde mix) and the answers to Q1. **What doesn't:** code and performance figures.
 
 Several open questions here, and some in §5 and §9, **can't be answered until engine and technical choices are made.** Those follow the Q2 spike.
 
@@ -321,7 +326,7 @@ Kept in sync with [`00-synthesis.md`](../research/00-synthesis.md) §6.
 
 | # | Question | Blocks | Resolution method | Status |
 |---|---|---|---|---|
-| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Grey-box prototype with A/B/C/D toggles | 🟡 Direction set; proportions untested |
+| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box built, not yet playtested |
 | **Q2** | Entity budget and horde architecture in 3D with verticality? | Content scope, engine, map size | Technical spike | 🔴 Open |
 | **Q3** | How do we prevent the enemy-stacking bug? | Combat feel, bosses | Spike alongside Q2 | 🟡 Direction set |
 | **Q4** | Manual movement + automatic combat — right input split? | Control scheme | Decided; feel validated in prototype | 🟢 Decided |
@@ -390,6 +395,7 @@ Every decision in this document, in order. If it isn't here, it isn't a decision
 | 2026-09-22 | Maps massive but bounded; invisible walls during development | §9 | ✅ Decided |
 | 2026-09-22 | Real city names for now | §9 | ✅ Decided |
 | 2026-09-22 | Meta currency sink deferred; currency accumulates for now | §10 | ⏸ Deferred |
+| 2026-09-22 | Q1 grey box runs in the browser (Three.js); throwaway, does not answer Q2/Q8 | §11 | ✅ Decided |
 | 2026-09-22 | Q1 resolution uses A+B+C+D; height rewards balanced by ground-level hold zones | §4 | 🧭 Direction |
 | 2026-09-22 | Flying enemies grow as a share of the horde with difficulty; absurdist roster allowed | §8 | 🧭 Direction |
 | 2026-09-22 | Flyers at every tier: birds/drones low; bigger birds, helicopters, fighter jets, superheroes high | §8 | 🧭 Direction |

@@ -374,7 +374,7 @@ These are carried into `docs/design/design-doc.md` §13 and should be resolved b
 
 | # | Question | Blocking | Method | Status |
 |---|---|---|---|---|
-| **Q1** | **How do we make a horde threatening to a player with Prototype-grade traversal?** Includes the height-vs-ground reward balance. | Everything | Grey-box prototype: one block, full movement kit, a horde. Test A/B/C/D from Conflict 1. | 🟡 Direction set (mix of A/B/C/D); proportions untested |
+| **Q1** | **How do we make a horde threatening to a player with Prototype-grade traversal?** Includes the height-vs-ground reward balance. | Everything | Grey-box prototype: full movement kit, a horde, A/B/C/D toggles. Built in the browser at [`prototype/greybox`](../../prototype/greybox/README.md). | 🟡 Direction set (mix of A/B/C/D); grey box built, not yet playtested |
 | **Q2** | **What is our entity budget, and what architecture achieves it in 3D with verticality?** | Content scope, engine choice, map size | Technical spike. Evaluate ECS/data-oriented approaches against a target count. | 🔴 Open |
 | **Q3** | **How do we prevent the Megabonk enemy-stacking bug?** | Combat feel, boss design | Spike alongside Q2. | 🟡 Direction set (tiered collision, flow fields, credit director) |
 | **Q4** | **Manual movement + automatic combat — is that the right input split?** | Entire control scheme | Confirm in the prototype | 🟢 Decided (validate feel in prototype) |
