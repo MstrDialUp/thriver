@@ -1,0 +1,9 @@
+Magnet power up drop or pickup to clean up XP strewn over the map
+Debug tools needed:
+    P = Pause time (includes enemy action, does not include player, player can free move
+    > = Level up
+    < = Level down
+    
+Good progression so far
+Taller = Tougher, contrary to what I originally believed. Easier to get penned in, while wallrun is low level, tall building provide decent barriers to keep the player grounded
+Schrodinger spawning (not sure about this one): when a player climbs up to an elevated rooftop and a large percentage of the spawned in enemies are not being rendered in the player's visible space, the world seems emptier than it ought to. To counter this, some percentage of spawned enemies should teleport to valid positions within the player's eyesight. To prevent them from snapping into place, these enemies should be teleporting to their rooftop position right before the player's view cone crosses over it. This should encompass both when a player climbs up and over the top edge of the building and when a player is wall running up a tall building and looking at building surfaces that are now below them.
