@@ -1,0 +1,78 @@
+Run 1:
+Clock at death: 19:38
+
+
+ runClock: 19:38,
+ realSeconds: 622,
+ level: 38,
+ tier: 3,
+ kills: 4069,
+ pctElevated: 62,
+ pctSurrounded: 7,
+ pctEscaped: 19,
+ longestEscapeSec: 19,
+ damageGround: 195,
+ damageElevated: 181,
+ zonesHeld: 9,
+ secondsInZones: 67,
+ rooftopCaches: 14,
+ relocations: 2857,
+ maxAltitude: 90,
+ bossKillMinutes: [
+  4.48,
+  8.5
+ ]
+ 
+ Run 2:
+ Clock at death: 19:09
+
+
+ runClock: 19:09,
+ realSeconds: 651,
+ level: 50,
+ tier: 3,
+ kills: 5168,
+ pctElevated: 28,
+ pctSurrounded: 0,
+ pctEscaped: 13,
+ longestEscapeSec: 4,
+ damageGround: 340,
+ damageElevated: 99,
+ zonesHeld: 24,
+ secondsInZones: 146,
+ rooftopCaches: 7,
+ relocations: 1684,
+ maxAltitude: 33,
+ bossKillMinutes: [
+  4.33,
+  8.15
+ ]
+ 
+ Run 3: Debugged:
+ Clock at death: −01:14   ← overtime, screenshot it
+
+
+ runClock: −01:14,
+ realSeconds: 197,
+ level: 64,
+ tier: 6,
+ kills: 4636,
+ pctElevated: 18,
+ pctSurrounded: 59,
+ pctEscaped: 2,
+ longestEscapeSec: 3,
+ damageGround: 116,
+ damageElevated: 0,
+ zonesHeld: 0,
+ secondsInZones: 0,
+ rooftopCaches: 0,
+ relocations: 670,
+ maxAltitude: 56,
+ bossKillMinutes: [
+  7.86,
+  16.05,
+  25.07,
+  25.16,
+  25.39
+ ]
+ 
