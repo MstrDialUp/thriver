@@ -48,6 +48,9 @@ export class Horde {
     this.type = new Uint8Array(MAX);
     this.spawnTier = new Uint8Array(MAX);
     this.climbing = new Uint8Array(MAX);
+    this.serial = new Uint32Array(MAX); // bumped on every spawn, so a stale index can be detected
+    this.nextSerial = 1;
+    this.touching = [];                 // enemies in contact with the player this frame
     for (const f of ['x', 'y', 'z', 'vx', 'vy', 'vz', 'hp', 'maxHp', 'dmgMult', 'fireT', 'hitFlash']) this[f] = new Float32Array(MAX);
     this.free = [];
     for (let i = MAX - 1; i >= 0; i--) this.free.push(i);
@@ -92,6 +95,8 @@ export class Horde {
     this.bv = new Float32Array(MAX_BULLETS * 3);
     this.bLife = new Float32Array(MAX_BULLETS);
     this.bDmg = new Float32Array(MAX_BULLETS);
+    this.bSrc = new Int32Array(MAX_BULLETS);
+    this.bSrcSerial = new Uint32Array(MAX_BULLETS);
     this.bulletMesh = new THREE.InstancedMesh(new THREE.SphereGeometry(0.25, 6, 4), new THREE.MeshBasicMaterial({ color: 0xff3355 }), MAX_BULLETS);
     this.bulletMesh.count = 0;
     this.bulletMesh.frustumCulled = false;
@@ -111,6 +116,7 @@ export class Horde {
     const i = this.free.pop();
     const t = TYPES[typeIdx];
     this.alive[i] = 1; this.type[i] = typeIdx; this.spawnTier[i] = tier;
+    this.serial[i] = this.nextSerial++;
     this.x[i] = x; this.y[i] = y; this.z[i] = z;
     this.vx[i] = this.vy[i] = this.vz[i] = 0;
     this.hp[i] = this.maxHp[i] = t.hp * hpMult;
@@ -152,6 +158,22 @@ export class Horde {
     }
   }
 
+  // Every live enemy whose centre is within r of (x, y, z). For radii beyond forNear's one-cell reach.
+  forRadius(x, y, z, r, fn) {
+    const c = Math.ceil(r / CELL), ix = Math.floor(x / CELL), iy = Math.floor(y / CELL), iz = Math.floor(z / CELL);
+    const seen = new Set(), r2 = r * r;
+    for (let dx = -c; dx <= c; dx++) for (let dy = -c; dy <= c; dy++) for (let dz = -c; dz <= c; dz++) {
+      const k = (((ix + dx) * 73856093) ^ ((iy + dy) * 19349663) ^ ((iz + dz) * 83492791)) & (HASH - 1);
+      if (seen.has(k)) continue;
+      seen.add(k);
+      for (let i = this.cellHead[k]; i !== -1; i = this.cellNext[i]) {
+        if (!this.alive[i]) continue;
+        const ex = this.x[i] - x, ey = this.y[i] + TYPES[this.type[i]].h / 2 - y, ez = this.z[i] - z;
+        if (ex * ex + ey * ey + ez * ez <= r2) fn(i);
+      }
+    }
+  }
+
   // Fills this.keys with the distinct hash keys of the 27 cells around (ix, iy, iz).
   neighbourKeys(ix, iy, iz) {
     const keys = this.keys;
@@ -171,6 +193,7 @@ export class Horde {
     const px = player.pos.x, py = player.pos.y, pz = player.pos.z, pcy = player.center;
     const tmp = this.tmp;
     let near8 = 0, near20 = 0, contactDps = 0;
+    this.touching.length = 0;
 
     for (let i = 0; i < MAX; i++) {
       if (!this.alive[i]) continue;
@@ -229,7 +252,7 @@ export class Horde {
           const d = hyp(px - x, pcy - y, pz - z);
           if (this.fireT[i] <= 0 && d < t.keepDist * 1.8) {
             this.fireT[i] = t.fireEvery * (0.8 + Math.random() * 0.4);
-            this.fireBullet(x, y, z, px, pcy, pz, t.bulletDmg * this.dmgMult[i]);
+            this.fireBullet(x, y, z, px, pcy, pz, t.bulletDmg * this.dmgMult[i], i);
           }
         }
       } else if (t.kind === 'jet') {
@@ -253,7 +276,7 @@ export class Horde {
       const ex = x - px, ey = (y + t.h / 2) - pcy, ez = z - pz;
       const d2 = ex * ex + ey * ey + ez * ez;
       const reach = t.r + 0.6;
-      if (d2 < reach * reach) contactDps += t.dmg * this.dmgMult[i];
+      if (d2 < reach * reach) { contactDps += t.dmg * this.dmgMult[i]; this.touching.push(i); }
       if (d2 < 64) near8++;
       if (d2 < 400) near20++;
 
@@ -339,7 +362,7 @@ export class Horde {
     }
   }
 
-  fireBullet(x, y, z, tx, ty, tz, dmg) {
+  fireBullet(x, y, z, tx, ty, tz, dmg, src = -1) {
     for (let b = 0; b < MAX_BULLETS; b++) {
       if (this.bLife[b] > 0) continue;
       const dx = tx - x, dy = ty - y, dz = tz - z, l = hyp(dx, dy, dz) || 1, s = 18;
@@ -347,6 +370,8 @@ export class Horde {
       this.bv.set([(dx / l) * s, (dy / l) * s, (dz / l) * s], b * 3);
       this.bLife[b] = 4;
       this.bDmg[b] = dmg;
+      this.bSrc[b] = src;
+      this.bSrcSerial[b] = src >= 0 ? this.serial[src] : 0;
       return;
     }
   }
@@ -363,7 +388,8 @@ export class Horde {
       if (world.blockedAt(x, y, z) || y < 0) { this.bLife[b] = 0; continue; }
       const dx = x - player.pos.x, dy = y - player.center, dz = z - player.pos.z;
       if (dx * dx + dy * dy * 0.5 + dz * dz < 0.8) {
-        game.damagePlayer(this.bDmg[b]);
+        const src = this.bSrc[b];
+        game.damagePlayer(this.bDmg[b], 'bullet', src >= 0 && this.alive[src] && this.serial[src] === this.bSrcSerial[b] ? src : -1);
         this.bLife[b] = 0; continue;
       }
       this.mat.makeTranslation(x, y, z);

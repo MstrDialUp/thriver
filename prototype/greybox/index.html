@@ -16,7 +16,10 @@
   .bar { height: 10px; background: #0006; border-radius: 3px; overflow: hidden; margin: 4px 0; }
   #hpfill { height: 100%; background: #e74c3c; width: 100%; }
   #xpfill { height: 100%; background: #3cff9e; width: 0; }
+  #shieldbar { display: none; height: 6px; }
+  #shieldfill { height: 100%; background: #6ec6ff; width: 0; }
   #bosses { white-space: pre; margin-top: 8px; color: #ffd0d0; }
+  #build { white-space: pre-wrap; margin-top: 8px; font: 12px/1.4 ui-monospace, monospace; width: 420px; }
   #metrics { bottom: 12px; left: 12px; white-space: pre; font: 12px/1.4 ui-monospace, monospace; background: #0005; padding: 6px 8px; border-radius: 4px; }
   #fps { bottom: 12px; right: 12px; font: 12px ui-monospace, monospace; }
   #move { bottom: 34px; right: 12px; font: 12px ui-monospace, monospace; }
@@ -31,6 +34,18 @@
   #overlay pre { white-space: pre-wrap; font: 12px/1.45 ui-monospace, monospace; color: #cfd6de; }
   #overlay button { font: inherit; padding: 8px 14px; margin: 8px 8px 0 0; border: 0; border-radius: 4px; background: #40c4ff; color: #000; cursor: pointer; }
   #overlay button.alt { background: #555; color: #fff; }
+  #choice { position: fixed; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; background: #000a; }
+  #choice h2 { margin: 0 0 14px; font-size: 24px; }
+  #choice .more { font-size: 14px; color: #ccc; font-weight: 400; }
+  #choice .cards { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .upcard { position: relative; width: 190px; min-height: 150px; padding: 12px; text-align: left; font: inherit; color: #fff; cursor: pointer;
+    background: #1d2127; border: 2px solid var(--rc); border-radius: 8px; }
+  .upcard.sel, .upcard:hover { background: #2a3038; box-shadow: 0 0 14px var(--rc); }
+  .upcard .rar { color: var(--rc); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+  .upcard .nm { font-size: 17px; font-weight: 700; margin: 4px 0 8px; }
+  .upcard .fx { font-size: 13px; color: #d8dee6; }
+  .upcard .key { position: absolute; right: 10px; bottom: 8px; color: #888; font: 12px ui-monospace, monospace; }
+  #choice .skip { margin-top: 16px; font: inherit; padding: 6px 14px; border: 0; border-radius: 4px; background: #555; color: #fff; cursor: pointer; }
   kbd { background: #333; border-radius: 3px; padding: 0 4px; }
 </style>
 <script type="importmap">
@@ -47,8 +62,10 @@
 <div class="hud" id="left">
   <div id="level">Lv 1</div>
   <div class="bar"><div id="hpfill"></div></div>
+  <div class="bar" id="shieldbar"><div id="shieldfill"></div></div>
   <div class="bar"><div id="xpfill"></div></div>
   <div id="bosses"></div>
+  <div id="build"></div>
 </div>
 <div class="hud" id="metrics"></div>
 <div class="hud" id="move"></div>
@@ -57,6 +74,7 @@
 <div class="hud" id="zone">holding zone<div class="bar"><div id="zonefill"></div></div></div>
 <div class="hud" id="crosshair"></div>
 <div id="flash"></div>
+<div id="choice"></div>
 
 <div id="overlay"><div class="card">
   <h1>Thriver — Q1 grey box</h1>
@@ -75,7 +93,10 @@ Pause       P               / Start
 Restart     R               / Back
 Debug panel ` or Tab
 
-Gold beams = rooftop caches (A). Blue beams = hold zones (B).
+Upgrade menu: 1 / 2 / 3 or click to pick, 4 to skip (pad: d-pad + A, Y)
+Debug       . level up   , level down   F freeze horde
+
+Gold beams = rooftop caches (A). Blue beams = hold zones (B): hold one for an upgrade.
 Red beams = bosses. Purple pads = rooftop monster closets.</pre>
   <button id="play">Click to play</button>
 </div></div>

@@ -3,7 +3,7 @@
 > **Read this one first.** The five game documents are the evidence. This is the argument.
 >
 > **Status:** Living document. Updated as research and prototyping change our conclusions.
-> **Last updated:** 2026-09-22 (revised: Megabonk research refreshed; Rich's design direction folded into §4–§6)
+> **Last updated:** 2026-09-23 (upgrade offers, slot count and the fall-damage experiment folded into §5; see design doc §7)
 
 ---
 
@@ -323,8 +323,8 @@ Combining every "carry forward" across the five documents, revised 2026-09-22 wi
 
 ### Progression in-run
 - **XP from kills and pickups**, with **elevated pickups** (Crackdown) pulling the player upward into danger, **balanced by ground-level hold-zone rewards** (Megabonk Charge Shrines) pulling them back down *(direction)*
-- **Level-up pauses and offers 3–4 choices** from weapons and perks
-- **Capped loadout slots** to force build identity. Not expandable by meta-progression, since that would be permanent power *(follows from Conflict 4 decision)*
+- **Level-up pauses and offers a pick 1 of 3** from weapons, skills and upgrades *(decided 2026-09-23; towers offer a separate pick 1 of 3 of movement/character upgrades, see design doc §7)*
+- **Capped loadout slots** to force build identity: **4 weapons + 4 skills** *(decided 2026-09-23)*. Not expandable by meta-progression, since that would be permanent power *(follows from Conflict 4 decision)*
 - **Movement upgrades, mixed model:** small ones are perks in the pool; big ones (grapple) are dual-purpose weapons/skills *(decided)*
 - **Evolution**: max weapon + paired perk + a trigger (elite chest) → dramatically stronger form
 - **Offer-steering tools from day one** — reroll, banish, lock (Megabonk added banish post-launch; build it in from the start)
@@ -339,7 +339,7 @@ Combining every "carry forward" across the five documents, revised 2026-09-22 wi
 - **Jump height upgradeable**, so the jump grows into a superjump; no separate superjump ability *(decided)*
 - **Third-person free camera** *(decided)*
 - **Grapple / web swing** as an acquirable weapon/skill or a character's starting ability *(decided)*
-- **Chained, uninterrupted traversal**, **no fall damage, no stamina** (research proposal; not yet confirmed)
+- **Chained, uninterrupted traversal**, **no stamina** (research proposal; not yet confirmed). *No fall damage* is being tested the other way: the grey box has **fall damage as an experiment** (2026-09-23), with wall contact and gliding as the safe ways down, as risk to set against height's reward
 - Auto-vault: **open** (Q13), to be settled by the prototype
 - **Deep and exploit-friendly** (Megabonk's bunnyhop) — adopt what players discover
 - **Traversal upgrades available mid-run** that open new routes (Crackdown's agility loop, compressed into one run)

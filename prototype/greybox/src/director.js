@@ -74,11 +74,11 @@ export class Director {
     if (this.remaining <= 0 && cfg.nuke) {
       if (!this.nuked) {
         this.nuked = true;
-        g.damagePlayer(g.cfg.maxHp * 0.6, true);
+        g.damagePlayer(g.eff.maxHp * 0.6, 'nuke');
         g.hud.nukeFlash();
       }
       const over = -this.remaining;
-      g.damagePlayer(5 * Math.pow(2, over / 15) * dt * cfg.timeScale, true);
+      g.damagePlayer(5 * Math.pow(2, over / 15) * dt * cfg.timeScale, 'nuke');
     }
   }
 

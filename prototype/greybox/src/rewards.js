@@ -125,6 +125,7 @@ export class Rewards {
           game.heal(25);
           stats.zonesDone++;
           game.hud.flash(`Zone held +${xp} XP`);
+          if (cfg.towerUpgrades) game.offerTower();
         } else if (d > 130) { z.done = true; this.remove(z); } // too far behind: move it
       }
       this.zones = this.zones.filter(z => !z.done);

@@ -3,7 +3,14 @@ import * as THREE from 'three';
 // Kinematic character controller against the world's boxes.
 // Kit (design doc §6): move, dash, slide, jump, double jump, wall jump,
 // wall run (vertical when pushing into a wall, sideways when moving along it),
-// glide (hold jump while falling). No fall damage, no stamina.
+// glide (hold jump while falling). No stamina.
+//
+// Fall height (grey-box experiment, PLAN-progression.md): the highest point since
+// the last safe event (ground, air jump, wall contact, gliding). Landing reports it
+// in `landFall`; main.js turns it into fall damage.
+//
+// Skill hooks (skills.js sets these on the effective stats): spider (run up a wall
+// from the ground), updraftTime/updraftSpeed (gliding lifts), wallJumpUp.
 
 const RADIUS = 0.4;
 const STAND_H = 1.8;
@@ -34,12 +41,17 @@ export class Player {
     this.dashRecharge = 0;
     this.dashTimer = 0;
     this.dashDir = new THREE.Vector3(0, 0, -1);
+    this.dashCount = 0;       // bumped per dash, so Slipstream can hit each enemy once per dash
     this.slideTimer = 0;
     this.wallRunTimer = 0;
     this.wallState = 0;       // 0 none, 1 vertical, 2 side
     this.lastWallNormal = null;
     this.sinceJump = 99;
     this.gliding = false;
+    this.lifting = false;     // Updraft: gliding upward
+    this.updraftLeft = 0;
+    this.fallTop = 0;
+    this.landFall = 0;        // fall height of a landing this frame (0 = none); read and cleared by main.js
     this.facing = 0;
     this.hp = 100;
   }
@@ -64,13 +76,14 @@ export class Player {
       if (this.dashRecharge >= cfg.dashCooldown) { this.dashCharges++; this.dashRecharge = 0; }
     } else this.dashCharges = cfg.dashCharges;
 
-    const wall = this.grounded ? null : this.probeWall(world);
+    const wall = this.grounded && !cfg.spider ? null : this.probeWall(world);
     const jumpV = Math.sqrt(2 * cfg.gravity * cfg.jumpHeight);
 
     // ---- actions ----
     if (inp.dashPressed && this.dashCharges > 0 && this.dashTimer <= 0) {
       this.dashCharges--;
       this.dashTimer = cfg.dashTime;
+      this.dashCount++;
       if (hasWish) this.dashDir.set(wx, 0, wz).normalize();
       else this.dashDir.set(fx, 0, fz);
       this.slideTimer = 0;
@@ -82,15 +95,19 @@ export class Player {
         this.grounded = false;
         this.slideTimer = 0; // slide-jump keeps the slide's horizontal speed
         this.sinceJump = 0;
+        this.updraftLeft = cfg.updraftTime;
       } else if (wall) {
         v.x = wall.nx * cfg.wallJumpPush + wx * 3;
         v.z = wall.nz * cfg.wallJumpPush + wz * 3;
-        v.y = jumpV * 0.95;
+        v.y = jumpV * 0.95 * cfg.wallJumpUp;
         this.airJumpsLeft = cfg.airJumps;
         this.wallState = 0;
         this.sinceJump = 0;
+        this.updraftLeft = cfg.updraftTime;
       } else if (this.airJumpsLeft > 0) {
         this.airJumpsLeft--;
+        this.fallTop = this.pos.y;
+        this.updraftLeft = cfg.updraftTime;
         v.y = jumpV;
         if (hasWish) { // redirect, keep speed
           const hs = Math.max(Math.hypot(v.x, v.z), cfg.moveSpeed * 0.8);
@@ -104,6 +121,12 @@ export class Player {
       this.slideTimer = cfg.slideTime;
       const hs = Math.hypot(v.x, v.z), target = Math.max(hs, cfg.moveSpeed * cfg.slideBoost);
       v.x *= target / hs; v.z *= target / hs;
+    }
+
+    // Spider: pushing into a wall from the ground starts a wall run.
+    if (cfg.spider && this.grounded && wall && hasWish && this.dashTimer <= 0 && -(wx * wall.nx + wz * wall.nz) > 0.5) {
+      this.grounded = false;
+      this.slideTimer = 0;
     }
 
     // ---- velocity ----
@@ -132,7 +155,7 @@ export class Player {
       }
       v.y = 0;
     } else {
-      if (wall && (cfg.wallRunTime >= 10 || this.wallRunTimer < cfg.wallRunTime)) {
+      if (wall && (cfg.wallRunUnlimited || this.wallRunTimer < cfg.wallRunTime)) {
         const into = -(wx * wall.nx + wz * wall.nz);
         const hs = Math.hypot(v.x, v.z);
         if (into > 0.5) {
@@ -155,11 +178,13 @@ export class Player {
         const hs = Math.hypot(v.x, v.z);
         let top = Math.max(cfg.moveSpeed, hs);
         v.y -= cfg.gravity * dt;
-        if (cfg.glide && inp.jumpHeld && v.y < 0 && this.sinceJump > 0.25) {
+        if (cfg.glide && inp.jumpHeld && (v.y < 0 || this.lifting) && this.sinceJump > 0.25) {
           this.gliding = true;
-          v.y = Math.max(v.y, -cfg.glideFallSpeed);
+          this.lifting = this.updraftLeft > 0;
+          if (this.lifting) { this.updraftLeft -= dt; v.y = cfg.updraftSpeed; }
+          else v.y = Math.max(v.y, -cfg.glideFallSpeed);
           top = Math.max(cfg.moveSpeed * cfg.glideSpeedMult, hs);
-        }
+        } else this.lifting = false;
         if (hasWish) accelerate(v, wx * top, wz * top, cfg.accelAir * dt);
       }
     }
@@ -183,6 +208,11 @@ export class Player {
       const top = world.support(this.pos.x, this.pos.z, this.pos.y, RADIUS * 0.9, 0.05);
       if (Math.abs(top - this.pos.y) < 0.06) { this.pos.y = top; this.grounded = true; }
     }
+    if (this.grounded) {
+      if (!wasGrounded) this.landFall = Math.max(this.landFall, this.fallTop - this.pos.y);
+      this.fallTop = this.pos.y;
+    } else if (wall || this.gliding) this.fallTop = this.pos.y; // sliding down a wall or gliding is safe
+    else this.fallTop = Math.max(this.fallTop, this.pos.y);
     if (this.grounded) {
       v.y = 0;
       this.airJumpsLeft = cfg.airJumps;

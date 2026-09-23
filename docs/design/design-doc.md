@@ -2,7 +2,7 @@
 
 > **Status:** Seeded, with first design decisions (2026-09-22, three rounds). Pitch, pillars, Rich's decisions on Conflicts 1–6 and Q9–Q13, and the boss/tier structure.
 > **Working title:** Thriver (placeholder — from the project directory name)
-> **Last updated:** 2026-09-22
+> **Last updated:** 2026-09-23 (upgrade offers and slots decided in §7; fall damage and the level bonus logged as grey-box experiments)
 >
 > ⚠️ **This document is still mostly empty.** It contains the pitch, the pillars the research supports, the decisions made so far, and the open questions. Sections marked `UNFILLED` are yours to write.
 >
@@ -68,6 +68,8 @@ These are proposed, not ratified. Strike any that do not match your intent.
 - **D: relocation.** Enemies far behind the player teleport back (§8).
 
 > **OPEN — the proportions.** How much reward sits high vs. low, how fast the flying share rises, and how aggressive relocation is. Answered by the Q1 prototype, which should have each of A/B/C/D as a toggle. One thing to check specifically: **climbing still has to buy a few seconds of breathing room**, or traversal loses the relief that makes it feel good.
+
+> **Early signal (playtest 1, 2026-09-22, single tester — preliminary):** with wall-run kept low-level, tall buildings acted as barriers that pen the player in at height rather than an escape route — the opposite of this section's "trivially defeated" framing. See [`prototype/greybox/README.md`](../../prototype/greybox/README.md#playtest-log). Not a conclusion; needs a second tester and more runs.
 
 ---
 
@@ -135,7 +137,7 @@ Research inputs still relevant:
 
 **✅ Decided (Rich, 2026-09-22) — camera: third-person, free camera.**
 
-Research inputs not yet decided: chained uninterrupted traversal; no fall damage; no stamina; deep, exploit-friendly movement (Megabonk adopted bunny-hopping); audible pickup cues.
+Research inputs not yet decided: chained uninterrupted traversal; no fall damage *(now being tested the other way: the grey box has fall damage as an experiment, see §7 and §15)*; no stamina; deep, exploit-friendly movement (Megabonk adopted bunny-hopping); audible pickup cues.
 
 > **OPEN — Q13: Auto-vault?** Glide is in and superjump is replaced by jump-height upgrades. Auto-vault is still undecided. What it did in Prototype and Crackdown: sprinting into a **low obstacle** (car hood, railing, planter, ledge below jump height) carries you over it **with no button press and no loss of speed**, so the player never **snags on street clutter**. That matters most at ground level, where the hold zones and the densest horde are. The downside is less control: it can fire when you didn't want it to. With double jump and slide it may be redundant. **Let the prototype decide:** if players keep catching on cars and railings, add it.
 
@@ -153,6 +155,15 @@ Research inputs not yet decided: chained uninterrupted traversal; no fall damage
 
 Decided elsewhere and relevant here: movement abilities are part of this pool (§6's mixed slot model), and slots **cannot be expanded by meta-progression** (§10: no permanent power).
 
+**✅ Decided (Rich, 2026-09-23) — how upgrades are offered:**
+
+- **Towers (the hold zones, §4 B) grant a pick 1 of 3 of movement and character upgrades**, rolled on a rarity drop table, on top of their XP. This makes B's pull back down to the ground stronger: the ground is where the traversal upgrades are.
+- **Level-ups present a pick 1 of 3** from a separate table: new weapons and skills, and upgrades to ones already owned. An upgrade's rarity comes from its size (a +20% fire-rate upgrade is rarer than a +5% one).
+- **No two cards in one offer are for the same weapon, skill or stat.**
+- **Slots: 4 weapons + 4 skills.**
+
+**🧪 Grey-box stand-in (2026-09-23), not a decision.** The grey box implements all of the above with placeholder content: 6 weapons, 9 skills, a 10-stat tower table, five rarities (Megabonk's colours and a 55/26/12/5/2 roll), and an automatic per-level damage bonus that keeps power in line with playtest 1 (Rich: "let's try the automatic bonus for now"). The item names, numbers, the tower table and the level bonus are all placeholders. The full list and the reasoning are in [`PLAN-progression.md`](../../prototype/greybox/PLAN-progression.md).
+
 Research inputs:
 
 - **Vampire Survivors' evolution system** — max weapon + paired passive + trigger → dramatically stronger form. Widely regarded as the best single system in the genre; turns stat items into goals and elite kills into anticipation.
@@ -163,7 +174,7 @@ Research inputs:
 - **Multiplicative stack amplifiers** for the genre's characteristic exponential blowups
 - **Earned screen-clearing ultimates** (Prototype's Critical Mass → Devastators) as a pressure release valve
 
-> **OPEN — How many slots, and can they grow during a run?** Meta-progression slot expansion is ruled out (it would be permanent power). In-run expansion (e.g. a rare item that adds a slot) is still possible and undecided.
+> **OPEN — Can slots grow during a run?** *(The count is decided: 4 weapons + 4 skills, 2026-09-23.)* Meta-progression slot expansion is ruled out (it would be permanent power). In-run expansion (e.g. a rare item that adds a slot) is still possible and undecided.
 
 > **OPEN — Do we have a dominant unbounded scaling vector?** Megabonk's #1 criticism: when one scaling vector is unbounded (gold→damage) and others are bounded, the unbounded one wins at every skill ceiling and build diversity collapses. Either bound them all, or make several unbounded in *different directions*.
 
@@ -326,7 +337,7 @@ Kept in sync with [`00-synthesis.md`](../research/00-synthesis.md) §6.
 
 | # | Question | Blocks | Resolution method | Status |
 |---|---|---|---|---|
-| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box built, not yet playtested |
+| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box playtested once (2026-09-22, single tester) — see [playtest log](../../prototype/greybox/README.md#playtest-log); preliminary |
 | **Q2** | Entity budget and horde architecture in 3D with verticality? | Content scope, engine, map size | Technical spike | 🔴 Open |
 | **Q3** | How do we prevent the enemy-stacking bug? | Combat feel, bosses | Spike alongside Q2 | 🟡 Direction set |
 | **Q4** | Manual movement + automatic combat — right input split? | Control scheme | Decided; feel validated in prototype | 🟢 Decided |
@@ -350,8 +361,10 @@ Recorded so that nothing in this document is mistaken for a commitment:
 - Player character identity and fantasy
 - Lower-boss identities and drops, tier-jump size, nuke curve, final exit method beyond the dev menu (Q9)
 - Map size, and the in-world reason for the boundary (Q10)
-- Weapon, skill, and perk taxonomy and counts
-- Slot counts, and whether slots can grow during a run
+- Weapon, skill, and perk taxonomy and counts *(the grey box's 6 weapons, 9 skills and tower table are placeholders)*
+- Whether slots can grow during a run *(the count, 4 + 4, is decided)*
+- Fall damage *(a grey-box experiment, not a decision)*, and whether glide stays in the base kit or becomes an acquirable skill now that it prevents fall damage
+- The automatic per-level damage bonus *(on trial in the grey box)*
 - Auto-vault (Q13); camera behaviour in tight spaces (§6)
 - The specific enemy roster and faction structure *(direction only: flyers at every tier, climbers, absurdism)*
 - The proportions of the Q1 resolution mix
@@ -402,6 +415,12 @@ Every decision in this document, in order. If it isn't here, it isn't a decision
 | 2026-09-22 | Non-mechanical enemies climb; rooftop monster closets; VS-style relocation | §8 | 🧭 Direction |
 | 2026-09-22 | Tiered collision: fodder may overlap (threshold relative to player level); bosses/elites have right of way | §8, §11 | 🧭 Direction |
 | 2026-09-22 | Flow fields and RoR2 credit director as priority mitigations | §8, §11 | 🧭 Direction |
+| 2026-09-23 | Towers (hold zones) grant a pick 1 of 3 of movement/character upgrades from a rarity drop table, on top of XP | §4, §7 | ✅ Decided |
+| 2026-09-23 | Level-ups present a pick 1 of 3 of weapons, skills, and upgrades to owned ones; upgrade rarity comes from its size | §7 | ✅ Decided |
+| 2026-09-23 | No two cards in one offer target the same weapon, skill or stat | §7 | ✅ Decided |
+| 2026-09-23 | Slots: 4 weapons + 4 skills | §7 | ✅ Decided |
+| 2026-09-23 | Fall damage, with tower-offered reduction; wall contact and gliding prevent it | §6 | 🧪 Experiment |
+| 2026-09-23 | Automatic per-level damage bonus alongside pick-1-of-3 level-ups | §7 | 🧪 Experiment |
 
 ---
 

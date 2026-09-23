@@ -53,6 +53,12 @@ export class Input {
       restartPressed: p.has('KeyR'),
       debugPressed: p.has('Backquote') || p.has('Tab'),
       confirmPressed: p.has('Enter'),
+      choicePressed: p.has('Digit1') ? 1 : p.has('Digit2') ? 2 : p.has('Digit3') ? 3 : 0,
+      skipPressed: p.has('Digit4'),
+      navPressed: (p.has('ArrowRight') ? 1 : 0) - (p.has('ArrowLeft') ? 1 : 0),
+      levelUpPressed: p.has('Period'),
+      levelDownPressed: p.has('Comma'),
+      freezePressed: p.has('KeyF'),
     };
     this.mouseDX = this.mouseDY = 0;
     p.clear();
@@ -77,6 +83,8 @@ export class Input {
       s.pausePressed ||= edge(9);      // Start
       s.restartPressed ||= edge(8);    // Back/Select
       s.confirmPressed ||= edge(0);
+      s.skipPressed ||= edge(3);       // Y
+      s.navPressed += (edge(15) ? 1 : 0) - (edge(14) ? 1 : 0); // d-pad right / left
       this.padPrev = pad.buttons.map(b => b.pressed);
     }
     const len = Math.hypot(s.moveX, s.moveY);

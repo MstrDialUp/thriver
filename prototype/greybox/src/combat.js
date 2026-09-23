@@ -1,21 +1,23 @@
 import * as THREE from 'three';
 import { TYPES } from './enemies.js';
+import { WEAPON_CLASSES } from './weapons.js';
 
 const hyp = (a, b, c = 0) => Math.sqrt(a * a + b * b + c * c);
 
-// One stand-in auto weapon, XP gems, and automatic level-ups.
-// The real upgrade pool is out of scope for the grey box: each level just
-// adds damage, fire rate, and eventually more projectiles, so the power
-// curve exists and can be felt.
+// The weapon loadout (kept in step with build.items), the shared projectile pool, XP gems, and levels.
 
 const MAX_SHOTS = 400;
 const MAX_GEMS = 1500;
 
 export class Combat {
   constructor(scene) {
+    this.scene = scene;
+    this.weapons = new Map();
     this.shotPos = new Float32Array(MAX_SHOTS * 3);
     this.shotVel = new Float32Array(MAX_SHOTS * 3);
     this.shotLife = new Float32Array(MAX_SHOTS);
+    this.shotDmg = new Float32Array(MAX_SHOTS);
+    this.shotSrc = new Array(MAX_SHOTS);
     this.shotMesh = new THREE.InstancedMesh(new THREE.SphereGeometry(0.18, 6, 4), new THREE.MeshBasicMaterial({ color: 0xfff27a }), MAX_SHOTS);
     this.shotMesh.frustumCulled = false;
     scene.add(this.shotMesh);
@@ -31,38 +33,27 @@ export class Combat {
     this.reset();
   }
 
-  reset() {
+  reset(cfg) {
     this.shotLife.fill(0);
     this.gemVal.fill(0);
-    this.fireTimer = 0;
+    for (const w of this.weapons.values()) w.dispose();
+    this.weapons.clear();
     this.level = 1;
     this.xp = 0;
-    this.xpNext = this.xpForLevel(1);
+    this.xpNext = this.xpForLevel(1, cfg);
   }
 
-  xpForLevel(l) { return 5 + l * 6; }
-
-  get damage() { return this.cfg.damage * (1 + 0.15 * (this.level - 1)); }
+  // Offers mode multiplies the cost so there are about half as many level-ups (the total is quadratic in level).
+  xpForLevel(l, cfg) { return (5 + l * 6) * (cfg?.upgradeMode === 'offers' ? cfg.levelXpMult : 1); }
 
   update(dt, game) {
-    const { player, horde, world, cfg } = game;
-    this.cfg = cfg;
+    const { player, horde, world, eff } = game;
 
-    // ---- fire ----
-    this.fireTimer -= dt;
-    if (this.fireTimer <= 0) {
-      this.fireTimer = cfg.fireInterval * Math.pow(0.97, this.level - 1);
-      const n = Math.min(10, cfg.projectiles + Math.floor((this.level - 1) / 3));
-      const targets = this.nearest(horde, player, n, cfg.range);
-      for (const i of targets) {
-        const t = TYPES[horde.type[i]];
-        this.fire(player.pos.x, player.center + 0.3, player.pos.z, horde.x[i], horde.y[i] + t.h / 2, horde.z[i], cfg.projectileSpeed);
-      }
-    }
+    this.syncWeapons(game.build);
+    for (const w of this.weapons.values()) w.update(dt, game, eff);
 
     // ---- shots ----
     let ns = 0;
-    const dmg = this.damage;
     for (let s = 0; s < MAX_SHOTS; s++) {
       if (this.shotLife[s] <= 0) continue;
       this.shotLife[s] -= dt;
@@ -80,9 +71,7 @@ export class Combat {
       });
       if (hitI >= 0) {
         this.shotLife[s] = 0;
-        horde.hp[hitI] -= dmg;
-        horde.hitFlash[hitI] = 0.08;
-        if (horde.hp[hitI] <= 0) game.onEnemyKilled(hitI);
+        game.damageEnemy(hitI, this.shotDmg[s], this.shotSrc[s]);
         continue;
       }
       this.mat.makeTranslation(x, y, z);
@@ -100,7 +89,7 @@ export class Combat {
       let x = this.gemPos[o], y = this.gemPos[o + 1], z = this.gemPos[o + 2];
       const dx = px - x, dy = py - y, dz = pz - z, d = hyp(dx, dy, dz);
       if (d < 1.0) { this.addXp(this.gemVal[g], game); this.gemVal[g] = 0; continue; }
-      if (d < cfg.magnetRadius) {
+      if (d < eff.magnetRadius) {
         const s = 18 * dt / d;
         x += dx * s; y += dy * s; z += dz * s;
       } else { // fall to the surface below
@@ -116,8 +105,19 @@ export class Combat {
     this.gemMesh.instanceMatrix.needsUpdate = true;
   }
 
-  nearest(horde, player, n, range) {
-    const px = player.pos.x, py = player.center, pz = player.pos.z, r2 = range * range;
+  // Create weapons the build has acquired; drop ones it no longer has (level-down undo).
+  syncWeapons(build) {
+    for (const id of Object.keys(build.items)) {
+      if (WEAPON_CLASSES[id] && !this.weapons.has(id)) this.weapons.set(id, new WEAPON_CLASSES[id](this.scene));
+    }
+    for (const [id, w] of this.weapons) {
+      if (!build.items[id]) { w.dispose(); this.weapons.delete(id); }
+    }
+  }
+
+  // Nearest n enemies to `from` ({ pos, center }) within range.
+  nearest(horde, from, n, range) {
+    const px = from.pos.x, py = from.center, pz = from.pos.z, r2 = range * range;
     const best = [];
     for (let i = 0; i < horde.alive.length; i++) {
       if (!horde.alive[i]) continue;
@@ -132,15 +132,22 @@ export class Combat {
     return best.map(b => b[1]);
   }
 
-  fire(x, y, z, tx, ty, tz, speed) {
+  fire(x, y, z, tx, ty, tz, speed, dmg, source) {
     for (let s = 0; s < MAX_SHOTS; s++) {
       if (this.shotLife[s] > 0) continue;
       const dx = tx - x, dy = ty - y, dz = tz - z, l = hyp(dx, dy, dz) || 1;
       this.shotPos.set([x, y, z], s * 3);
       this.shotVel.set([(dx / l) * speed, (dy / l) * speed, (dz / l) * speed], s * 3);
       this.shotLife[s] = 1.2;
+      this.shotDmg[s] = dmg;
+      this.shotSrc[s] = source;
       return;
     }
+  }
+
+  // Debug: pull every gem on the map onto the player (collected next frame).
+  vacuum(player) {
+    for (let g = 0; g < MAX_GEMS; g++) if (this.gemVal[g] > 0) this.gemPos.set([player.pos.x, player.center, player.pos.z], g * 3);
   }
 
   dropGem(x, y, z, value) {
@@ -159,8 +166,9 @@ export class Combat {
     while (this.xp >= this.xpNext) {
       this.xp -= this.xpNext;
       this.level++;
-      this.xpNext = this.xpForLevel(this.level);
+      this.xpNext = this.xpForLevel(this.level, game.eff);
       game.hud.flash(`Level ${this.level}`);
+      if (game.eff.upgradeMode === 'offers') game.offerLevel();
     }
   }
 }

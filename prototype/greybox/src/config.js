@@ -10,6 +10,7 @@ export const defaults = {
   flyers: true,            // C: flying enemies (birds, drones, ... by tier)
   rooftopClosets: true,    // C: some rooftops spawn enemies
   relocation: true,        // D: enemies left far behind teleport back near the player
+  fallDamage: true,        // experiment: risk to set against height's reward (wall contact and gliding are safe)
 
   // --- Run ---
   timeScale: 1,            // multiplies the run clock (boss schedule, difficulty); movement is unaffected
@@ -33,7 +34,8 @@ export const defaults = {
   slideBoost: 1.35,
   slideTime: 0.8,
   slideFriction: 3,
-  wallRunTime: 2.5,        // seconds of wall running per landing (10+ = unlimited, Prototype-style)
+  wallRunTime: 2.5,        // seconds of wall running per landing
+  wallRunUnlimited: false, // Prototype-style unlimited wall running (ignores wallRunTime)
   wallRunUpSpeed: 9,
   wallRunSideGravity: 0.2,
   wallJumpPush: 11,
@@ -41,6 +43,9 @@ export const defaults = {
   glideFallSpeed: 3,
   glideSpeedMult: 1.2,
   autoVault: false,        // Q13 — off by default so it can be compared
+  fallSafeHeight: 8,       // no fall damage below max(this, fallSafeJumpMult × jumpHeight)
+  fallSafeJumpMult: 3,     // so an upgraded superjump never punishes its own landing
+  fallDmgPerM: 1.5,        // HP per metre above the safe height
   maxHp: 100,
 
   // --- Camera ---
@@ -65,7 +70,20 @@ export const defaults = {
   slidingPerMin: 0.08,     // time-driven: +8% enemy HP per run-minute
   tierMult: 1.6,           // each tier multiplies enemy HP by this
 
-  // --- Weapon (single stand-in auto weapon) ---
+  // --- Progression ---
+  upgradeMode: 'offers',   // offers = pick 1 of 3 per level; auto = playtest 1 (each level scales the blaster); off = no scaling
+  levelXpMult: 4,          // offers mode: XP cost per level ×4, which halves the number of levels
+  levelPower: 'curve',     // offers mode level bonus: curve = share of playtest 1's power at the same XP; compound = +levelDamageBonus per level
+  levelPowerShare: 0.3,    // curve: from tools/power-curve.mjs with all weapons and skills (step 7). Re-run when content or ladders change
+  levelDamageBonus: 0.11,  // compound: all-damage per level
+  maxItemLevel: 8,
+  autoPick: false,         // debug: resolve every offer automatically, rarest card first
+  weaponSlots: 4,
+  skillSlots: 4,
+  towerUpgrades: true,     // completing a hold zone offers a pick-1-of-3 movement/character upgrade
+  rarityWeights: { common: 55, uncommon: 26, rare: 12, epic: 5, legendary: 2 },
+
+  // --- Weapon: blaster (starting weapon) ---
   fireInterval: 0.45,
   projectiles: 2,
   damage: 12,
