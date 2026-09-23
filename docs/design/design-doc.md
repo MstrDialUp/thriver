@@ -2,7 +2,7 @@
 
 > **Status:** Seeded, with first design decisions (2026-09-22, three rounds). Pitch, pillars, Rich's decisions on Conflicts 1–6 and Q9–Q13, and the boss/tier structure.
 > **Working title:** Thriver (placeholder — from the project directory name)
-> **Last updated:** 2026-09-23 (upgrade offers and slots decided in §7; fall damage and the level bonus logged as grey-box experiments)
+> **Last updated:** 2026-09-23 (upgrade offers and slots decided in §7; fall damage and the level bonus logged as grey-box experiments; preliminary engine survey linked from §11 Q8)
 >
 > ⚠️ **This document is still mostly empty.** It contains the pitch, the pillars the research supports, the decisions made so far, and the open questions. Sections marked `UNFILLED` are yours to write.
 >
@@ -221,6 +221,8 @@ Research inputs — the most transferable math in the set:
 - **Scheduled beats** — Megabonk's mini-bosses and swarms at fixed times
 
 > **OPEN — Where on the density spectrum do we sit?** Risk of Rain 2 runs dozens of enemies; Vampire Survivors runs hundreds. We are a bullet heaven, so our floor is high — but in 3D with verticality, every entity costs far more. This is a design question *and* a technical one (see Q2).
+>
+> *Rich (2026-09-23): "absurd toward the end," no number yet.* For reference, Vampire Survivors caps at 500 alive at once and Megabonk at 550. [`engine-options.md`](../research/engine-options.md) §8 proposes testing 550 / 1,000 / 2,000 in the grey box to see which *reads* as absurd. That's a research proposal, not a decision.
 
 > **OPEN — What does the multiplier pay out in, exactly?** Currency rate, unlock progress, challenge eligibility, or a mix. Megabonk's cautionary note: its currency multipliers helped produce a glut (§10, Q12).
 
@@ -286,6 +288,10 @@ Also available (research, undecided):
 - **It is throwaway, and it is not the production engine.** It answers Q1 (and helps with Q6 and Q13). **It does not answer Q2 or Q8**: browser performance says nothing about a native engine's entity ceiling. That keeps us clear of Crackdown's hazard, because nothing built here carries into production.
 - **What transfers:** tuning numbers (movement speeds, jump heights, reward placement, horde mix) and the answers to Q1. **What doesn't:** code and performance figures.
 
+**✅ Decided (Rich, 2026-09-23) — the browser build is a reduced "Lite" version.** It's mainly for feel and sandboxing, and possibly posted on itch.io. **It doesn't have to use the production engine** and may drift from actual development once an engine is chosen. So the production engine only has to target **Windows, Linux and Steam Deck** (see [`engine-options.md`](../research/engine-options.md) §7).
+
+**✅ Decided (Rich, 2026-09-23) — the Steam Deck is important.** It is the **performance floor**, and Rich has one to test on. Development happens on a Linux desktop (Ryzen 5 3600, RTX 2070), which is far stronger, so entity-budget numbers (Q2) count only when they're measured on the Deck ([`engine-options.md`](../research/engine-options.md) §9).
+
 Several open questions here, and some in §5 and §9, **can't be answered until engine and technical choices are made.** Those follow the Q2 spike.
 
 > **OPEN — Q2: What is our entity budget, and what architecture achieves it in 3D with verticality?**
@@ -305,6 +311,8 @@ Several open questions here, and some in §5 and §9, **can't be answered until 
 > **OPEN — Q8: Engine and tooling.**
 >
 > Should follow Q2's spike, not precede it. Crackdown switched to RenderWare 4 mid-production in 2005, "caused significant problems," and needed Microsoft to supply extra programmers. **Decide early, prototype the hard case first, then commit.**
+>
+> **Preliminary survey (research, 2026-09-23, not a decision):** [`../research/engine-options.md`](../research/engine-options.md) proposes spiking **Godot and Unity first, and Unreal only if both miss the entity goal**. It proposes working enemy-count targets (550 floor / 2,000 goal / 5,000 stretch alive at once, against the genre's ~500 cap) and proposes measuring those targets on the Steam Deck, at 60 fps (also recording 45 and 30).
 
 **One piece of perspective the research strongly supports:** the genre's value is in systems design, not technology. Vampire Survivors was built in a browser framework by one unemployed person using default engine assets on £1,100. Megabonk was one person in Unity in thirteen months. Risk of Rain 2 was self-taught developers who had never made a 3D game. **Nothing here should be chosen for prestige.**
 
@@ -344,7 +352,7 @@ Kept in sync with [`00-synthesis.md`](../research/00-synthesis.md) §6.
 | **Q5** | How much permanent meta-power? | Economy | — | 🟢 Decided: none |
 | **Q6** | Does the city stay interesting once traversal is maxed? | Retention | Prototype | 🔴 Open |
 | **Q7** | How much content per city (authored core, set-piece library)? | Production scope | Scoping after assembly is proven | 🟡 Partly decided (3 cities) |
-| **Q8** | Engine and tooling choice | Everything | Follows Q2 | 🔴 Open |
+| **Q8** | Engine and tooling choice | Everything | Follows Q2; preliminary survey in [`engine-options.md`](../research/engine-options.md) | 🔴 Open (spike proposed: Godot and Unity; Unreal if both miss the goal) |
 | **Q9** | Run length, final-boss timing, nuke tuning; what replaces floor transitions? | Core loop | Design, then testing | 🟡 Mostly decided: 30 min, five scheduled lower bosses raise the tier, dev menu for exit. Open (testing/tuning): boss drops, tier size, nuke curve, snowball risk |
 | **Q10** | Map size; bounded, looping, or streamed? | Map generation, tech | Follows Q2 | 🟡 Bounded and massive (decided). Open: exact size, in-world reason for the boundary |
 | **Q11** | Real city names or parodies? | Branding, art | — | 🟢 Real names for now |
@@ -369,7 +377,7 @@ Recorded so that nothing in this document is mistaken for a commitment:
 - The specific enemy roster and faction structure *(direction only: flyers at every tier, climbers, absurdism)*
 - The proportions of the Q1 resolution mix
 - Meta currency name and prices; end-game sink deferred (Q12)
-- Platform targets, engine, scope, team, schedule
+- Engine, scope, team, schedule. *Platforms are partly set: Windows, Linux and Steam Deck for the game, with the Deck as the performance floor; the browser only as a Lite build (§11). Consoles and the Deck frame-rate target are not decided.*
 - Monetisation and price point
 - Multiplayer or co-op (all five references differ; Risk of Rain 2's co-op is central to its appeal)
 
@@ -419,6 +427,8 @@ Every decision in this document, in order. If it isn't here, it isn't a decision
 | 2026-09-23 | Level-ups present a pick 1 of 3 of weapons, skills, and upgrades to owned ones; upgrade rarity comes from its size | §7 | ✅ Decided |
 | 2026-09-23 | No two cards in one offer target the same weapon, skill or stat | §7 | ✅ Decided |
 | 2026-09-23 | Slots: 4 weapons + 4 skills | §7 | ✅ Decided |
+| 2026-09-23 | Browser build is a reduced "Lite" version (feel, sandboxing, maybe itch.io), not tied to the production engine | §11 | ✅ Decided |
+| 2026-09-23 | Steam Deck is important: the performance floor; entity-budget numbers count only when measured on it | §11 | ✅ Decided |
 | 2026-09-23 | Fall damage, with tower-offered reduction; wall contact and gliding prevent it | §6 | 🧪 Experiment |
 | 2026-09-23 | Automatic per-level damage bonus alongside pick-1-of-3 level-ups | §7 | 🧪 Experiment |
 

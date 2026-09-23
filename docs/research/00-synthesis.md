@@ -381,7 +381,7 @@ These are carried into `docs/design/design-doc.md` §13 and should be resolved b
 | **Q5** | **How much permanent meta-power?** | Economy design | — | 🟢 Decided: none |
 | **Q6** | **Does the city stay mechanically interesting once traversal is maxed?** | Long-term retention | Prototype. Upgradeable jumps and the grapple give a curve; whether it keeps escalating to the end of a run is untested. | 🔴 Open |
 | **Q7** | **How much content per city (authored core size, set-piece library size)?** | Production scope | Scoping once the assembly approach is proven. City count decided: 3. | 🟡 Partly decided |
-| **Q8** | **Engine and tooling choice** | Everything | Should follow Q2's spike, not precede it. Do not repeat Crackdown's mid-production engine switch. | 🔴 Open |
+| **Q8** | **Engine and tooling choice** | Everything | Should follow Q2's spike, not precede it. Do not repeat Crackdown's mid-production engine switch. Preliminary survey: [`engine-options.md`](engine-options.md). | 🔴 Open (spike proposed: Godot and Unity; Unreal if both miss the goal) |
 | **Q9** | **Run length, final-boss timing, and nuke tuning; what pacing beats replace floor transitions?** | Core loop | Design, then testing | 🟡 Mostly decided: 30 min, five scheduled lower bosses raise the tier, dev menu for exit. Open (testing/tuning): boss drops, tier size, nuke curve, snowball risk |
 | **Q10** | **How big is a map, and is it bounded, looping, or streamed?** | Map generation, tech | Follows Q2 | 🟡 Bounded and massive (decided). Open: exact size (engine-dependent), in-world reason for the boundary |
 | **Q11** | **Real city names or parodies?** | Branding, art | — | 🟢 Real names for now |
@@ -407,3 +407,4 @@ Several of these (Q2, Q8, the size half of Q10, the nuke tuning in Q9) **can't b
 - [`megabonk.md`](megabonk.md) — proof of concept and list of hazards
 - [`crackdown-2007.md`](crackdown-2007.md) — verticality as core mechanic
 - [`risk-of-rain-2.md`](risk-of-rain-2.md) — the 2D→3D translation and scaling model
+- [`engine-options.md`](engine-options.md) — preliminary engine survey for Q8 (not a game doc)

@@ -26,7 +26,8 @@ docs/
 │   ├── vampire-survivors.md   # The genre's structure, math, and dopamine pacing
 │   ├── megabonk.md            # Proof the 3D pitch works, and what goes wrong
 │   ├── crackdown-2007.md      # Verticality as a core mechanic; the orb economy
-│   └── risk-of-rain-2.md      # The 2D→3D translation; scaling and director math
+│   ├── risk-of-rain-2.md      # The 2D→3D translation; scaling and director math
+│   └── engine-options.md      # Preliminary engine survey (Q8) — not a decision
 └── design/
     └── design-doc.md          # Living design document
 prototype/
