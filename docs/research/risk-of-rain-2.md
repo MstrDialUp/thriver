@@ -255,7 +255,7 @@ Hopoo **abandoned full procedural generation**. Their stated reason:
 
 Their solution: **hand-crafted premade levels with randomised object and enemy placement.** The article notes this specifically *mitigated verticality complexity*.
 
-> **This is the most important practical lesson in this document.** A small team building a 3D game with verticality should expect fully procedural level generation to be beyond reach, and should plan for hand-authored spaces with randomised contents. Megabonk arrived at effectively the same answer — procedurally assembled floors drawn from only two authored map themes.
+> **This is the most important practical lesson in this document.** A small team building a 3D game with verticality should expect fully procedural level generation to be beyond reach, and should plan for hand-authored spaces with randomised contents. Megabonk arrived at effectively the same answer — procedurally assembled floors drawn from only two authored map themes at launch (a third, Graveyard, was added three months later).
 >
 > For an urban game this is good news: hand-authored city blocks and districts with randomised assembly, enemy placement, and pickup placement is a well-trodden path, and city architecture is naturally modular.
 

@@ -10,7 +10,7 @@ A 3D bullet heaven survivors-like set in a vertical urban environment, where you
 
 **[`docs/research/00-synthesis.md`](docs/research/00-synthesis.md)** — the argument. What we take from each inspiration, where those inspirations conflict, and the open questions that must be answered before content work begins.
 
-**[`docs/design/design-doc.md`](docs/design/design-doc.md)** — the living design document. Currently seeded with the pitch, research-derived pillars, and open questions. Most sections are deliberately unfilled.
+**[`docs/design/design-doc.md`](docs/design/design-doc.md)** — the living design document. Currently seeded with the pitch, research-derived pillars, the first round of design decisions (see its §15 decision log), and open questions. Most sections are still unfilled.
 
 ---
 

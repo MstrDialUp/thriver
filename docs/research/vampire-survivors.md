@@ -43,6 +43,8 @@ This is the single most important design decision in the game. Consequences:
 - At the time limit, **Death (the Reaper)** spawns and is designed to end the run near-instantly. **Additional Reapers spawn every subsequent minute.**
 - Surviving past the limit is possible only with specific build pieces (e.g. Infinite Corridor, Crimson Shroud) that let you actually damage or freeze Death.
 
+**The horde cannot be outrun.** Regular enemies spawn just off-screen and **despawn if the player moves far enough away**, and the spawner keeps refilling the ring around the player. **Bosses do not despawn; they are teleported back to the edge of the screen.** Some special entities (e.g. Moongolow's Amphoras) do the same. So running away sheds enemies, but it never sheds *pressure*: wherever you go, the ring is rebuilt around you, and anything important follows. This is one of the least-discussed and most important reasons VS's pressure is inescapable, and it matters for our Conflict 1.
+
 The Reaper is worth noting as design: it is not a difficulty curve, it is a **wall**. The game does not taper off — it hard-stops you, which makes 30:00 a clean, legible goal and prevents the late run from degenerating into an infinite victory lap.
 
 ### 2.3 Leveling and the upgrade offer
@@ -277,3 +279,5 @@ Vampire Survivors works because **the player cannot escape the horde** — on an
 - [Boring — Vampire Survivors General Discussions (Steam)](https://steamcommunity.com/app/1794680/discussions/0/5350867208706933331/)
 - [Vampire Survivors Critic Reviews — OpenCritic](https://opencritic.com/game/12685/-/reviews)
 - [Vampire Survivors–like — Wikipedia](https://en.wikipedia.org/wiki/Vampire_Survivors%E2%80%93like)
+- [Enemies — Vampire Survivors Wiki](https://vampire.survivors.wiki/w/Enemies) (despawn-on-distance; bosses teleported back)
+- [Moongolow — Vampire Survivors Wiki (Fandom)](https://vampire-survivors.fandom.com/wiki/Moongolow)
