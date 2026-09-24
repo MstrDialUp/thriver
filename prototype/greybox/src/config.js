@@ -5,7 +5,8 @@
 export const defaults = {
   // --- Q1 resolution toggles (synthesis Conflict 1) ---
   rewardsAtHeight: true,   // A: XP caches on rooftops
-  holdZones: true,         // B: ground-level Charge-Shrine-style zones
+  holdZones: true,         // B: small towers (Charge-Shrine-style hold zones) on any flat surface, respawning
+  largeTowers: true,       // B: large towers, a set number per map, mostly on rooftops, gone once completed
   climbers: true,          // C: non-mechanical enemies climb buildings
   flyers: true,            // C: flying enemies (birds, drones, ... by tier)
   rooftopClosets: true,    // C: some rooftops spawn enemies
@@ -35,6 +36,7 @@ export const defaults = {
   slideTime: 0.8,
   slideFriction: 3,
   wallRunTime: 2.5,        // seconds of wall running per landing
+  wallMode: 'free',        // free = climb and run along at once (diagonals); locked = playtest 1-2 (up OR along)
   wallRunUnlimited: false, // Prototype-style unlimited wall running (ignores wallRunTime)
   wallRunUpSpeed: 9,
   wallRunSideGravity: 0.2,
@@ -47,6 +49,10 @@ export const defaults = {
   fallSafeJumpMult: 3,     // so an upgraded superjump never punishes its own landing
   fallDmgPerM: 1.5,        // HP per metre above the safe height
   maxHp: 100,
+  hpRegen: 0,              // HP per second (tower stat)
+  iFrames: 0.5,            // seconds of immunity after a hit (contact damage pauses too; the nuke ignores it)
+  contactHitChunk: 5,      // contact damage counts as a hit (starting i-frames) once it has dealt this much
+  bulletMaxHitPct: 0.25,   // one enemy bullet takes at most this share of max HP
 
   // --- Camera ---
   camDistance: 7,
@@ -65,6 +71,23 @@ export const defaults = {
   spawnRingMin: 30,
   spawnRingMax: 45,
   fodderOverlap: 0.6,      // 0 = fodder fully separates, 1 = fodder overlaps freely
+  bulletSpeedMin: 9,       // enemy bullets at the start of the run...
+  bulletSpeedMax: 18,      // ...ramping to this
+  bulletSpeedRampMin: 12,  // run-minutes to reach full speed
+  bulletDmgExp: 0.5,       // bullet damage scales with enemy damage^this (1 = playtest 2)
+  bossHpMult: 3,           // lower bosses' HP multiplier
+  bossXpLevels: 2,         // a lower boss drops XP worth this many levels at the time of the kill
+  finalBossXpLevels: 5,
+
+  // --- Civilians (PLAN-playtest2 step 8) ---
+  civilians: true,
+  civPedestrians: 300,     // with no enemies around; the share falls as the horde grows
+  civCars: 60,
+  civOnlyTime: 30,         // run-seconds of civilians only, before enemies spawn
+  civRing: 100,            // civilians further than this are recycled near the player
+  civFleeRadius: 12,
+  civPedXp: 0.3,
+  civCarXp: 0.6,
 
   // --- Difficulty (two scalers, design doc §8) ---
   slidingPerMin: 0.08,     // time-driven: +8% enemy HP per run-minute
@@ -94,10 +117,27 @@ export const defaults = {
   // --- Rewards ---
   cacheCount: 18,
   cacheRespawn: 45,
-  holdZoneCount: 3,
+  holdZoneCount: 3,        // small towers alive at once
   holdZoneRadius: 6,
   holdTime: 6,
   holdDrain: 1.5,          // drain speed relative to fill when outside the zone
+  smallTowerRoofShare: 0.5,
+  largeTowerCount: 12,
+  largeTowerRadius: 9,     // clamped to the roof it stands on
+  largeHoldTime: 20,
+  largeTowerRoofShare: 0.9,
+  largeTowerXpMult: 3,
+  largeTowerHeal: 50,
+  largeTowerRarityShift: 1, // rarity weights shifted up this many steps (1 = never Common)
+  orbs: true,
+  orbCount: 500,
+  orbValue: 0.003,         // +0.3% per orb
+  orbRoofShare: 0.4,
+  orbWallShare: 0.3,       // the rest go at street level
+
+  // --- Sound ---
+  sound: true,
+  volume: 0.5,
 
   // --- World ---
   layout: 'mixed',         // mixed = Chicago-like towers west, Paris-like low-rise east

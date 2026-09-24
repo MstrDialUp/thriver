@@ -36,9 +36,11 @@ export class Blaster {
     this.timer = eff.fireInterval * Math.pow(0.97, lv) / rate;
     const n = Math.min(20, eff.projectiles + Math.floor(lv / 3) + own('projectiles'));
     const range = eff.range * (1 + own('range'));
-    for (const i of combat.nearest(horde, player, n, range)) {
-      combat.fire(player.pos.x, player.center + 0.3, player.pos.z, horde.x[i], centerY(horde, i), horde.z[i], eff.projectileSpeed, eff.damage * (1 + 0.15 * lv) * dmg, this.id);
+    const aims = combat.targets(game, player, n, range);
+    for (const [tx, ty, tz] of aims) {
+      combat.fire(player.pos.x, player.center + 0.3, player.pos.z, tx, ty, tz, eff.projectileSpeed, eff.damage * (1 + 0.15 * lv) * dmg, this.id);
     }
+    if (aims.length) game.sfx?.play('shot', player.pos.x, player.center, player.pos.z);
   }
 
   dispose() {}
@@ -66,6 +68,7 @@ export class Pulse {
     if (this.timer <= 0) {
       this.timer = b.interval / rate;
       horde.forRadius(player.pos.x, player.center, player.pos.z, r, i => game.damageEnemy(i, b.damage * dmg, this.id));
+      game.areaHit(player.pos.x, player.center, player.pos.z, r, b.damage * dmg, this.id);
       this.flash = 0.3;
     }
     this.flash = Math.max(0, this.flash - dt);
@@ -112,6 +115,7 @@ export class Arc {
       const cx = horde.x[cur], cy = centerY(horde, cur), cz = horde.z[cur];
       if (segs < this.maxSegs) pos.array.set([px, py, pz, cx, cy, cz], 6 * segs++);
       game.damageEnemy(cur, b.damage * dmg, this.id);
+      game.areaHit(cx, cy, cz, 1.5, 0, this.id); // the bolt clears bullets where it strikes
       px = cx; py = cy; pz = cz;
       let best, bestD = Infinity;
       horde.forRadius(cx, cy, cz, chainR, i => {
@@ -125,6 +129,7 @@ export class Arc {
     pos.needsUpdate = true;
     this.lines.geometry.setDrawRange(0, segs * 2);
     this.show = 0.12;
+    game.sfx?.play('zap', player.pos.x, player.center, player.pos.z);
   }
 
   dispose() { this.scene.remove(this.lines); }
@@ -158,6 +163,7 @@ export class MeleeDrone {
     for (let k = 0; k < n; k++) {
       const a = this.angle + (k / n) * Math.PI * 2;
       const x = player.pos.x + Math.cos(a) * b.orbit, y = player.center, z = player.pos.z + Math.sin(a) * b.orbit;
+      game.areaHit(x, y, z, 0.8, b.damage * dmg, this.id, b.rehit);
       horde.forNear(x, y, z, i => {
         const t = TYPES[horde.type[i]], rr = t.r + 0.5;
         if ((horde.x[i] - x) ** 2 + (horde.z[i] - z) ** 2 > rr * rr || Math.abs(centerY(horde, i) - y) > t.h / 2 + 0.5) return;
@@ -225,6 +231,7 @@ export class Mortar {
         const i = this.pickTarget(horde, player, b.range, r);
         if (i === undefined) break;
         this.shells.push({ sx: player.pos.x, sy: player.center + 1, sz: player.pos.z, tx: horde.x[i], ty: horde.y[i], tz: horde.z[i], t: 0 });
+        game.sfx?.play('mortar', player.pos.x, player.center, player.pos.z);
       }
     }
     let n = 0;
@@ -233,6 +240,8 @@ export class Mortar {
       if (s.t >= 1) {
         const below = player.pos.y - 2;
         horde.forRadius(s.tx, s.ty + 0.5, s.tz, r, i => game.damageEnemy(i, b.damage * dmg * (horde.y[i] < below ? 1 + b.below : 1), this.id));
+        game.areaHit(s.tx, s.ty + 0.5, s.tz, r, b.damage * dmg, this.id);
+        game.sfx?.play('boom', s.tx, s.ty, s.tz);
         const mesh = new THREE.Mesh(this.blastGeo, new THREE.MeshBasicMaterial({ color: 0xffa040, transparent: true, opacity: 0.5, depthWrite: false }));
         mesh.position.set(s.tx, s.ty + 0.5, s.tz);
         this.scene.add(mesh);
@@ -299,10 +308,11 @@ export class GunDrone {
       p.lerp(this.tmp.set(tx, ty, tz), Math.min(1, 8 * dt));
       this.timers[k] = (this.timers[k] ?? (k * b.interval) / n) - dt;
       if (this.timers[k] <= 0) {
-        const [i] = combat.nearest(horde, { pos: p, center: p.y }, 1, b.range);
-        if (i !== undefined) {
+        const [aim] = combat.targets(game, { pos: p, center: p.y }, 1, b.range);
+        if (aim) {
           this.timers[k] = b.interval / rate;
-          combat.fire(p.x, p.y, p.z, horde.x[i], centerY(horde, i), horde.z[i], eff.projectileSpeed, b.damage * dmg, this.id);
+          combat.fire(p.x, p.y, p.z, aim[0], aim[1], aim[2], eff.projectileSpeed, b.damage * dmg, this.id);
+          game.sfx?.play('droneShot', p.x, p.y, p.z);
         }
       }
       this.mat.makeTranslation(p.x, p.y, p.z);

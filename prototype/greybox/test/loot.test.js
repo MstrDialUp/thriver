@@ -193,3 +193,33 @@ test('level-up: skills have their own 4-slot cap, separate from weapons', () => 
   assert.equal(t.filter(x => x.isNew && x.kind === 'weapon').length, 5); // weapon slots unaffected
   for (const s of Object.keys(SKILLS)) for (const stat of Object.keys(SKILLS[s].stats)) assert.ok(STATS[`${s}.${stat}`], `${s}.${stat}`);
 });
+
+import { towerTargets } from '../src/catalog.js';
+import { shiftRarity } from '../src/loot.js';
+
+test('towers offer character stats only: no weapons, skills or their upgrades', () => {
+  for (const t of TOWER_TARGETS) {
+    assert.ok(!t.item && !t.isNew, t.id);
+    for (const fx of Object.values(t.rolls)) for (const stat of Object.keys(fx)) {
+      assert.ok(STATS[stat] && !STATS[stat].owner, `${t.id}: ${stat}`);
+    }
+  }
+});
+
+test('a tower stat that only feeds one skill is offered only while that skill is owned', () => {
+  const b = new Build();
+  assert.ok(!towerTargets(b).some(t => t.id === 'impactDamage'));
+  b.apply({ item: 'impact', effects: {} });
+  assert.ok(towerTargets(b).some(t => t.id === 'impactDamage'));
+});
+
+test('large towers: shifting rarity up one step never rolls Common and keeps the total', () => {
+  const s = shiftRarity(WEIGHTS, 1);
+  assert.equal(s.common, 0);
+  assert.equal(s.uncommon, WEIGHTS.common);
+  assert.equal(s.legendary, WEIGHTS.epic + WEIGHTS.legendary);
+  assert.equal(Object.values(s).reduce((a, b) => a + b), 100);
+  assert.deepEqual(shiftRarity(WEIGHTS, 0), WEIGHTS);
+  const r = rng(11);
+  for (let i = 0; i < 2000; i++) assert.notEqual(rollRarity(s, r), 'common');
+});

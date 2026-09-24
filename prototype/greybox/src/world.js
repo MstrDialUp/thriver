@@ -28,6 +28,7 @@ export class World {
     this.boxes = [];
     this.rng = mulberry32(seed);
     this.pitch = BLOCK + STREET;
+    this.blocks = blocks;
     this.half = (blocks * this.pitch) / 2;
     this.queryStamp = 0;
 
@@ -256,6 +257,80 @@ export class World {
       if (!this.blockedAt(x, 0.5, z, 0.6)) return { x, z };
     }
     return null;
+  }
+
+  // A roof building's top is clear if nothing (a tower on a podium) stands on the point.
+  roofClear(b, x, z, r = 0.6) {
+    return !this.blockedAt(x, b.maxY + 0.5, z, r);
+  }
+
+  // A point on a roof within [rMin, rMax] of (cx, cz), at least `margin` in from the edge:
+  // { x, y, z, box } or null.
+  randomRoofPoint(cx, cz, rMin, rMax, margin = 2, tries = 30, rand = Math.random) {
+    // Only roofs that reach into the ring, so a small ring near the player still finds one.
+    const near = this.roofs.filter(b => {
+      const dx = Math.max(b.minX - cx, 0, cx - b.maxX), dz = Math.max(b.minZ - cz, 0, cz - b.maxZ);
+      const fx = Math.max(Math.abs(b.minX - cx), Math.abs(b.maxX - cx)), fz = Math.max(Math.abs(b.minZ - cz), Math.abs(b.maxZ - cz));
+      return Math.hypot(dx, dz) <= rMax && Math.hypot(fx, fz) >= rMin;
+    });
+    if (!near.length) return null;
+    for (let k = 0; k < tries; k++) {
+      const b = near[Math.floor(rand() * near.length)];
+      if (b.maxX - b.minX < margin * 2 + 1 || b.maxZ - b.minZ < margin * 2 + 1) continue;
+      const x = b.minX + margin + rand() * (b.maxX - b.minX - margin * 2);
+      const z = b.minZ + margin + rand() * (b.maxZ - b.minZ - margin * 2);
+      const d = Math.hypot(x - cx, z - cz);
+      if (d < rMin || d > rMax || !this.roofClear(b, x, z)) continue;
+      return { x, y: b.maxY, z, box: b };
+    }
+    return null;
+  }
+
+  // A point floating `off` metres out from a building's wall, between `minH` and 2 m below the roof.
+  randomWallPoint(rand = Math.random, off = 1, minH = 4) {
+    for (let k = 0; k < 30; k++) {
+      const b = this.roofs[Math.floor(rand() * this.roofs.length)];
+      if (b.maxY - b.minY < minH + 3) continue;
+      const face = Math.floor(rand() * 4), y = b.minY + minH + rand() * (b.maxY - b.minY - minH - 2);
+      const u = rand();
+      let x, z;
+      if (face < 2) { z = b.minZ + 1 + u * (b.maxZ - b.minZ - 2); x = face === 0 ? b.minX - off : b.maxX + off; }
+      else { x = b.minX + 1 + u * (b.maxX - b.minX - 2); z = face === 2 ? b.minZ - off : b.maxZ + off; }
+      if (Math.abs(x) > this.half - 2 || Math.abs(z) > this.half - 2 || this.blockedAt(x, y, z, 0.6)) continue;
+      return { x, y, z, box: b };
+    }
+    return null;
+  }
+
+  // Street centreline coordinates between blocks (the map-edge half-streets are left out).
+  get streetLines() {
+    return (this._lines ??= Array.from({ length: this.blocks - 1 }, (_, k) => -this.half + (k + 1) * this.pitch));
+  }
+
+  // ---------- moving boxes (civilian cars) ----------
+  // Kept in the lookup grid so collision, bullets and the camera see them. Not in the nav grid.
+  addDynamic(b) {
+    b.stamp = 0;
+    b.cells = null;
+    this.updateDynamic(b);
+  }
+
+  updateDynamic(b) {
+    const [i0, j0] = this.cellOf(b.minX, b.minZ), [i1, j1] = this.cellOf(b.maxX, b.maxZ), c = b.cells;
+    if (c && c[0] === i0 && c[1] === j0 && c[2] === i1 && c[3] === j1) return;
+    if (c) this.removeFromCells(b);
+    for (let i = i0; i <= i1; i++) for (let j = j0; j <= j1; j++) this.grid[i + j * this.gridN].push(b);
+    b.cells = [i0, j0, i1, j1];
+  }
+
+  removeDynamic(b) { if (b.cells) this.removeFromCells(b); b.cells = null; }
+
+  removeFromCells(b) {
+    const [i0, j0, i1, j1] = b.cells;
+    for (let i = i0; i <= i1; i++) for (let j = j0; j <= j1; j++) {
+      const cell = this.grid[i + j * this.gridN], k = cell.indexOf(b);
+      if (k >= 0) cell.splice(k, 1);
+    }
   }
 
   clamp(v, margin = 1) {

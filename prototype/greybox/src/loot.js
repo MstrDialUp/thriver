@@ -12,6 +12,15 @@ export function rollRarity(weights, rng = Math.random) {
   return RARITIES[0];
 }
 
+// Shift rarity weights up by `steps` (large towers): each rarity takes the weight of the one
+// below it, the bottom rarities get nothing, and the top keeps what would overflow.
+export function shiftRarity(weights, steps = 1) {
+  const w = RARITIES.map(r => weights[r] ?? 0), out = {};
+  for (const r of RARITIES) out[r] = 0;
+  w.forEach((v, i) => { out[RARITIES[Math.min(RARITIES.length - 1, i + steps)]] += v; });
+  return out;
+}
+
 // Nearest supported rarity: step down first, then up.
 export function fallbackOrder(rarity) {
   const i = RARITIES.indexOf(rarity);

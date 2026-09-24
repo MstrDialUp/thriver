@@ -13,7 +13,10 @@ import { buildDebug } from './debug.js';
 import { Build } from './build.js';
 import { Choice } from './choice.js';
 import { Skills } from './skills.js';
-import { TOWER_TARGETS, levelTargets } from './catalog.js';
+import { towerTargets, levelTargets } from './catalog.js';
+import { Orbs } from './orbs.js';
+import { Civilians } from './civilians.js';
+import { Sfx } from './audio.js';
 import { newStats, tickStats, recordDamage, summary, fmtClock, samplePower } from './metrics.js';
 
 const canvas = document.getElementById('c');
@@ -57,6 +60,9 @@ game.hud = new Hud();
 game.skills = new Skills(scene);
 game.choice = new Choice(game, () => { setState('playing'); game.input.requestLock(); });
 game.cam = new FollowCamera(camera);
+game.orbs = new Orbs(scene);
+game.civ = new Civilians(scene);
+game.sfx = new Sfx(camera);
 
 let worldKey = '';
 function buildWorld() {
@@ -80,9 +86,14 @@ game.restart = () => {
   game.horde.clear();
   game.combat.reset(game.eff);
   game.director.reset();
+  game.civ.clear();          // before placing towers and orbs, so last run's cars don't get in the way
   game.rewards.reset(game);
+  game.orbs.reset(game.world, config);
   const s = game.world.randomStreetPoint(0, 0, 0, 30, 60) ?? { x: 0, z: -game.world.half + 7 };
   game.player.reset(s.x, s.z);
+  game.civ.reset(game);
+  game.iframes = 0;
+  game.contactAcc = 0;
   game.player.hp = game.eff.maxHp;
   game.world.computeFlow(s.x, 0, s.z);
   setState('playing');
@@ -91,10 +102,25 @@ game.restart = () => {
 game.resetTuning = () => resetConfig();
 
 // kind: contact | bullet | fall | nuke. source: index of the enemy that dealt the hit, or -1.
+// I-frames (PLAN-playtest2 step 4): after a hit, nothing but the nuke lands for eff.iFrames seconds.
+// Contact damage is continuous, so it counts as a hit once it has dealt contactHitChunk.
 game.damagePlayer = (amount, kind = 'contact', source = -1) => {
   if (config.godMode || game.state !== 'playing' || amount <= 0) return;
+  const eff = game.eff;
+  if (kind !== 'nuke') {
+    if (game.iframes > 0) return;
+    if (kind === 'bullet') amount = Math.min(amount, eff.maxHp * eff.bulletMaxHitPct);
+    if (kind === 'contact' || kind === 'bullet') amount *= 1 - eff.damageReduction;
+    if (kind === 'contact') {
+      game.contactAcc += amount;
+      if (game.contactAcc >= eff.contactHitChunk) { game.contactAcc = 0; game.iframes = eff.iFrames; }
+    } else game.iframes = eff.iFrames;
+  }
   game.skills.onHit(game, kind, source);
+  const before = amount;
   amount = game.skills.absorb(amount);
+  if (kind !== 'contact' || game.iframes > 0) game.sfx.play(amount > 0 ? 'hurt' : 'shieldHit');
+  game.hud.hurt(before / eff.maxHp);
   if (amount <= 0) return;
   game.player.hp -= amount;
   recordDamage(game.stats, amount, game.player, kind);
@@ -109,6 +135,7 @@ game.damagePlayer = (amount, kind = 'contact', source = -1) => {
 // A landing: the Impact skill, and fall damage above the safe height.
 game.onLand = (fall) => {
   const eff = game.eff, safe = Math.max(eff.fallSafeHeight, eff.fallSafeJumpMult * eff.jumpHeight);
+  if (fall > 1) game.sfx.play('land', game.player.pos.x, game.player.pos.y, game.player.pos.z, Math.min(1, 0.3 + fall / 20));
   game.stats.maxFall = Math.max(game.stats.maxFall, fall);
   game.skills.onLand(game, fall, safe);
   if (fall <= safe) return;
@@ -119,12 +146,12 @@ game.onLand = (fall) => {
   game.hud.flash(`Hard landing −${Math.round(dmg)}`);
 };
 
-game.offerTower = () => game.choice.offer('tower', () => TOWER_TARGETS);
+game.offerTower = (large = false) => game.choice.offer(large ? 'largeTower' : 'tower', () => towerTargets(game.build), large ? config.largeTowerRarityShift : 0);
 game.offerLevel = () => game.choice.offer('level', () => levelTargets(game.build, game.eff));
 
 // Debug: . levels up (through the normal XP path, so offers mode opens a menu);
 // , levels down and undoes that level's pick. Only while playing with no menu queued.
-game.levelUp = () => game.combat.addXp(game.combat.xpNext - game.combat.xp, game);
+game.levelUp = () => game.combat.addXp(game.combat.xpNext - game.combat.xp, game, true);
 game.levelDown = () => {
   const c = game.combat;
   if (c.level <= 1 || game.choice.pending) return;
@@ -137,6 +164,13 @@ game.levelDown = () => {
 };
 
 game.heal = (v) => { game.player.hp = Math.min(game.eff.maxHp, game.player.hp + v); };
+
+// Area hits that aren't aimed at one enemy (Pulse, Mortar, Impact, ...): they also destroy
+// enemy bullets in the sphere (step 5) and hurt civilians in it (step 8). civDmg 0 = bullets only.
+game.areaHit = (x, y, z, r, civDmg, source, rehit = 0) => {
+  game.stats.bulletsDestroyed += game.horde.destroyBullets(x, y, z, r);
+  if (civDmg > 0) game.civ.damageRadius(x, y, z, r, civDmg, game, rehit);
+};
 
 // Every weapon and skill damages enemies through here, so damage can be credited per source.
 game.damageEnemy = (i, amount, source) => {
@@ -152,7 +186,13 @@ game.damageEnemy = (i, amount, source) => {
 game.onEnemyKilled = (i) => {
   const h = game.horde, t = TYPES[h.type[i]];
   game.stats.kills++;
-  if (t.xp) game.combat.dropGem(h.x[i], h.y[i], h.z[i], t.xp * (1 + 0.25 * (game.tier - 1)));
+  if (t.boss) {
+    // A boss drops XP worth a few levels at the time of the kill, as a cluster of gems.
+    const c = game.combat, levels = t.final ? config.finalBossXpLevels : config.bossXpLevels;
+    let xp = c.xpNext - c.xp;
+    for (let l = 1; l < levels; l++) xp += c.xpForLevel(c.level + l, game.eff);
+    for (let k = 0; k < 12; k++) c.dropGem(h.x[i] + (Math.random() - 0.5) * 4, h.y[i] + Math.random() * 3, h.z[i] + (Math.random() - 0.5) * 4, xp / 12);
+  } else if (t.xp) game.combat.dropGem(h.x[i], h.y[i], h.z[i], t.xp * (1 + 0.25 * (game.tier - 1)));
   game.director.onKilled(i);
   h.kill(i);
 };
@@ -184,7 +224,7 @@ function setState(s) {
   game.state = s;
   if (s === 'playing') overlay.style.display = 'none';
 }
-document.getElementById('play').onclick = () => { game.restart(); game.input.requestLock(); };
+document.getElementById('play').onclick = () => { game.sfx.start(); game.restart(); game.input.requestLock(); };
 canvas.addEventListener('click', () => { if (game.state === 'playing') game.input.requestLock(); });
 document.addEventListener('pointerlockchange', () => {
   if (!game.input.locked && game.state === 'playing' && game.input.lastDevice === 'mouse' && !guiVisible) {
@@ -245,21 +285,29 @@ function frame(now) {
       game.player.landFall = 0;
     } else {
       if (game.player.landFall > 0) { game.onLand(game.player.landFall); game.player.landFall = 0; }
+      game.iframes = Math.max(0, game.iframes - dt);
+      game.contactAcc = Math.max(0, game.contactAcc - game.eff.contactHitChunk * dt); // leaky: only a burst counts as a hit
+      if (game.eff.hpRegen > 0) game.heal(game.eff.hpRegen * dt);
       game.director.update(dt);
+      game.civ.update(dt, game);
       const contactDps = game.horde.update(dt, game);
       game.damagePlayer(contactDps * dt);
       game.combat.update(dt, game);
       game.rewards.update(dt, game);
+      game.orbs.update(dt, game);
       game.skills.update(dt, game, game.eff);
       tickStats(game.stats, dt, game.player);
       samplePower(game.stats, game);
     }
     game.cam.update(dt, inp, game.player, game.world, config);
+    game.player.mesh.visible = !(game.iframes > 0 && Math.floor(game.iframes * 20) % 2); // i-frame flicker
   } else {
     game.cam.update(dt, { lookX: 0, lookY: 0 }, game.player, game.world, config);
   }
 
   game.horde.render();
+  game.civ.render();
+  game.sfx.update(dt, game);
   game.hud.update(dt, game);
   renderer.render(scene, camera);
   requestAnimationFrame(frame);

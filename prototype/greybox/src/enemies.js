@@ -97,6 +97,7 @@ export class Horde {
     this.bDmg = new Float32Array(MAX_BULLETS);
     this.bSrc = new Int32Array(MAX_BULLETS);
     this.bSrcSerial = new Uint32Array(MAX_BULLETS);
+    this.liveBullets = [];
     this.bulletMesh = new THREE.InstancedMesh(new THREE.SphereGeometry(0.25, 6, 4), new THREE.MeshBasicMaterial({ color: 0xff3355 }), MAX_BULLETS);
     this.bulletMesh.count = 0;
     this.bulletMesh.frustumCulled = false;
@@ -109,6 +110,7 @@ export class Horde {
     for (let i = MAX - 1; i >= 0; i--) this.free.push(i);
     this.count = 0;
     this.bLife.fill(0);
+    this.liveBullets.length = 0;
   }
 
   spawn(typeIdx, x, y, z, tier, hpMult, dmgMult) {
@@ -252,7 +254,9 @@ export class Horde {
           const d = hyp(px - x, pcy - y, pz - z);
           if (this.fireT[i] <= 0 && d < t.keepDist * 1.8) {
             this.fireT[i] = t.fireEvery * (0.8 + Math.random() * 0.4);
-            this.fireBullet(x, y, z, px, pcy, pz, t.bulletDmg * this.dmgMult[i], i);
+            // Bullets scale more gently than contact damage, and speed up over the run (PLAN-playtest2 step 4).
+            this.fireBullet(x, y, z, px, pcy, pz, t.bulletDmg * Math.pow(this.dmgMult[i], cfg.bulletDmgExp), i, game.director.bulletSpeed());
+            game.sfx?.play('enemyShot', x, y, z);
           }
         }
       } else if (t.kind === 'jet') {
@@ -362,10 +366,10 @@ export class Horde {
     }
   }
 
-  fireBullet(x, y, z, tx, ty, tz, dmg, src = -1) {
+  fireBullet(x, y, z, tx, ty, tz, dmg, src = -1, s = 18) {
     for (let b = 0; b < MAX_BULLETS; b++) {
       if (this.bLife[b] > 0) continue;
-      const dx = tx - x, dy = ty - y, dz = tz - z, l = hyp(dx, dy, dz) || 1, s = 18;
+      const dx = tx - x, dy = ty - y, dz = tz - z, l = hyp(dx, dy, dz) || 1;
       this.bx.set([x, y, z], b * 3);
       this.bv.set([(dx / l) * s, (dy / l) * s, (dz / l) * s], b * 3);
       this.bLife[b] = 4;
@@ -376,22 +380,45 @@ export class Horde {
     }
   }
 
-  updateBullets(dt, game) {
-    const { player, world } = game;
+  // Enemy bullets inside a sphere are destroyed (player damage, PLAN-playtest2 step 5). Returns how many.
+  destroyBullets(x, y, z, r) {
     let n = 0;
+    const r2 = r * r;
+    for (const b of this.liveBullets) {
+      if (this.bLife[b] <= 0) continue;
+      const o = b * 3, dx = this.bx[o] - x, dy = this.bx[o + 1] - y, dz = this.bx[o + 2] - z;
+      if (dx * dx + dy * dy + dz * dz <= r2) { this.bLife[b] = 0; n++; }
+    }
+    return n;
+  }
+
+  updateBullets(dt, game) {
+    const { player, world, civ, stats } = game;
+    let n = 0;
+    this.liveBullets.length = 0;
     for (let b = 0; b < MAX_BULLETS; b++) {
       if (this.bLife[b] <= 0) continue;
       this.bLife[b] -= dt;
       const o = b * 3;
       this.bx[o] += this.bv[o] * dt; this.bx[o + 1] += this.bv[o + 1] * dt; this.bx[o + 2] += this.bv[o + 2] * dt;
       const x = this.bx[o], y = this.bx[o + 1], z = this.bx[o + 2];
-      if (world.blockedAt(x, y, z) || y < 0) { this.bLife[b] = 0; continue; }
+      const blk = y < 0 ? null : world.blockedAt(x, y, z);
+      if (blk || y < 0) {
+        if (blk?.civ !== undefined && civ.damageCar(blk.civ, this.bDmg[b], game, false)) stats.civFriendlyFire++; // friendly fire
+        this.bLife[b] = 0; continue;
+      }
+      const ped = civ.pedAt(x, y, z, 0.45);
+      if (ped >= 0) {
+        if (civ.damagePed(ped, this.bDmg[b], game, false)) stats.civFriendlyFire++;
+        this.bLife[b] = 0; continue;
+      }
       const dx = x - player.pos.x, dy = y - player.center, dz = z - player.pos.z;
       if (dx * dx + dy * dy * 0.5 + dz * dz < 0.8) {
         const src = this.bSrc[b];
         game.damagePlayer(this.bDmg[b], 'bullet', src >= 0 && this.alive[src] && this.serial[src] === this.bSrcSerial[b] ? src : -1);
         this.bLife[b] = 0; continue;
       }
+      this.liveBullets.push(b);
       this.mat.makeTranslation(x, y, z);
       this.bulletMesh.setMatrixAt(n++, this.mat);
     }

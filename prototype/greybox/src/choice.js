@@ -1,5 +1,5 @@
-import { RARITIES, RARITY_COLORS, FILLER, STATS, itemInfo } from './catalog.js';
-import { makeOffer } from './loot.js';
+import { RARITIES, RARITY_COLORS, FILLER, STATS, itemInfo, fmtNum } from './catalog.js';
+import { makeOffer, shiftRarity } from './loot.js';
 import { fmtClock } from './metrics.js';
 
 // Pick-1-of-3 menu, shared by towers and level-ups. Offers queue up; main.js
@@ -11,6 +11,7 @@ const INPUT_GRACE_MS = 350;
 
 const SOURCES = {
   tower: { title: 'Tower upgrade', color: '#40c4ff' },
+  largeTower: { title: 'Large tower upgrade', color: '#ffb030' },
   level: { title: 'Level up', color: '#3cff9e' },
 };
 
@@ -31,14 +32,15 @@ export class Choice {
   get pending() { return this.queue.length; }
 
   // getTargets runs when the menu opens, so queued offers see the picks made before them.
-  offer(source, getTargets) {
-    this.queue.push({ source, getTargets });
+  // rarityShift moves the rarity weights up (large towers: bigger upgrades).
+  offer(source, getTargets, rarityShift = 0) {
+    this.queue.push({ source, getTargets, rarityShift });
   }
 
   // Roll the next queued offer. forceRarity (debug) applies to this one offer only.
   roll() {
-    const { source, getTargets } = this.queue.shift();
-    const weights = this.forceRarity ? { [this.forceRarity]: 1 } : this.game.eff.rarityWeights;
+    const { source, getTargets, rarityShift } = this.queue.shift();
+    const weights = this.forceRarity ? { [this.forceRarity]: 1 } : shiftRarity(this.game.eff.rarityWeights, rarityShift);
     this.forceRarity = null;
     const cards = makeOffer(getTargets(), 3, weights);
     if (cards.length < 3) cards.push({ ...FILLER });
@@ -81,7 +83,7 @@ export class Choice {
     return lv + effects.map(([stat, v]) => {
       const s = STATS[stat], total = (bonus[stat] ?? 0) + v;
       const label = effects.length > 1 || c.item ? `${s.label} ` : ''; // single-stat tower cards already carry the name
-      if (s.mode === 'add') return `${label}+${v} <small>(total +${total})</small>`;
+      if (s.mode === 'add') return `${label}+${fmtNum(v)}${s.unit ?? ''} <small>(total +${fmtNum(total)})</small>`;
       if (s.mode === 'hyper') return `${label}${pct(v)} <small>(total ${pct(1 - 1 / (1 + total))}, diminishing)</small>`;
       return `${label}${pct(v)} <small>(total ${pct(total)})</small>`;
     }).join('<br>');

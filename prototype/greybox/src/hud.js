@@ -1,5 +1,5 @@
 import { summary, fmtClock } from './metrics.js';
-import { STATS, itemInfo, itemKind } from './catalog.js';
+import { STATS, itemInfo, itemKind, fmtNum } from './catalog.js';
 
 // Plain DOM overlay. Updated at ~10 Hz except for the bars.
 
@@ -11,7 +11,9 @@ export class Hud {
       clock: $('clock'), hp: $('hpfill'), xp: $('xpfill'), level: $('level'), tier: $('tier'),
       bosses: $('bosses'), metrics: $('metrics'), toast: $('toast'), zone: $('zone'), zonefill: $('zonefill'),
       fps: $('fps'), flash: $('flash'), move: $('move'), build: $('build'), shieldbar: $('shieldbar'), shield: $('shieldfill'),
+      hurt: $('hurt'), zonelabel: $('zonelabel'),
     };
+    this.hurtLevel = 0;
     this.slow = 0;
     this.toastTimer = 0;
     this.frames = 0;
@@ -29,6 +31,9 @@ export class Hud {
     this.el.toast.style.opacity = 0;
   }
 
+  // Red screen border when hurt (PLAN-playtest2 step 4). frac = share of max HP; small ticks add up.
+  hurt(frac) { this.hurtLevel = Math.min(1, this.hurtLevel + 0.25 + frac * 4); }
+
   nukeFlash() {
     this.el.flash.style.transition = 'none';
     this.el.flash.style.opacity = 1;
@@ -44,7 +49,7 @@ export class Hud {
     const cfg = game.eff;
     this.frames++; this.fpsTime += dt;
     if (this.fpsTime > 0.5) {
-      this.el.fps.textContent = `${Math.round(this.frames / this.fpsTime)} fps · ${horde.count} enemies`;
+      this.el.fps.textContent = `${Math.round(this.frames / this.fpsTime)} fps · ${horde.count} enemies · ${game.civ.ped.count + game.civ.car.count} civilians`;
       this.frames = 0; this.fpsTime = 0;
     }
     this.el.hp.style.width = `${Math.max(0, (100 * player.hp) / cfg.maxHp)}%`;
@@ -53,10 +58,16 @@ export class Hud {
     this.el.shieldbar.style.display = shieldMax ? 'block' : 'none';
     if (shieldMax) this.el.shield.style.width = `${(100 * game.skills.shield) / shieldMax}%`;
     if (this.toastTimer > 0 && (this.toastTimer -= dt) <= 0) this.el.toast.style.opacity = 0;
+    this.hurtLevel = Math.max(0, this.hurtLevel - dt * 2.5);
+    this.el.hurt.style.opacity = this.hurtLevel.toFixed(2);
 
     const z = game.activeZone;
     this.el.zone.style.display = z ? 'block' : 'none';
-    if (z) this.el.zonefill.style.width = `${Math.round(z.progress * 100)}%`;
+    if (z) {
+      this.el.zonefill.style.width = `${Math.round(z.progress * 100)}%`;
+      this.el.zonefill.style.background = z.tier === 'large' ? '#ffb030' : '#40c4ff';
+      this.el.zonelabel.textContent = z.tier === 'large' ? 'holding LARGE tower' : 'holding tower';
+    }
 
     const p = player;
     const state = p.dashTimer > 0 ? 'dash' : p.gliding ? 'glide' : p.wallState === 1 ? 'wall run ↑' : p.wallState === 2 ? 'wall run' : p.slideTimer > 0 ? 'slide' : p.grounded ? '' : 'air';
@@ -96,21 +107,26 @@ export class Hud {
     this.el.metrics.textContent =
       `up ${s.pctElevated}% · surrounded ${s.pctSurrounded}% · escaped ${s.pctEscaped}%\n` +
       `longest escape ${s.longestEscapeSec}s · dmg ground/up ${s.damageGround}/${s.damageElevated}\n` +
-      `zones ${s.zonesHeld} · caches ${s.rooftopCaches} · kills ${s.kills}\n` +
+      `towers ${s.zonesHeld} (large ${s.largeTowersHeld}, ${game.rewards.largeLeft}/${game.rewards.largeTotal} left) · caches ${s.rooftopCaches}\n` +
+      `orbs ${s.orbsTaken}/${game.orbs.count} · kills ${s.kills} · civilians ${s.civKilled}\n` +
       `power ×${s.powerIndex} · vs playtest 1 ${s.powerVsPlaytest1}`;
   }
 
   // Build panel: owned weapons and skills with levels, then the tower (stat) bonuses.
   buildText(game) {
     const { build } = game, items = Object.entries(build.items);
-    const list = kind => items.filter(([id]) => itemKind(id) === kind).map(([id, lv]) => `${itemInfo(id).name} ${lv}`).join(' · ') || '—';
-    const pct = v => `${v > 0 ? '+' : '−'}${Math.round(Math.abs(v) * 100)}%`;
+    const list = kind => {
+      const owned = items.filter(([id]) => itemKind(id) === kind).map(([id, lv]) => `${itemInfo(id).name} ${lv}`);
+      const free = Math.max(0, game.eff[kind === 'weapon' ? 'weaponSlots' : 'skillSlots'] - owned.length);
+      return [...owned, ...Array(free).fill('[ ]')].join(' · ');
+    };
+    const pct = v => `${v > 0 ? '+' : '−'}${(Math.abs(v) * 100).toFixed(Math.abs(v) < 0.1 ? 1 : 0)}%`; // orbs are fractions of a percent
     const stats = Object.entries(build.bonus).filter(([k, v]) => STATS[k] && !STATS[k].owner && Math.abs(v) > 1e-9).map(([k, v]) => {
       const s = STATS[k], label = s.label.toLowerCase();
-      if (s.mode === 'add') return `${label} +${v}`;
+      if (s.mode === 'add') return `${label} +${fmtNum(v)}`;
       if (s.mode === 'hyper') return `${label} ${pct(1 - 1 / (1 + v))}`;
       return `${label} ${pct(v)}`;
     });
-    return `weapons  ${list('weapon')}\nskills   ${list('skill')}` + (stats.length ? `\ntower    ${stats.join(' · ')}` : '');
+    return `weapons  ${list('weapon')}\nskills   ${list('skill')}` + (stats.length ? `\nstats    ${stats.join(' · ')}` : '');
   }
 }

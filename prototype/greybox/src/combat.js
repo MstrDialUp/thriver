@@ -61,7 +61,11 @@ export class Combat {
       const x = (this.shotPos[o] += this.shotVel[o] * dt);
       const y = (this.shotPos[o + 1] += this.shotVel[o + 1] * dt);
       const z = (this.shotPos[o + 2] += this.shotVel[o + 2] * dt);
-      if (y < 0 || world.blockedAt(x, y, z)) { this.shotLife[s] = 0; continue; }
+      const blk = y < 0 ? null : world.blockedAt(x, y, z);
+      if (y < 0 || blk) {
+        if (blk?.civ !== undefined) game.civ.damageCar(blk.civ, this.shotDmg[s], game);
+        this.shotLife[s] = 0; continue;
+      }
       let hitI = -1;
       horde.forNear(x, y, z, i => {
         if (hitI >= 0) return;
@@ -74,6 +78,11 @@ export class Combat {
         game.damageEnemy(hitI, this.shotDmg[s], this.shotSrc[s]);
         continue;
       }
+      // Enemy bullets and pedestrians in the way also stop a shot (PLAN-playtest2 steps 5 and 8).
+      const shotBullets = horde.destroyBullets(x, y, z, 0.5);
+      if (shotBullets) { game.stats.bulletsDestroyed += shotBullets; this.shotLife[s] = 0; continue; }
+      const ped = game.civ.pedAt(x, y, z, 0.3);
+      if (ped >= 0) { game.civ.damagePed(ped, this.shotDmg[s], game); this.shotLife[s] = 0; continue; }
       this.mat.makeTranslation(x, y, z);
       this.shotMesh.setMatrixAt(ns++, this.mat);
     }
@@ -113,6 +122,14 @@ export class Combat {
     for (const [id, w] of this.weapons) {
       if (!build.items[id]) { w.dispose(); this.weapons.delete(id); }
     }
+  }
+
+  // Aim points for n shots: the nearest enemies, or civilians when no enemy is in range
+  // (auto-aim prefers enemies, so civilians don't soak up the build's damage).
+  targets(game, from, n, range) {
+    const { horde } = game, ids = this.nearest(horde, from, n, range);
+    if (ids.length) return ids.map(i => [horde.x[i], horde.y[i] + TYPES[horde.type[i]].h / 2, horde.z[i]]);
+    return game.civ.nearest(from.pos.x, from.center, from.pos.z, n, range);
   }
 
   // Nearest n enemies to `from` ({ pos, center }) within range.
@@ -160,7 +177,9 @@ export class Combat {
     }
   }
 
-  addXp(v, game) {
+  // raw: skip the XP-gain stat (debug level-up adds exactly what the level needs).
+  addXp(v, game, raw = false) {
+    if (!raw) v *= game.eff.xpGain ?? 1;
     this.xp += v;
     game.stats.xpTotal += v;
     while (this.xp >= this.xpNext) {

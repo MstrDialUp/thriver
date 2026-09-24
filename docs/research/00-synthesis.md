@@ -3,7 +3,7 @@
 > **Read this one first.** The five game documents are the evidence. This is the argument.
 >
 > **Status:** Living document. Updated as research and prototyping change our conclusions.
-> **Last updated:** 2026-09-23 (upgrade offers, slot count and the fall-damage experiment folded into §5; see design doc §7)
+> **Last updated:** 2026-09-24 (playtest 2 tower decisions folded into Conflict 1 and §5; see design doc §4, §7)
 
 ---
 
@@ -124,6 +124,8 @@ D was missing from the first version of this doc. It is arguably **the main reas
 > - **C is heavy, and it escalates.** **Many more flying enemies**, **present at every tier**: birds and drones at low tiers; bigger birds, helicopters, fighter jets, and superheroes at high tiers *(refined in the third round)*. **An absurdist roster is fine.** **Non-mechanical enemies (people, animals) climb buildings** to get at the player.
 > - **Monster closets on rooftops.** Some buildings have spawn points on top, so altitude is not automatically clear of enemies.
 > - **D: enemies teleport back** when the player gets far enough away (VS-style), so distance is never a permanent escape.
+>
+> **Update (Rich, 2026-09-24, after playtest 2):** towers can now spawn on **any flat surface**, and **large towers go almost exclusively on rooftops** to push players up. **B's pull-down role is set aside for now**, because rooftops had too little to do (playtest 2 rooftop caches: 0–2 per run). See design doc §4 and §7.
 >
 > **What this does not settle:** the *proportions*. How much reward sits high vs. low, how fast the flying share ramps, and how often the relocation fires are still **Q1, to be answered by the grey-box prototype**. This direction tells the prototype what to test, not what the answer is.
 
@@ -322,7 +324,8 @@ Combining every "carry forward" across the five documents, revised 2026-09-22 wi
 - **Tiered collision:** low-level fodder may overlap; bosses/elites/high-level have right of way *(direction)*
 
 ### Progression in-run
-- **XP from kills and pickups**, with **elevated pickups** (Crackdown) pulling the player upward into danger, **balanced by ground-level hold-zone rewards** (Megabonk Charge Shrines) pulling them back down *(direction)*
+- **XP from kills and pickups**, with **elevated pickups** (Crackdown) pulling the player upward into danger, ~~balanced by ground-level hold-zone rewards (Megabonk Charge Shrines) pulling them back down~~ *(direction; the pull-down half set aside 2026-09-24: towers spawn on any flat surface, and large ones on rooftops)*
+- **Two tower tiers**: small (quick, respawning, XP + heal + pick 1 of 3) and large (slow charge, set number per map, gone once completed, bigger upgrade). Towers offer **character stats only**, never weapons or skills *(decided 2026-09-24)*
 - **Level-up pauses and offers a pick 1 of 3** from weapons, skills and upgrades *(decided 2026-09-23; towers offer a separate pick 1 of 3 of movement/character upgrades, see design doc §7)*
 - **Capped loadout slots** to force build identity: **4 weapons + 4 skills** *(decided 2026-09-23)*. Not expandable by meta-progression, since that would be permanent power *(follows from Conflict 4 decision)*
 - **Movement upgrades, mixed model:** small ones are perks in the pool; big ones (grapple) are dual-purpose weapons/skills *(decided)*
@@ -374,7 +377,7 @@ These are carried into `docs/design/design-doc.md` §13 and should be resolved b
 
 | # | Question | Blocking | Method | Status |
 |---|---|---|---|---|
-| **Q1** | **How do we make a horde threatening to a player with Prototype-grade traversal?** Includes the height-vs-ground reward balance. | Everything | Grey-box prototype: full movement kit, a horde, A/B/C/D toggles. Built in the browser at [`prototype/greybox`](../../prototype/greybox/README.md). | 🟡 Direction set (mix of A/B/C/D); grey box built, not yet playtested |
+| **Q1** | **How do we make a horde threatening to a player with Prototype-grade traversal?** Includes the height-vs-ground reward balance. | Everything | Grey-box prototype: full movement kit, a horde, A/B/C/D toggles. Built in the browser at [`prototype/greybox`](../../prototype/greybox/README.md). | 🟡 Direction set (mix of A/B/C/D); grey box playtested twice (2026-09-22, 2026-09-24), preliminary. B's pull-down role set aside 2026-09-24 |
 | **Q2** | **What is our entity budget, and what architecture achieves it in 3D with verticality?** | Content scope, engine choice, map size | Technical spike. Evaluate ECS/data-oriented approaches against a target count. | 🔴 Open |
 | **Q3** | **How do we prevent the Megabonk enemy-stacking bug?** | Combat feel, boss design | Spike alongside Q2. | 🟡 Direction set (tiered collision, flow fields, credit director) |
 | **Q4** | **Manual movement + automatic combat — is that the right input split?** | Entire control scheme | Confirm in the prototype | 🟢 Decided (validate feel in prototype) |

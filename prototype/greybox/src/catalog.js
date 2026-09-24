@@ -21,6 +21,13 @@ export const STATS = {
   fallReduction:  { mode: 'hyper', label: 'Fall damage reduction' },
   damageMult:     { mode: 'mult', label: 'Damage (all)' },
   fireRateMult:   { mode: 'mult', label: 'Fire rate (all)' },
+  magnetRadius:   { mode: 'pct', label: 'Pickup radius' },
+  impactDamage:   { mode: 'mult', label: 'Impact damage' },
+  xpGain:         { mode: 'mult', label: 'XP gain' },
+  damageReduction: { mode: 'hyper', label: 'Damage reduction' },
+  hpRegen:        { mode: 'add', label: 'Health regen', unit: ' HP/s' },
+  dashSpeed:      { mode: 'pct', label: 'Dash distance' },
+  slideBoost:     { mode: 'pct', label: 'Slide speed' },
   airJumps:       { mode: 'add', label: 'Air jumps' },
   dashCharges:    { mode: 'add', label: 'Dash charges' },
 };
@@ -32,7 +39,9 @@ const towerPct = (stat, [c, u, r]) => ({
   rolls: { common: { [stat]: c }, uncommon: { [stat]: u }, rare: { [stat]: r } },
 });
 
-// Tower (hold zone) table: movement and character upgrades.
+// Tower table: character stats only, never weapons, skills or their upgrades (Rich, 2026-09-24).
+// Movement counts as a character stat. `requires`: only offered while that item is owned, so
+// a stat that only feeds one skill is never a dead card.
 // Extra jumps and dashes only exist at Epic and above, so they always outrank a percentage roll.
 export const TOWER_TARGETS = [
   towerPct('moveSpeed', [0.02, 0.03, 0.05]),
@@ -45,9 +54,28 @@ export const TOWER_TARGETS = [
   towerPct('fallReduction', [0.05, 0.08, 0.12]),
   towerPct('damageMult', [0.03, 0.05, 0.08]),
   towerPct('fireRateMult', [0.03, 0.05, 0.08]),
+  towerPct('magnetRadius', [0.05, 0.08, 0.12]),
+  { ...towerPct('impactDamage', [0.05, 0.08, 0.12]), requires: 'impact' },
+  towerPct('xpGain', [0.03, 0.05, 0.08]),
+  towerPct('damageReduction', [0.02, 0.03, 0.05]),
+  towerPct('hpRegen', [0.2, 0.3, 0.5]),
+  towerPct('dashSpeed', [0.04, 0.06, 0.10]),
+  towerPct('slideBoost', [0.04, 0.06, 0.10]),
   { id: 'airJump', name: '+1 air jump', rolls: { epic: { airJumps: 1 } } },
   { id: 'dashCharge', name: '+1 dash charge', rolls: { epic: { dashCharges: 1 } } },
   { id: 'jumpAndDash', name: '+1 air jump and +1 dash', rolls: { legendary: { airJumps: 1, dashCharges: 1 } } },
+];
+
+export const towerTargets = build => TOWER_TARGETS.filter(t => !t.requires || build.items[t.requires]);
+
+// Crackdown-style orbs (PLAN-playtest2 step 7): one colour per stat.
+export const ORB_STATS = [
+  { stat: 'moveSpeed', color: 0x4cff6a },
+  { stat: 'jumpHeight', color: 0xffe14c },
+  { stat: 'wallRunTime', color: 0xff9f40 },
+  { stat: 'maxHp', color: 0xff4c6a },
+  { stat: 'damageMult', color: 0xc04cff },
+  { stat: 'magnetRadius', color: 0x4cd8ff },
 ];
 
 // ---------- Level-up table: weapons and skills ----------
@@ -199,10 +227,12 @@ export function levelTargets(build, cfg) {
 // Shown when an offer has fewer than three real cards.
 export const FILLER = { targetId: 'filler', name: 'Patch up', rarity: 'common', effects: {}, heal: 30, xp: 10 };
 
+export const fmtNum = v => (Number.isInteger(v) ? String(v) : v.toFixed(1));
+
 export function describeEffects(effects) {
   return Object.entries(effects).map(([stat, v]) => {
     const s = STATS[stat];
-    if (s.mode === 'add') return `${v > 0 ? '+' : ''}${v} ${s.label.toLowerCase()}`;
+    if (s.mode === 'add') return `${v > 0 ? '+' : ''}${fmtNum(v)}${s.unit ?? ''} ${s.label.toLowerCase()}`;
     return `${s.label} ${v > 0 ? '+' : '−'}${Math.round(Math.abs(v) * 100)}%`;
   }).join(', ');
 }

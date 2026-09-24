@@ -10,7 +10,8 @@ export function buildDebug(game) {
 
   const q1 = gui.addFolder('Q1 — resolutions (A/B/C/D)');
   q1.add(cfg, 'rewardsAtHeight').name('A · rooftop caches');
-  q1.add(cfg, 'holdZones').name('B · ground hold zones');
+  q1.add(cfg, 'holdZones').name('B · small towers');
+  q1.add(cfg, 'largeTowers').name('B · large towers (off: gone till restart)');
   q1.add(cfg, 'climbers').name('C · climbers');
   q1.add(cfg, 'flyers').name('C · flyers');
   q1.add(cfg, 'rooftopClosets').name('C · rooftop closets');
@@ -25,6 +26,7 @@ export function buildDebug(game) {
   mv.add(cfg, 'dashCooldown', 0.1, 3, 0.05);
   mv.add(cfg, 'dashSpeed', 10, 60, 1);
   mv.add(cfg, 'wallRunTime', 0, 10, 0.1);
+  mv.add(cfg, 'wallMode', ['free', 'locked']).name('wall movement');
   mv.add(cfg, 'wallRunUnlimited').name('wall run unlimited');
   mv.add(cfg, 'wallRunUpSpeed', 3, 25, 0.5);
   mv.add(cfg, 'glide');
@@ -58,8 +60,34 @@ export function buildDebug(game) {
   df.add(cfg, 'fireInterval', 0.05, 2, 0.05);
   df.add(cfg, 'projectiles', 1, 10, 1);
   df.add(cfg, 'range', 10, 60, 1);
-  df.add(cfg, 'holdTime', 1, 20, 0.5);
+  df.add(cfg, 'bossHpMult', 0.5, 10, 0.5).name('boss HP ×');
+  df.add(cfg, 'bossXpLevels', 0, 10, 1).name('boss XP (levels)');
+  df.add(cfg, 'bulletSpeedMin', 2, 30, 1).name('enemy bullet speed: start');
+  df.add(cfg, 'bulletSpeedMax', 2, 40, 1).name('enemy bullet speed: max');
+  df.add(cfg, 'bulletDmgExp', 0, 1, 0.05).name('bullet damage scaling (^)');
+  df.add(cfg, 'bulletMaxHitPct', 0.05, 1, 0.05).name('bullet max hit (share of HP)');
+  df.add(cfg, 'iFrames', 0, 2, 0.05).name('i-frames (s)');
+  df.add(cfg, 'contactHitChunk', 1, 30, 1).name('contact dmg per "hit"');
   df.close();
+
+  const tw = gui.addFolder('Towers, orbs, civilians');
+  tw.add(cfg, 'holdZoneCount', 0, 10, 1).name('small: alive at once');
+  tw.add(cfg, 'holdTime', 1, 20, 0.5).name('small: charge (s)');
+  tw.add(cfg, 'smallTowerRoofShare', 0, 1, 0.05).name('small: share on roofs');
+  tw.add(cfg, 'largeTowerCount', 0, 40, 1).name('large: per map (restart)');
+  tw.add(cfg, 'largeHoldTime', 2, 60, 1).name('large: charge (s)');
+  tw.add(cfg, 'largeTowerRoofShare', 0, 1, 0.05).name('large: share on roofs (restart)');
+  tw.add(cfg, 'largeTowerRarityShift', 0, 4, 1).name('large: rarity shift');
+  tw.add(cfg, 'orbs').name('orbs (restart)');
+  tw.add(cfg, 'orbCount', 0, 2000, 50).name('orbs per map (restart)');
+  tw.add(cfg, 'orbValue', 0.001, 0.02, 0.001).name('orb value');
+  tw.add(cfg, 'civilians');
+  tw.add(cfg, 'civPedestrians', 0, 800, 10).name('pedestrians');
+  tw.add(cfg, 'civCars', 0, 200, 5).name('cars');
+  tw.add(cfg, 'civOnlyTime', 0, 120, 5).name('civilians-only opening (s)');
+  tw.add(cfg, 'sound');
+  tw.add(cfg, 'volume', 0, 1, 0.05);
+  tw.close();
 
   const pr = gui.addFolder('Progression');
   pr.add(cfg, 'upgradeMode', ['offers', 'auto', 'off']).name('level-up mode (restart)');

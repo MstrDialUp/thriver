@@ -2,7 +2,8 @@ import * as THREE from 'three';
 
 // Kinematic character controller against the world's boxes.
 // Kit (design doc §6): move, dash, slide, jump, double jump, wall jump,
-// wall run (vertical when pushing into a wall, sideways when moving along it),
+// wall run (wallMode 'free': climb and run along at once, so pushing diagonally into a wall
+// climbs diagonally; 'locked', playtest 1-2: vertical when pushing into it OR sideways along it),
 // glide (hold jump while falling). No stamina.
 //
 // Fall height (grey-box experiment, PLAN-progression.md): the highest point since
@@ -44,7 +45,8 @@ export class Player {
     this.dashCount = 0;       // bumped per dash, so Slipstream can hit each enemy once per dash
     this.slideTimer = 0;
     this.wallRunTimer = 0;
-    this.wallState = 0;       // 0 none, 1 vertical, 2 side
+    this.wallState = 0;       // 0 none, 1 vertical (mostly climbing), 2 side (mostly running along)
+    this.wallUp = 0;          // free mode: share of the input going into the wall (0..1), for the mantle
     this.lastWallNormal = null;
     this.sinceJump = 99;
     this.gliding = false;
@@ -155,7 +157,27 @@ export class Player {
       }
       v.y = 0;
     } else {
-      if (wall && (cfg.wallRunUnlimited || this.wallRunTimer < cfg.wallRunTime)) {
+      const prevUp = this.wallUp;
+      this.wallUp = 0;
+      if (wall && cfg.wallMode === 'free' && (cfg.wallRunUnlimited || this.wallRunTimer < cfg.wallRunTime)) {
+        // Split the input into "into the wall" (climb) and "along the wall" (run), and do both.
+        const into = -(wx * wall.nx + wz * wall.nz);
+        const tx = wx + into * wall.nx, tz = wz + into * wall.nz, along = Math.hypot(tx, tz);
+        const up = Math.max(0, (into - 0.15) / 0.85);
+        if (hasWish && (up > 0 || (along > 0.3 && v.y < cfg.wallRunUpSpeed))) {
+          this.wallState = up >= 0.5 ? 1 : 2;
+          this.wallUp = up;
+          if (up > 0) v.y = cfg.wallRunUpSpeed * up;
+          else v.y = Math.max(v.y - cfg.gravity * cfg.wallRunSideGravity * dt, -1.5);
+          // Along the wall: keep any faster momentum in that direction, else run at move speed.
+          const ux = along > 1e-3 ? tx / along : 0, uz = along > 1e-3 ? tz / along : 0;
+          const carried = Math.max(0, v.x * ux + v.z * uz);
+          const lat = along > 1e-3 ? Math.max(carried, cfg.moveSpeed * along) : 0;
+          v.x = ux * lat - wall.nx * 0.5; v.z = uz * lat - wall.nz * 0.5; // hug the wall
+          this.wallRunTimer += dt;
+          this.lastWallNormal = wall;
+        }
+      } else if (wall && (cfg.wallRunUnlimited || this.wallRunTimer < cfg.wallRunTime)) {
         const into = -(wx * wall.nx + wz * wall.nz);
         const hs = Math.hypot(v.x, v.z);
         if (into > 0.5) {
@@ -171,7 +193,7 @@ export class Player {
         if (this.wallState) { this.wallRunTimer += dt; this.lastWallNormal = wall; }
       }
       if (!this.wallState) {
-        if (prevWallState === 1 && this.lastWallNormal) { // ran off the top: mantle onto the roof
+        if ((prevWallState === 1 || prevUp > 0.2) && this.lastWallNormal) { // ran off the top: mantle onto the roof
           v.x = -this.lastWallNormal.nx * 5; v.z = -this.lastWallNormal.nz * 5;
           v.y = Math.max(v.y, 4);
         }

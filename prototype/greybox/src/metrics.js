@@ -21,6 +21,9 @@ export function newStats() {
     picks: [], menuTime: 0,
     damageFall: 0, hardLandings: 0, maxFall: 0,
     power: [], nextPowerSample: 0,
+    largeTowersDone: 0, towersOnRoof: 0, towersOnGround: 0,
+    orbsTaken: 0, orbsByPlace: { roof: 0, wall: 0, street: 0 },
+    bulletsDestroyed: 0, civKilled: 0, civFriendlyFire: 0,
   };
 }
 
@@ -78,7 +81,15 @@ export function summary(s, game) {
     hardLandings: s.hardLandings,
     maxFallM: Math.round(s.maxFall),
     zonesHeld: s.zonesDone,
+    largeTowersHeld: s.largeTowersDone,
+    towersHeldOnRoof: s.towersOnRoof,
+    towersHeldOnGround: s.towersOnGround,
     secondsInZones: Math.round(s.timeInZone),
+    orbsTaken: s.orbsTaken,
+    orbsByPlace: { ...s.orbsByPlace },
+    bulletsDestroyed: s.bulletsDestroyed,
+    civKilled: s.civKilled,
+    civFriendlyFire: s.civFriendlyFire,
     rooftopCaches: s.cachesTaken,
     upgradesPicked: s.picks.filter(p => p.picked !== 'skip').length,
     secondsInMenus: Math.round(s.menuTime),

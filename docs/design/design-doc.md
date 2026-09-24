@@ -2,7 +2,7 @@
 
 > **Status:** Seeded, with first design decisions (2026-09-22, three rounds). Pitch, pillars, Rich's decisions on Conflicts 1–6 and Q9–Q13, and the boss/tier structure.
 > **Working title:** Thriver (placeholder — from the project directory name)
-> **Last updated:** 2026-09-23 (upgrade offers and slots decided in §7; fall damage and the level bonus logged as grey-box experiments; preliminary engine survey linked from §11 Q8)
+> **Last updated:** 2026-09-24 (playtest 2: two tower tiers, towers on any flat surface, towers never offer weapons or skills; §4, §7)
 >
 > ⚠️ **This document is still mostly empty.** It contains the pitch, the pillars the research supports, the decisions made so far, and the open questions. Sections marked `UNFILLED` are yours to write.
 >
@@ -67,7 +67,17 @@ These are proposed, not ratified. Strike any that do not match your intent.
 - **C: heavy and escalating.** Flying enemies are present **at every tier** and escalate in kind (birds and drones early; helicopters, fighter jets, superheroes later); non-mechanical enemies climb buildings; some rooftops have monster closets (§8).
 - **D: relocation.** Enemies far behind the player teleport back (§8).
 
+**✅ Decided (Rich, 2026-09-24, after playtest 2) — towers can spawn anywhere flat, and large towers go up.**
+
+- **Towers (B's hold zones) can spawn on any flat surface, roof or ground.**
+- **Large towers are placed almost exclusively on rooftops, to push players up** (§7 has the two tiers).
+- **B's "pull back down" role is set aside for now.** Rich: towers were meant to keep the player grounded, but *"right now there's not a lot to do on top of the buildings."* In playtest 2, rooftop caches were almost ignored (0–2 per run, against 7–14 in playtest 1), and most damage was taken on the ground.
+
+*Research note, not a decision:* this moves both A and the large towers toward height, so nothing is left whose job is to pull the player **down**. Playtest 2's data suggests that may not be needed yet: the horde already brings the fight to the ground. But it reopens the check this section already asks for, now from the other side: **does going up still cost something?** Fall damage (§6, experiment) and C (flyers, climbers, closets) are what's left to answer it.
+
 > **OPEN — the proportions.** How much reward sits high vs. low, how fast the flying share rises, and how aggressive relocation is. Answered by the Q1 prototype, which should have each of A/B/C/D as a toggle. One thing to check specifically: **climbing still has to buy a few seconds of breathing room**, or traversal loses the relief that makes it feel good.
+
+> **Playtest 2 (2026-09-24, single tester, five runs):** most damage was taken on the ground, and rooftop caches were almost ignored. See [the playtest log](../../prototype/greybox/README.md#playtest-2--2026-09-24). Also preliminary.
 
 > **Early signal (playtest 1, 2026-09-22, single tester — preliminary):** with wall-run kept low-level, tall buildings acted as barriers that pen the player in at height rather than an escape route — the opposite of this section's "trivially defeated" framing. See [`prototype/greybox/README.md`](../../prototype/greybox/README.md#playtest-log). Not a conclusion; needs a second tester and more runs.
 
@@ -157,10 +167,20 @@ Decided elsewhere and relevant here: movement abilities are part of this pool (�
 
 **✅ Decided (Rich, 2026-09-23) — how upgrades are offered:**
 
-- **Towers (the hold zones, §4 B) grant a pick 1 of 3 of movement and character upgrades**, rolled on a rarity drop table, on top of their XP. This makes B's pull back down to the ground stronger: the ground is where the traversal upgrades are.
+- **Towers (the hold zones, §4 B) grant a pick 1 of 3 of movement and character upgrades**, rolled on a rarity drop table, on top of their XP. ~~This makes B's pull back down to the ground stronger: the ground is where the traversal upgrades are.~~ *(Superseded 2026-09-24: towers can now spawn anywhere flat, and large ones go on rooftops. See §4 and below.)*
 - **Level-ups present a pick 1 of 3** from a separate table: new weapons and skills, and upgrades to ones already owned. An upgrade's rarity comes from its size (a +20% fire-rate upgrade is rarer than a +5% one).
 - **No two cards in one offer are for the same weapon, skill or stat.**
 - **Slots: 4 weapons + 4 skills.**
+
+**✅ Decided (Rich, 2026-09-24, after playtest 2) — tower rewards and tiers:**
+
+- **Towers never offer weapons, skills, or upgrades to them.** They offer **character stats** only. **Movement counts as a character stat** ("it is the character that moves through the world"), and so do the all-damage and all-fire-rate boosts.
+- **Almost every player stat should be on the tower table**, in small percentages, including ones that other skills also touch (fall damage, impact damage, pickup radius).
+- **Two tiers of tower:**
+  - **Small towers:** quick to charge, **respawn constantly**, and pay XP, a heal and a pick 1 of 3, as towers do now. Their upgrades are smaller than a large tower's.
+  - **Large towers:** **take longer to charge**, and pay **health, XP and a character upgrade**. There's a **set number per map**, and **a completed one is gone for the run**. The count should be **more than 5–8**; the exact number is a tuning question. Placed almost exclusively on rooftops (§4).
+
+> **OPEN — Crackdown-style orbs** (Rich's playtest 2 note, not yet a decision): many small collectibles, colour-coded by the stat they give, each worth a fraction of a percent. How many there are, where they go, and whether they replace rooftop caches is untested. Planned for the grey box in [`PLAN-playtest2.md`](../../prototype/greybox/PLAN-playtest2.md).
 
 **🧪 Grey-box stand-in (2026-09-23), not a decision.** The grey box implements all of the above with placeholder content: 6 weapons, 9 skills, a 10-stat tower table, five rarities (Megabonk's colours and a 55/26/12/5/2 roll), and an automatic per-level damage bonus that keeps power in line with playtest 1 (Rich: "let's try the automatic bonus for now"). The item names, numbers, the tower table and the level bonus are all placeholders. The full list and the reasoning are in [`PLAN-progression.md`](../../prototype/greybox/PLAN-progression.md).
 
@@ -194,6 +214,13 @@ Research inputs:
 - **Non-mechanical enemies (people, animals, etc.) climb buildings** to reach the player.
 - **Monster closets on rooftops**: some buildings have spawn points on top.
 - **Relocation**: enemies that fall far enough behind the player **teleport back** toward the player, as in Vampire Survivors (where regular enemies despawn and the ring refills, and bosses teleport back to the screen edge).
+
+**🧪 Grey-box experiment (Rich, 2026-09-24), not yet a decision — a city full of civilians:**
+
+- The city is filled with **pedestrians and cars**. **Enemies are swapped in for a share of them**, and that share grows with tier and time. The first 30 seconds are civilians only. The goal is that the screen always feels full.
+- **Cars** drive as if the player isn't there. **Pedestrians** wander the street grid and run when the player comes close.
+- **Civilians can be destroyed for XP**, less than enemies that fight back. **Enemies never attack them**, but enemy ranged attacks can hit them (friendly fire).
+- *Research note:* this is a small version of Prototype's autonomous chaos and Pillar 6 (the city as an active part of the run). It also bears on the entity budget (Q2): civilians are extra entities, but much cheaper than horde agents. Plan: [`PLAN-playtest2.md`](../../prototype/greybox/PLAN-playtest2.md) step 8.
 
 **🧭 Direction (Rich, 2026-09-22) — crowd collision (see also Q3, §11):**
 
@@ -345,7 +372,7 @@ Kept in sync with [`00-synthesis.md`](../research/00-synthesis.md) §6.
 
 | # | Question | Blocks | Resolution method | Status |
 |---|---|---|---|---|
-| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box playtested once (2026-09-22, single tester) — see [playtest log](../../prototype/greybox/README.md#playtest-log); preliminary |
+| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box playtested twice (2026-09-22, 2026-09-24; single tester) — see [playtest log](../../prototype/greybox/README.md#playtest-log); preliminary. B's pull-down role set aside 2026-09-24 |
 | **Q2** | Entity budget and horde architecture in 3D with verticality? | Content scope, engine, map size | Technical spike | 🔴 Open |
 | **Q3** | How do we prevent the enemy-stacking bug? | Combat feel, bosses | Spike alongside Q2 | 🟡 Direction set |
 | **Q4** | Manual movement + automatic combat — right input split? | Control scheme | Decided; feel validated in prototype | 🟢 Decided |
@@ -429,6 +456,11 @@ Every decision in this document, in order. If it isn't here, it isn't a decision
 | 2026-09-23 | Slots: 4 weapons + 4 skills | §7 | ✅ Decided |
 | 2026-09-23 | Browser build is a reduced "Lite" version (feel, sandboxing, maybe itch.io), not tied to the production engine | §11 | ✅ Decided |
 | 2026-09-23 | Steam Deck is important: the performance floor; entity-budget numbers count only when measured on it | §11 | ✅ Decided |
+| 2026-09-24 | Towers offer character stats only (movement and all-damage/all-fire-rate included), never weapons, skills or their upgrades | §7 | ✅ Decided |
+| 2026-09-24 | Two tower tiers: small (quick charge, constant respawn, XP + heal + pick 1 of 3) and large (long charge, health + XP + bigger upgrade, set number per map, gone once completed, more than 5–8) | §7 | ✅ Decided |
+| 2026-09-24 | Towers spawn on any flat surface; large towers almost exclusively on rooftops; B's pull-down role set aside | §4 | ✅ Decided |
+| 2026-09-24 | Civilians (pedestrians, cars) fill the city; enemies swapped in over time; civilians give XP, take enemy friendly fire, aren't targeted by enemies | §8 | 🧪 Experiment |
+| 2026-09-24 | Crackdown-style stat orbs, 500 per map, including on building sides | §7 | 🧪 Experiment |
 | 2026-09-23 | Fall damage, with tower-offered reduction; wall contact and gliding prevent it | §6 | 🧪 Experiment |
 | 2026-09-23 | Automatic per-level damage bonus alongside pick-1-of-3 level-ups | §7 | 🧪 Experiment |
 

@@ -30,6 +30,9 @@ export class Build {
     this.picks.splice(this.picks.lastIndexOf(card), 1);
   }
 
+  // A bare stat bonus that isn't a pick (orbs).
+  addBonus(stat, v) { this.bonus[stat] = (this.bonus[stat] ?? 0) + v; }
+
   // A weapon's or skill's own bonus, e.g. own('blaster', 'damage').
   own(item, stat) { return this.bonus[`${item}.${stat}`] ?? 0; }
 

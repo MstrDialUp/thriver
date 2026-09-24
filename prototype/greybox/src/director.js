@@ -35,6 +35,15 @@ export class Director {
   // Health scales faster than damage (RoR2): failure should be "overwhelmed", not one-shot.
   dmgMult() { return Math.sqrt(this.hpMult()); }
 
+  // Enemy bullets start slow and speed up with run time, not tier (players who avoid bosses stay low-tier).
+  bulletSpeed() {
+    const c = this.game.cfg, k = Math.min(1, this.minutes / c.bulletSpeedRampMin);
+    return c.bulletSpeedMin + (c.bulletSpeedMax - c.bulletSpeedMin) * k;
+  }
+
+  // Civilians only for the opening seconds (PLAN-playtest2 step 8).
+  get civOnly() { return this.game.cfg.civilians && this.t < this.game.cfg.civOnlyTime; }
+
   update(dt) {
     const g = this.game, cfg = g.cfg;
     this.t += dt * cfg.timeScale;
@@ -46,7 +55,7 @@ export class Director {
     }
 
     // Horde spawning.
-    const rate = cfg.spawnPerSec + cfg.spawnGrowthPerMin * this.minutes;
+    const rate = this.civOnly ? 0 : cfg.spawnPerSec + cfg.spawnGrowthPerMin * this.minutes;
     this.spawnAcc += rate * dt * cfg.timeScale;
     let guard = 0;
     while (this.spawnAcc >= 1 && guard++ < 50) {
@@ -95,7 +104,7 @@ export class Director {
     return T.walker;
   }
 
-  spawnPoint(typeIdx) {
+  spawnPoint(typeIdx, closetRoll = Math.random()) {
     const g = this.game, cfg = g.cfg, p = g.player.pos, t = TYPES[typeIdx];
     if (t.kind === 'flyer' || t.kind === 'jet') {
       const a = Math.random() * Math.PI * 2, d = cfg.spawnRingMin + Math.random() * (cfg.spawnRingMax - cfg.spawnRingMin);
@@ -104,7 +113,7 @@ export class Director {
       return { x, y: Math.max(sup + 3, p.y + 5 + Math.random() * 15), z };
     }
     // C — rooftop monster closets
-    if (cfg.rooftopClosets && g.world.closets.length && Math.random() < cfg.closetShare) {
+    if (cfg.rooftopClosets && g.world.closets.length && closetRoll < cfg.closetShare) {
       const cands = g.world.closets.filter(b => {
         const d = Math.hypot((b.minX + b.maxX) / 2 - p.x, (b.minZ + b.maxZ) / 2 - p.z);
         return d > 15 && d < 80;
@@ -119,8 +128,11 @@ export class Director {
   }
 
   spawnOne() {
-    const type = this.pickType();
-    const pt = this.spawnPoint(type);
+    const type = this.pickType(), t = TYPES[type];
+    // A new street-level enemy takes the place of a pedestrian out of view, so the city "turns".
+    const cfg = this.game.cfg, ground = t.kind === 'ground' || t.kind === 'climber';
+    const closetRoll = Math.random(), closet = cfg.rooftopClosets && closetRoll < cfg.closetShare;
+    const pt = (ground && !closet && cfg.civilians && this.game.civ.convert(this.game)) || this.spawnPoint(type, closetRoll);
     if (!pt) return;
     this.game.horde.spawn(type, pt.x, pt.y, pt.z, this.game.tier, this.hpMult(), this.dmgMult());
   }
@@ -128,7 +140,7 @@ export class Director {
   spawnBoss(type) {
     const g = this.game;
     const s = g.world.randomStreetPoint(g.player.pos.x, g.player.pos.z, 35, 50, 40) ?? { x: g.player.pos.x + 40, z: g.player.pos.z };
-    const hp = type === T.final ? this.hpMult() : this.hpMult() * (0.6 + 0.4 * (this.bossesSpawned));
+    const hp = type === T.final ? this.hpMult() : this.hpMult() * (0.6 + 0.4 * (this.bossesSpawned)) * g.cfg.bossHpMult;
     g.horde.spawn(type, s.x, 0, s.z, g.tier, hp, this.dmgMult());
   }
 

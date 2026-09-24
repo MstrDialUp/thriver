@@ -112,10 +112,12 @@ export class Skills {
       this.hackerTick -= dt;
       if (this.hackerTick <= 0) {
         this.hackerTick = b.tick;
-        horde.forRadius(z.x, 0, z.z, r, i => game.damageEnemy(i, this.dmg(game, eff, 'hacker', b.dps * b.tick), 'hacker'));
+        const dmg = this.dmg(game, eff, 'hacker', b.dps * b.tick);
+        horde.forRadius(z.x, z.y, z.z, r, i => game.damageEnemy(i, dmg, 'hacker'));
+        game.areaHit(z.x, z.y, z.z, r, dmg, 'hacker');
       }
       this.hackerMesh.visible = true;
-      this.hackerMesh.position.set(z.x, 0, z.z);
+      this.hackerMesh.position.set(z.x, z.y, z.z);
       this.hackerMesh.scale.setScalar(r);
     } else this.hackerMesh.visible = false;
 
@@ -153,8 +155,9 @@ export class Skills {
     if (!has(game, 'impact') || fall <= safe) return;
     const b = SKILLS.impact.base, over = fall - safe, p = game.player;
     const r = (b.radius + b.radiusPerM * over) * (1 + this.own(game, 'impact', 'radius'));
-    const dmg = this.dmg(game, game.eff, 'impact', b.damage) * (1 + b.dmgPerM * over);
+    const dmg = this.dmg(game, game.eff, 'impact', b.damage) * (1 + b.dmgPerM * over) * game.eff.impactDamage;
     game.horde.forRadius(p.pos.x, p.pos.y + 1, p.pos.z, r, i => game.damageEnemy(i, dmg, 'impact'));
+    game.areaHit(p.pos.x, p.pos.y + 1, p.pos.z, r, dmg, 'impact');
     const mesh = new THREE.Mesh(this.impactGeo, new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.7, side: THREE.DoubleSide, depthWrite: false }));
     mesh.position.set(p.pos.x, p.pos.y + 0.1, p.pos.z);
     this.scene.add(mesh);

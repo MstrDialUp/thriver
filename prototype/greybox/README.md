@@ -25,8 +25,7 @@ Keyboard + mouse or a controller both work. Click the page to capture the mouse.
 | Camera | Mouse | Right stick |
 | Jump / double jump | Space | A |
 | Glide | Hold Space while falling | Hold A |
-| Wall run (up) | Jump into a wall and keep pushing into it | same |
-| Wall run (along) | Jump next to a wall while moving along it | same |
+| Wall run | Jump into a wall and push: into it climbs, along it runs, diagonally does both (`wall movement: free`; `locked` = playtests 1–2) | same |
 | Wall jump | Space while touching a wall | A |
 | Dash | Shift | RB or X |
 | Slide | Ctrl or C (while moving) | B |
@@ -42,10 +41,13 @@ Keyboard + mouse or a controller both work. Click the page to capture the mouse.
 |---|---|
 | West half: towers 25–90 m, some on podiums | Chicago |
 | East half: uniform 15–20 m perimeter blocks with courtyards | Paris (low verticality) |
-| Blue boxes in streets | Parked cars (snag test for auto-vault) |
+| Dark blue boxes in streets | Parked cars (snag test for auto-vault) |
+| Tan boxes on sidewalks, grey cars in the inner lanes | Civilians: pedestrians wander and run from you, cars drive and ignore you (they shove you aside; you can ride them). Enemies are swapped in for pedestrians over the run; civilians only for the first 30 s. Destroy them for a little XP. Enemies never target them, but enemy bullets hit them |
+| Coloured orbs (500) | Crackdown-style stat orbs, +0.3% each, colour = stat: green move speed, yellow jump height, orange wall-run time, red max health, purple damage, cyan pickup radius. On roofs, off building walls, and at street level. Same layout every run for a seed |
 | Faint red walls at the map edge | Invisible walls (design doc §9) |
 | **A** — gold beams | XP caches on rooftops |
-| **B** — blue beams / rings | Hold zones: stand inside to fill; leaving drains it |
+| **B** — blue beams / rings | Small towers: on any flat surface near you (roof or street), 6 s to charge, respawning. Stand inside to fill; leaving drains it |
+| **B** — orange beams / rings | Large towers: 12 per map, placed at run start, 90% on rooftops, 20 s to charge, gone once held. More XP, a bigger heal, and a bigger upgrade (never Common) |
 | **C** — orange enemies | Climbers: scale any wall between them and a higher player |
 | **C** — blue / grey / green / purple / yellow flyers | Birds and drones (tier 1), big birds (2), helicopters (3), jets (4), superheroes (5) |
 | **C** — purple pads | Rooftop monster closets |
@@ -59,15 +61,17 @@ Keyboard + mouse or a controller both work. Click the page to capture the mouse.
 
 Built from [`PLAN-progression.md`](PLAN-progression.md). Every number is a grey-box placeholder.
 
-- **Towers.** Completing a hold zone pays XP and a heal, then offers a **pick 1 of 3** movement/character upgrade rolled on a rarity table (Common → Legendary). Percentage boosts (move speed, jump height, wall-run time and climb speed, glide speed, dash cooldown, fall-damage reduction, max health, all damage, all fire rate) are Common–Rare. +1 air jump or +1 dash is Epic; both together is Legendary.
+- **Towers** ([`PLAN-playtest2.md`](PLAN-playtest2.md)). Completing a tower pays XP and a heal, then offers a **pick 1 of 3** character upgrade rolled on a rarity table (Common → Legendary). **Never weapons or skills.** Percentage boosts are Common–Rare: move speed, jump height, wall-run time and climb speed, glide speed, dash cooldown and distance, slide speed, fall-damage reduction, damage reduction, max health, health regen, XP gain, pickup radius, all damage, all fire rate, and impact damage (only once you own Impact). +1 air jump or +1 dash is Epic; both together is Legendary. Large towers roll one rarity step higher.
 - **Level-ups** (mode `offers`, the default) also offer a pick 1 of 3: upgrades to weapons and skills you own, and **new** ones while you have a free slot (**4 weapons, 4 skills**). One card per weapon or skill, never two for the same one. Items max out at level 8.
 - **Weapons:** Blaster (starting), **Pulse** (damage sphere around you), **Arc** (chain lightning), **Melee Drone** (orbiting satellites), **Mortar** (shells into the densest crowd, +50% to enemies below you), **Gun Drone** (drones that follow and shoot, then recharge).
 - **Skills:** **XP Magnet**, **Shield** (recharging; bar under HP), **Retaliation** (touch or shoot you, take damage back), **Slipstream** (dash through enemies to hit them), **Momentum** (damage from speed above run speed, falls included; on the HUD), **Impact** (a shockwave when you land from above the safe height; bigger drops hit harder; a glide landing doesn't trigger it), **Spider** (run into a wall to run up it; also vaults cars), **Hacker** (while you hold a zone, its sphere damages enemies), **Updraft** (Epic: gliding lifts you for 2 s per jump).
 - **Pace and power.** A level costs 4× playtest 1's XP, so there are about half as many level-ups. To keep power in line with playtest 1, each level also gives an automatic damage bonus that follows playtest 1's curve (×N next to your level). `node tools/power-curve.mjs` sets its size; see the plan's *Power budget*. The HUD's `power ×N · vs playtest 1 R` line compares your weapons against playtest 1 at the same XP (1.0 = as strong). It counts weapons only, not skill damage.
-- **HUD build panel** (top left): weapons, skills, and tower bonuses.
+- **HUD build panel** (top left): weapons and skills, with `[ ]` for each free slot, then stat bonuses from towers and orbs.
+- **Balance (playtest 2).** Lower bosses have 3× HP and drop XP worth two levels (the final boss, five). Enemy bullets start at 9 m/s and reach 18 m/s at 12 minutes; their damage scales with the square root of the enemy damage multiplier, and one bullet takes at most 25% of max HP. **I-frames:** 0.5 s after a hit (contact damage counts as a hit once it has dealt 5 HP in a burst); the player flickers and the screen border flashes red. **Your weapons destroy enemy bullets**: shots stop on them, and area weapons (Pulse, Arc strikes, Melee Drone, Mortar, Impact, Hacker) clear them.
+- **Sound.** Synthesised in code (no files), positional, fading with distance up and down as well as across: weapon fire (not Pulse), drones and shooting enemies, footsteps, wall steps, landings, damage (a different sound when the shield takes it), tower charge-up (rising pitch), a completion chime, orb pickups, and hums from the nearest orb and large tower. Volume and mute in the debug panel.
 - Level-up mode `auto` restores playtest 1 exactly (no menus; every level scales the blaster) for comparison. `off` = no level scaling at all.
 
-Still out of scope: meta-progression, evolutions, reroll/banish, art, audio, procedural generation.
+Still out of scope: meta-progression, evolutions, reroll/banish, art, procedural generation.
 
 ## Test plan
 
@@ -79,8 +83,19 @@ The HUD tracks the Q1 numbers continuously:
 - **surrounded %** — time with ≥ 10 enemies within 8 m
 - **escaped %** / **longest escape** — time with no enemy within 20 m
 - **damage ground / up** — where the player actually gets hurt
+- **towers** (large held, large left), **orbs** taken, **civilians** destroyed
 
-Suggested sessions, 10 minutes each at clock speed 2–3:
+**Playtest 3 sessions** (from [`PLAN-playtest2.md`](PLAN-playtest2.md)):
+
+1. **Towers.** Do large rooftop towers pull you up? Watch `up %`, `towersHeldOnRoof` and `largeTowersHeld`. Does going up still cost something? Watch damage while elevated, and fall damage.
+2. **Wall movement, free vs locked** (Movement folder). Does free feel better? Does it change `up %` or escape %?
+3. **Balance.** Do runs get past 10 minutes without being one-shot? Do boss kills feel worth it?
+4. **Orbs.** Do you go out of your way for them? Do wall orbs get you wall-running more? Watch `orbsByPlace`.
+5. **Civilians.** Does the city feel full? Does the swap to enemies read as the city turning? Are civilians too much free XP early?
+6. **Sound on vs off.** Can you find towers and orbs by ear?
+7. **Enemy count** ([engine report](../../docs/research/engine-options.md) §8): runs at 550, 1,000 and 2,000 `maxEnemies` (Horde folder), to see which *reads* as absurd. Frame rate at the top end doesn't matter for this.
+
+Earlier sessions, 10 minutes each at clock speed 2–3:
 
 1. **Baseline, everything on.** Does climbing buy a few seconds of breathing room but never a permanent escape? (That is the target from design doc §4.)
 2. **Only C off** (no climbers, flyers, or closets). Expect escape % to jump. This measures how much of the pressure C is doing.
@@ -136,12 +151,64 @@ Three runs, single tester (the designer — a second tester is still needed, per
 | max altitude (m) | 90 | 33 | 56 |
 | boss kill times (min) | 4.48, 8.5 | 4.33, 8.15 | 7.86, 16.05, 25.07, 25.16, 25.39 |
 
+### Playtest 2 — 2026-09-24
+
+Five runs, single tester (the designer; a second tester is still needed). All runs used the progression build (level-up mode `offers`), the `mixed` layout and the default 600-enemy cap. Raw data: [`playtest2_stats`](../../playtest2_stats). Notes: [`playtest_thoughts_greybox1_20260924`](../../playtest_thoughts_greybox1_20260924).
+
+**What the numbers show** (observations, not conclusions):
+
+- **The player gets hurt on the ground.** Ground damage was 187–473 per run. Damage while elevated was 9–21 in four runs and 122 in one.
+- **Rooftop caches were almost ignored:** 0–2 per run, against 7–14 in playtest 1. Hold zones were heavily used (up to 28 per run). This matches Rich's note that there isn't much to do on rooftops yet.
+- **Power is in line with playtest 1 or a bit above** (0.74–1.39; four of five runs at 1.07 or more), so the automatic level bonus is roughly doing its job.
+- **Runs were short.** Only runs 3 and 5 got past the 8:00 boss. Run 4 ended after 56 real seconds.
+
+**Rich's notes:**
+
+- **Towers:** only character upgrades, never weapons or skills. Offer nearly every player stat in small percentages, including ones other skills also touch (fall damage, impact damage, pickup radius). **Many more collectibles and towers**, including Crackdown-style **orbs**, colour-coded by the stat they give, each worth a fraction of a percent.
+- **Movement:** wall movement should flow more freely. Right now it's locked to either sideways or up.
+- **Balance:**
+  - Bosses need more health and should drop a large amount of XP.
+  - Early enemy projectiles should be slower. Late ones one-shot the player from about 10 minutes in.
+  - Enemy projectiles should be destroyable by damage.
+  - Give the player a few i-frames after being hit.
+- **Opening:** add semi-passive entities (cars, non-enemy NPCs walking around). The run should start with only non-attacking enemies, with attacking ones arriving after 30 seconds.
+- **HUD:** show empty weapon and skill slots, so it's clear how full the loadout is.
+- **Sound:** weapon fire (except Pulse), drones and shooting enemies, footsteps, wall steps, landings, damage (different when the shield takes it), tower charge-up, all fading with distance horizontally and vertically. Needed to assess the grey box properly.
+
+**Decisions that came out of it** (Rich, 2026-09-24; design doc §4, §7, §15):
+
+- **Towers never offer weapons, skills, or upgrades to them.** Movement counts as a character stat, so movement upgrades stay. The all-damage and all-fire-rate boosts also stay.
+- **Two tiers of tower.** **Small** towers charge quickly, respawn constantly, and pay XP, a heal and a pick 1 of 3, as now. **Large** towers take longer to charge and pay health, XP and a bigger character upgrade. There is a **set number per map, and a completed one is gone for the run**. The count should be more than 5–8.
+- **Towers can spawn on any flat surface, roof or ground.** Large towers go **almost exclusively on rooftops**, to push players up. The idea that towers keep the player grounded is **set aside** for now, because rooftops have too little to do.
+
+The grey-box changes are planned in [`PLAN-playtest2.md`](PLAN-playtest2.md).
+
+**Raw stats:**
+
+| | Run 1 | Run 2 | Run 3 | Run 4 | Run 5 |
+|---|---|---|---|---|---|
+| Clock at end | 25:15 | 26:00 | 20:37 | 29:03 | 20:52 |
+| Real seconds | 284 | 239 | 563 | 56 | 548 |
+| Level | 13 | 11 | 23 | 4 | 24 |
+| Tier | 2 | 1 | 3 | 1 | 2 |
+| Kills | 1422 | 1113 | 4155 | 122 | 3797 |
+| up % (elevated) | 24 | 39 | 18 | 30 | 27 |
+| surrounded % | 4 | 5 | 3 | 27 | 7 |
+| escaped % | 4 | 26 | 8 | 10 | 8 |
+| damage ground | 290 | 187 | 300 | 109 | 473 |
+| damage elevated | 18 | 9 | 21 | 16 | 122 |
+| damage fall | 37 | 5 | 1 | 0 | 62 |
+| zones held | 12 | 10 | 25 | 2 | 28 |
+| rooftop caches | 0 | 2 | 1 | 0 | 1 |
+| power vs playtest 1 | 1.07 | 1.21 | 1.39 | 0.74 | 1.30 |
+| boss kill times (min) | 4.18 | — | 4.13, 8.35 | — | 4.22 |
+
 ## Performance notes
 
 Measured headless in software rendering on the dev machine, so treat them as upper bounds. With 600 enemies all crowded onto a stationary player, simulation costs about 8 ms per frame. With 1,500 it's about 12–20 ms. Separation (the tiered overlap rule) is the dominant cost. The `maxEnemies` slider goes to 2,500 if you want to find where the browser gives out, but that number does not transfer to a native engine.
 
 ## Files
 
-`src/config.js` holds all tunables. `world.js` is the city boxes, collision queries, and flow field. `player.js` is the movement kit (and fall height). `enemies.js` is the horde, separation, and enemy bullets. `director.js` is the clock, spawning, bosses, tiers, and nuke. `rewards.js` is A and B. `combat.js` is the loadout, projectiles, XP, and levels. `weapons.js` and `skills.js` are the items; `catalog.js` is their data and the tower table; `loot.js` rolls rarities and offers; `build.js` is the run's build and effective stats; `choice.js` is the pick-1-of-3 menu; `power.js` is the power index. `metrics.js`, `hud.js`, and `debug.js` handle measurement and UI.
+`src/config.js` holds all tunables. `world.js` is the city boxes, collision queries, and flow field. `player.js` is the movement kit (and fall height). `enemies.js` is the horde, separation, and enemy bullets. `director.js` is the clock, spawning, bosses, tiers, and nuke. `rewards.js` is A (caches) and B (small and large towers). `orbs.js` is the stat orbs; `civilians.js` is pedestrians and cars; `audio.js` is the synthesised sound. `combat.js` is the loadout, projectiles, XP, and levels. `weapons.js` and `skills.js` are the items; `catalog.js` is their data and the tower table; `loot.js` rolls rarities and offers; `build.js` is the run's build and effective stats; `choice.js` is the pick-1-of-3 menu; `power.js` is the power index. `metrics.js`, `hud.js`, and `debug.js` handle measurement and UI.
 
-`npm test` runs the unit tests in `test/` (offer rules, stacking, slot caps). `node tools/power-curve.mjs` checks the power curve against playtest 1.
+`npm test` runs the unit tests in `test/` (offer rules, stacking, slot caps, tower rules). `node tools/power-curve.mjs` checks the power curve against playtest 1.

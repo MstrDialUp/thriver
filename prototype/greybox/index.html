@@ -28,6 +28,7 @@
   #zonefill { height: 100%; width: 0; background: #40c4ff; }
   #crosshair { top: 50%; left: 50%; width: 4px; height: 4px; margin: -2px; background: #fff8; border-radius: 50%; }
   #flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+  #hurt { position: fixed; inset: 0; opacity: 0; pointer-events: none; box-shadow: inset 0 0 90px 28px #ff1a1a; }
   #overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #0009; }
   #overlay .card { background: #1d2127; padding: 24px 28px; border-radius: 8px; max-width: 560px; }
   #overlay h1 { margin: 0 0 8px; font-size: 22px; }
@@ -71,9 +72,10 @@
 <div class="hud" id="move"></div>
 <div class="hud" id="fps"></div>
 <div class="hud" id="toast"></div>
-<div class="hud" id="zone">holding zone<div class="bar"><div id="zonefill"></div></div></div>
+<div class="hud" id="zone"><span id="zonelabel">holding tower</span><div class="bar"><div id="zonefill"></div></div></div>
 <div class="hud" id="crosshair"></div>
 <div id="flash"></div>
+<div id="hurt"></div>
 <div id="choice"></div>
 
 <div id="overlay"><div class="card">
@@ -84,8 +86,8 @@ Move        WASD            / left stick
 Camera      mouse           / right stick
 Jump        Space           / A      (again in air: double jump)
 Glide       hold Space while falling
-Wall run    jump into a wall and keep pushing into it (runs up);
-            jump alongside a wall while moving (runs along)
+Wall run    jump into a wall and push: into it climbs, along it runs,
+            diagonally does both
 Wall jump   Space while touching a wall
 Dash        Shift           / RB or X
 Slide       Ctrl or C       / B      (while moving)
@@ -96,8 +98,9 @@ Debug panel ` or Tab
 Upgrade menu: 1 / 2 / 3 or click to pick, 4 to skip (pad: d-pad + A, Y)
 Debug       . level up   , level down   F freeze horde
 
-Gold beams = rooftop caches (A). Blue beams = hold zones (B): hold one for an upgrade.
-Red beams = bosses. Purple pads = rooftop monster closets.</pre>
+Gold beams = rooftop caches (A). Blue beams = small towers, orange = large towers (B):
+hold one for an upgrade. Coloured orbs = tiny stat boosts. Red beams = bosses.
+Purple pads = rooftop monster closets. Tan boxes / grey cars = civilians.</pre>
   <button id="play">Click to play</button>
 </div></div>
 
