@@ -1804,3 +1804,213 @@
     "seed": 1
   }
 }
+Player 2 (10yo):
+{
+  "metrics": {
+    "runClock": "29:03",
+    "realSeconds": 56,
+    "level": 4,
+    "tier": 1,
+    "kills": 122,
+    "pctElevated": 30,
+    "pctSurrounded": 27,
+    "pctEscaped": 10,
+    "longestEscapeSec": 3,
+    "damageGround": 109,
+    "damageElevated": 16,
+    "damageFall": 0,
+    "hardLandings": 0,
+    "maxFallM": 6,
+    "zonesHeld": 2,
+    "secondsInZones": 18,
+    "rooftopCaches": 0,
+    "upgradesPicked": 5,
+    "secondsInMenus": 11,
+    "powerIndex": 4.17,
+    "powerVsPlaytest1": 0.74,
+    "relocations": 27,
+    "maxAltitude": 23,
+    "bossKillMinutes": [],
+    "damageBySource": {
+      "blaster": 2307,
+      "pulse": 864,
+      "meleeDrone": 153
+    }
+  },
+  "picks": [
+    {
+      "t": 12,
+      "clock": "29:48",
+      "level": 2,
+      "source": "level",
+      "picked": "momentum@uncommon",
+      "offered": [
+        "momentum@uncommon",
+        "blaster@common",
+        "pulse@common"
+      ]
+    },
+    {
+      "t": 12,
+      "clock": "29:48",
+      "level": 2,
+      "source": "tower",
+      "picked": "fireRateMult@uncommon",
+      "offered": [
+        "moveSpeed@common",
+        "damageMult@common",
+        "fireRateMult@uncommon"
+      ]
+    },
+    {
+      "t": 42,
+      "clock": "29:17",
+      "level": 3,
+      "source": "level",
+      "picked": "pulse@common",
+      "offered": [
+        "arc@common",
+        "momentum@common",
+        "pulse@common"
+      ]
+    },
+    {
+      "t": 42,
+      "clock": "29:17",
+      "level": 3,
+      "source": "tower",
+      "picked": "airJump@epic",
+      "offered": [
+        "dashCharge@epic",
+        "dashCooldown@common",
+        "airJump@epic"
+      ]
+    },
+    {
+      "t": 54,
+      "clock": "29:05",
+      "level": 4,
+      "source": "level",
+      "picked": "meleeDrone@uncommon",
+      "offered": [
+        "meleeDrone@uncommon",
+        "impact@uncommon",
+        "magnet@common"
+      ]
+    }
+  ],
+  "power": [
+    {
+      "t": 0,
+      "level": 1,
+      "xp": 0,
+      "index": 1,
+      "vsPlaytest1": 1
+    },
+    {
+      "t": 30,
+      "level": 2,
+      "xp": 67,
+      "index": 1.12,
+      "vsPlaytest1": 0.39
+    }
+  ],
+  "bonus": {
+    "fireRateMult": 0.05,
+    "airJumps": 1
+  },
+  "config": {
+    "rewardsAtHeight": true,
+    "holdZones": true,
+    "climbers": true,
+    "flyers": true,
+    "rooftopClosets": true,
+    "relocation": true,
+    "fallDamage": true,
+    "timeScale": 1,
+    "runLength": 1800,
+    "bossTimes": [
+      4,
+      8,
+      11,
+      15,
+      20
+    ],
+    "finalBossMinTime": 22,
+    "nuke": true,
+    "godMode": false,
+    "moveSpeed": 9,
+    "accelGround": 70,
+    "accelAir": 18,
+    "gravity": 30,
+    "jumpHeight": 2.5,
+    "airJumps": 1,
+    "dashSpeed": 30,
+    "dashTime": 0.16,
+    "dashCooldown": 0.9,
+    "dashCharges": 1,
+    "slideBoost": 1.35,
+    "slideTime": 0.8,
+    "slideFriction": 3,
+    "wallRunTime": 2.5,
+    "wallRunUnlimited": false,
+    "wallRunUpSpeed": 9,
+    "wallRunSideGravity": 0.2,
+    "wallJumpPush": 11,
+    "glide": true,
+    "glideFallSpeed": 3,
+    "glideSpeedMult": 1.2,
+    "autoVault": false,
+    "fallSafeHeight": 8,
+    "fallSafeJumpMult": 3,
+    "fallDmgPerM": 1.5,
+    "maxHp": 100,
+    "camDistance": 7,
+    "mouseSensitivity": 0.0025,
+    "stickSensitivity": 3,
+    "invertY": false,
+    "maxEnemies": 600,
+    "spawnPerSec": 3,
+    "spawnGrowthPerMin": 1,
+    "climberShare": 0.3,
+    "flyerShare": 0.25,
+    "closetShare": 0.3,
+    "relocateDistance": 70,
+    "spawnRingMin": 30,
+    "spawnRingMax": 45,
+    "fodderOverlap": 0.6,
+    "slidingPerMin": 0.08,
+    "tierMult": 1.6,
+    "upgradeMode": "offers",
+    "levelXpMult": 4,
+    "levelPower": "curve",
+    "levelPowerShare": 0.3,
+    "levelDamageBonus": 0.11,
+    "maxItemLevel": 8,
+    "autoPick": false,
+    "weaponSlots": 4,
+    "skillSlots": 4,
+    "towerUpgrades": true,
+    "rarityWeights": {
+      "common": 55,
+      "uncommon": 26,
+      "rare": 12,
+      "epic": 5,
+      "legendary": 2
+    },
+    "fireInterval": 0.45,
+    "projectiles": 2,
+    "damage": 12,
+    "range": 28,
+    "projectileSpeed": 45,
+    "magnetRadius": 4,
+    "cacheCount": 18,
+    "cacheRespawn": 45,
+    "holdZoneCount": 3,
+    "holdZoneRadius": 6,
+    "holdTime": 6,
+    "holdDrain": 1.5,
+    "layout": "mixed",
+    "seed": 1
+  }
+}
