@@ -505,3 +505,446 @@
     "seed": 1
   }
 }
+{
+  "metrics": {
+    "runClock": "26:00",
+    "realSeconds": 239,
+    "level": 11,
+    "tier": 1,
+    "kills": 1113,
+    "pctElevated": 39,
+    "pctSurrounded": 5,
+    "pctEscaped": 26,
+    "longestEscapeSec": 10,
+    "damageGround": 187,
+    "damageElevated": 9,
+    "damageFall": 5,
+    "hardLandings": 1,
+    "maxFallM": 12,
+    "zonesHeld": 10,
+    "secondsInZones": 65,
+    "rooftopCaches": 2,
+    "upgradesPicked": 20,
+    "secondsInMenus": 54,
+    "powerIndex": 52.77,
+    "powerVsPlaytest1": 1.21,
+    "relocations": 182,
+    "maxAltitude": 67,
+    "bossKillMinutes": [],
+    "damageBySource": {
+      "blaster": 31674,
+      "arc": 27178,
+      "pulse": 936,
+      "slipstream": 124,
+      "mortar": 50586,
+      "hacker": 2081
+    }
+  },
+  "picks": [
+    {
+      "t": 10,
+      "clock": "29:50",
+      "level": 2,
+      "source": "level",
+      "picked": "arc@common",
+      "offered": [
+        "arc@common",
+        "magnet@common",
+        "blaster@common"
+      ]
+    },
+    {
+      "t": 10,
+      "clock": "29:50",
+      "level": 2,
+      "source": "tower",
+      "picked": "fireRateMult@common",
+      "offered": [
+        "fireRateMult@common",
+        "maxHp@common",
+        "glideSpeedMult@common"
+      ]
+    },
+    {
+      "t": 19,
+      "clock": "29:41",
+      "level": 2,
+      "source": "tower",
+      "picked": "dashCharge@epic",
+      "offered": [
+        "dashCharge@epic",
+        "wallRunUpSpeed@common",
+        "jumpHeight@rare"
+      ]
+    },
+    {
+      "t": 22,
+      "clock": "29:38",
+      "level": 3,
+      "source": "level",
+      "picked": "slipstream@uncommon",
+      "offered": [
+        "arc@common",
+        "magnet@common",
+        "slipstream@uncommon"
+      ]
+    },
+    {
+      "t": 35,
+      "clock": "29:25",
+      "level": 4,
+      "source": "level",
+      "picked": "pulse@common",
+      "offered": [
+        "slipstream@common",
+        "momentum@uncommon",
+        "pulse@common"
+      ]
+    },
+    {
+      "t": 35,
+      "clock": "29:25",
+      "level": 4,
+      "source": "tower",
+      "picked": "damageMult@rare",
+      "offered": [
+        "dashCooldown@uncommon",
+        "fallReduction@common",
+        "damageMult@rare"
+      ]
+    },
+    {
+      "t": 49,
+      "clock": "29:11",
+      "level": 4,
+      "source": "tower",
+      "picked": "jumpHeight@common",
+      "offered": [
+        "jumpHeight@common",
+        "fireRateMult@common",
+        "maxHp@common"
+      ]
+    },
+    {
+      "t": 77,
+      "clock": "28:43",
+      "level": 5,
+      "source": "level",
+      "picked": "magnet@common",
+      "offered": [
+        "magnet@common",
+        "spider@rare",
+        "impact@uncommon"
+      ]
+    },
+    {
+      "t": 77,
+      "clock": "28:43",
+      "level": 5,
+      "source": "tower",
+      "picked": "damageMult@common",
+      "offered": [
+        "dashCooldown@common",
+        "damageMult@common",
+        "jumpHeight@rare"
+      ]
+    },
+    {
+      "t": 90,
+      "clock": "28:30",
+      "level": 6,
+      "source": "level",
+      "picked": "mortar@uncommon",
+      "offered": [
+        "slipstream@common",
+        "mortar@uncommon",
+        "magnet@rare"
+      ]
+    },
+    {
+      "t": 93,
+      "clock": "28:26",
+      "level": 6,
+      "source": "tower",
+      "picked": "wallRunUpSpeed@uncommon",
+      "offered": [
+        "fireRateMult@common",
+        "fallReduction@common",
+        "wallRunUpSpeed@uncommon"
+      ]
+    },
+    {
+      "t": 97,
+      "clock": "28:23",
+      "level": 7,
+      "source": "level",
+      "picked": "spider@rare",
+      "offered": [
+        "spider@rare",
+        "momentum@uncommon",
+        "magnet@common"
+      ]
+    },
+    {
+      "t": 121,
+      "clock": "27:59",
+      "level": 7,
+      "source": "tower",
+      "picked": "fallReduction@uncommon",
+      "offered": [
+        "fallReduction@uncommon",
+        "wallRunTime@common",
+        "wallRunUpSpeed@common"
+      ]
+    },
+    {
+      "t": 131,
+      "clock": "27:48",
+      "level": 8,
+      "source": "level",
+      "picked": "blaster@rare",
+      "offered": [
+        "momentum@uncommon",
+        "blaster@rare",
+        "arc@common"
+      ]
+    },
+    {
+      "t": 131,
+      "clock": "27:48",
+      "level": 8,
+      "source": "tower",
+      "picked": "maxHp@rare",
+      "offered": [
+        "maxHp@rare",
+        "dashCooldown@common",
+        "wallRunUpSpeed@common"
+      ]
+    },
+    {
+      "t": 152,
+      "clock": "27:27",
+      "level": 8,
+      "source": "tower",
+      "picked": "fireRateMult@uncommon",
+      "offered": [
+        "dashCooldown@common",
+        "fireRateMult@uncommon",
+        "damageMult@uncommon"
+      ]
+    },
+    {
+      "t": 153,
+      "clock": "27:26",
+      "level": 9,
+      "source": "level",
+      "picked": "hacker@rare",
+      "offered": [
+        "spider@uncommon",
+        "hacker@rare",
+        "arc@rare"
+      ]
+    },
+    {
+      "t": 160,
+      "clock": "27:20",
+      "level": 9,
+      "source": "tower",
+      "picked": "wallRunTime@rare",
+      "offered": [
+        "wallRunTime@rare",
+        "fireRateMult@uncommon",
+        "moveSpeed@common"
+      ]
+    },
+    {
+      "t": 200,
+      "clock": "26:40",
+      "level": 10,
+      "source": "level",
+      "picked": "magnet@epic",
+      "offered": [
+        "blaster@rare",
+        "magnet@epic",
+        "spider@common"
+      ]
+    },
+    {
+      "t": 238,
+      "clock": "26:01",
+      "level": 11,
+      "source": "level",
+      "picked": "mortar@uncommon",
+      "offered": [
+        "slipstream@uncommon",
+        "mortar@uncommon",
+        "pulse@common"
+      ]
+    }
+  ],
+  "power": [
+    {
+      "t": 0,
+      "level": 1,
+      "xp": 0,
+      "index": 1,
+      "vsPlaytest1": 1
+    },
+    {
+      "t": 30,
+      "level": 3,
+      "xp": 164,
+      "index": 1.93,
+      "vsPlaytest1": 0.4
+    },
+    {
+      "t": 60,
+      "level": 4,
+      "xp": 298,
+      "index": 4.98,
+      "vsPlaytest1": 0.74
+    },
+    {
+      "t": 90,
+      "level": 6,
+      "xp": 460,
+      "index": 12.49,
+      "vsPlaytest1": 1.17
+    },
+    {
+      "t": 120,
+      "level": 7,
+      "xp": 705,
+      "index": 17.76,
+      "vsPlaytest1": 1.09
+    },
+    {
+      "t": 150,
+      "level": 8,
+      "xp": 973,
+      "index": 25.03,
+      "vsPlaytest1": 1.07
+    },
+    {
+      "t": 180,
+      "level": 9,
+      "xp": 1243,
+      "index": 30.49,
+      "vsPlaytest1": 0.92
+    },
+    {
+      "t": 210,
+      "level": 10,
+      "xp": 1337,
+      "index": 40.17,
+      "vsPlaytest1": 1.15
+    }
+  ],
+  "bonus": {
+    "fireRateMult": 0.08,
+    "dashCharges": 1,
+    "damageMult": 0.11,
+    "jumpHeight": 0.06,
+    "wallRunUpSpeed": 0.05,
+    "fallReduction": 0.08,
+    "blaster.fireRate": 0.12,
+    "maxHp": 0.1,
+    "wallRunTime": 0.1,
+    "magnet.radius": 0.3,
+    "mortar.damage": 0.08
+  },
+  "config": {
+    "rewardsAtHeight": true,
+    "holdZones": true,
+    "climbers": true,
+    "flyers": true,
+    "rooftopClosets": true,
+    "relocation": true,
+    "fallDamage": true,
+    "timeScale": 1,
+    "runLength": 1800,
+    "bossTimes": [
+      4,
+      8,
+      11,
+      15,
+      20
+    ],
+    "finalBossMinTime": 22,
+    "nuke": true,
+    "godMode": false,
+    "moveSpeed": 9,
+    "accelGround": 70,
+    "accelAir": 18,
+    "gravity": 30,
+    "jumpHeight": 2.5,
+    "airJumps": 1,
+    "dashSpeed": 30,
+    "dashTime": 0.16,
+    "dashCooldown": 0.9,
+    "dashCharges": 1,
+    "slideBoost": 1.35,
+    "slideTime": 0.8,
+    "slideFriction": 3,
+    "wallRunTime": 2.5,
+    "wallRunUnlimited": false,
+    "wallRunUpSpeed": 9,
+    "wallRunSideGravity": 0.2,
+    "wallJumpPush": 11,
+    "glide": true,
+    "glideFallSpeed": 3,
+    "glideSpeedMult": 1.2,
+    "autoVault": false,
+    "fallSafeHeight": 8,
+    "fallSafeJumpMult": 3,
+    "fallDmgPerM": 1.5,
+    "maxHp": 100,
+    "camDistance": 7,
+    "mouseSensitivity": 0.0025,
+    "stickSensitivity": 3,
+    "invertY": false,
+    "maxEnemies": 600,
+    "spawnPerSec": 3,
+    "spawnGrowthPerMin": 1,
+    "climberShare": 0.3,
+    "flyerShare": 0.25,
+    "closetShare": 0.3,
+    "relocateDistance": 70,
+    "spawnRingMin": 30,
+    "spawnRingMax": 45,
+    "fodderOverlap": 0.6,
+    "slidingPerMin": 0.08,
+    "tierMult": 1.6,
+    "upgradeMode": "offers",
+    "levelXpMult": 4,
+    "levelPower": "curve",
+    "levelPowerShare": 0.3,
+    "levelDamageBonus": 0.11,
+    "maxItemLevel": 8,
+    "autoPick": false,
+    "weaponSlots": 4,
+    "skillSlots": 4,
+    "towerUpgrades": true,
+    "rarityWeights": {
+      "common": 55,
+      "uncommon": 26,
+      "rare": 12,
+      "epic": 5,
+      "legendary": 2
+    },
+    "fireInterval": 0.45,
+    "projectiles": 2,
+    "damage": 12,
+    "range": 28,
+    "projectileSpeed": 45,
+    "magnetRadius": 4,
+    "cacheCount": 18,
+    "cacheRespawn": 45,
+    "holdZoneCount": 3,
+    "holdZoneRadius": 6,
+    "holdTime": 6,
+    "holdDrain": 1.5,
+    "layout": "mixed",
+    "seed": 1
+  }
+}
