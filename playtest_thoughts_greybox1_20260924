@@ -1,0 +1,24 @@
+Add empty slots so we can see how full up we are on weapons and skills
+
+Tower upgrades should be exclusively character upgrades, not new skills or weapon upgrades. Should also include items that might be covered by other skills, like fall damage, impact damage, pickup radius, etc. Almost all player stats should be offered in small percentages by the towers
+
+More free flow wall movement. Right now it seems to be locked to side or up, should be much less restricted
+
+Bosses should have more health
+
+Early projectiles should be slower
+
+Projectiles seem to be almost too powerful at later levels as they seem to oneshot me once we're ~10 minutes in
+
+Add semi-passive entities. Cars, non-enemy npcs walking around. Game should start with solely non-attacking enemies, with attacking enemies showing up after 30 seconds.
+
+Projectiles should be able to be destroyed by damage
+
+After being damaged player character should have a few i-frames
+
+Boss large XP drop
+
+Lots more collectibles and towers. Like crackdown, have "orbs" that give distinct bonuses (speed, jump height, etc) color coded by what they do. These should be very small bonuses though, decimals of a percent
+
+Need sound - Fire sound for all weapons (not pulse), fire sound for drones/projectile enemies, footsteps, wallsteps, landings, damage sound, different damage sound for shield, tower "charge up" sound, sound should fade away as you get farther away (both vertically or horizontally) (That may be something for an engine with an actual sound engine, maybe not this playtest tool) Sound is needed for the play test tool to properly assess it however.
+
