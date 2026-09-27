@@ -1,0 +1,20 @@
+high pitched noise - not gameplay driven, just a note for this web version
+
+add tower fill speed as upgradeable item from towers
+
+on-screen notifications on what got increased when picking up orbs
+
+AoE damage on escape skill (possibly future item instead)
+
+There is an exploit -  after wall climbing is exhausted, players can continue climbing by mashing jump while pushing towards the wall. Touching the wall resets the jump counter, allowing players to climb much higher than their wall climb stat would let them. Not sure if I want to eliminate this, this is the kind of movement exploit I was going for, though it still needs to be seen how overpowered this allows players to be. I used it heavily during the latest play test session (data lost as I accidentally hit R mid-run and lost the metrics.json). Maybe there's an item or skill that allows wall touches to regen jump counter? Then players can still jump up as high as the number of jumps they have unless they get that item that lets wall touches count as ground touches. Will also need to keep this in mind moving over to the engine, as this kind of movement exploit may not carry over when we go into the engine.
+
+Item that increases damage by how high you are
+
+item that increases damage if you are in the air
+
+upgrade to increase overall projectile count for player
+
+playtest/debug mode needs to automatically save metrics json periodically, I keep losing playtest data as I restart the game, either accidentally or on purpose, before saving it.
+
+When you get far enough in the game, the pause menu gets so fill of stats that it pushes Resume off the screen. Hitting R restarts the game, and there is no key to get the game back. Esc does not keep the game going. Maybe allow the pause menu stats to be wider.
+
