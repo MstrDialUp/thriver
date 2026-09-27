@@ -8,7 +8,7 @@
 - **Cars** can turn at junctions and U-turn at the map edge. They never damage the player.
 - **Arc** clears bullets where it strikes but doesn't hurt civilians. **Mortar** only targets enemies, so it's idle during the civilians-only opening. Blaster and Gun Drone shoot civilians only when no enemy is in range. Numbers are **grey-box placeholders** unless listed under "Decisions".
 
-Source: [playtest 2 log](README.md#playtest-2--2026-09-24) and Rich's [notes](../../playtest_thoughts_greybox1_20260924).
+Source: [playtest 2 log](README.md#playtest-2--2026-09-24) and Rich's [notes](../../playtests/greybox/playtest_thoughts_greybox1_20260924).
 
 ## Decisions (Rich, 2026-09-24; design doc §4, §7, §15)
 

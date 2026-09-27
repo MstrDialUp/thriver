@@ -12,7 +12,7 @@ A 3D bullet heaven survivors-like set in a vertical urban environment, where you
 
 **[`docs/design/design-doc.md`](docs/design/design-doc.md)** — the living design document. Currently seeded with the pitch, research-derived pillars, the first round of design decisions (see its §15 decision log), and open questions. Most sections are still unfilled.
 
-**[`prototype/greybox/`](prototype/greybox/README.md)** — the Q1 grey box. Run `python3 -m http.server 8000` in that folder and open `http://localhost:8000`.
+**[`prototype/greybox/`](prototype/greybox/README.md)** — the Q1 grey box. Run `node serve.mjs` in that folder and open `http://localhost:8000`. Runs save themselves into `playtests/greybox/`.
 
 ---
 
@@ -32,6 +32,8 @@ docs/
     └── design-doc.md          # Living design document
 prototype/
 └── greybox/                   # Q1 grey box (browser, Three.js) — throwaway
+playtests/
+└── greybox/                   # Raw playtest data and notes; autosaved runs in <date>/ folders
 ```
 
 ## The inspirations

@@ -1,5 +1,5 @@
 import { summary, fmtClock } from './metrics.js';
-import { STATS, itemInfo, itemKind, fmtNum } from './catalog.js';
+import { STATS, itemInfo, itemKind, fmtNum, fmtPct } from './catalog.js';
 
 // Plain DOM overlay. Updated at ~10 Hz except for the bars.
 
@@ -12,7 +12,9 @@ export class Hud {
       bosses: $('bosses'), metrics: $('metrics'), toast: $('toast'), zone: $('zone'), zonefill: $('zonefill'),
       fps: $('fps'), flash: $('flash'), move: $('move'), build: $('build'), shieldbar: $('shieldbar'), shield: $('shieldfill'),
       hurt: $('hurt'), zonelabel: $('zonelabel'),
+      saved: $('saved'), restart: $('restart'), restartfill: $('restartfill'), orbpops: $('orbpops'),
     };
+    this.pops = new Map(); // orb stat → { el, total, count, t }
     this.hurtLevel = 0;
     this.slow = 0;
     this.toastTimer = 0;
@@ -30,6 +32,23 @@ export class Hud {
     this.toastTimer = 0;
     this.el.toast.style.opacity = 0;
   }
+
+  // Orb pickup popup (Rich's playtest 3 note): "+0.3% jump height". Pickups of the same stat
+  // within a couple of seconds merge into one line that counts up, so a row of orbs is one line.
+  orb(stat, value, color) {
+    let p = this.pops.get(stat);
+    if (!p) {
+      p = { el: document.createElement('div'), total: 0, count: 0 };
+      p.el.style.color = `#${color.toString(16).padStart(6, '0')}`;
+      this.el.orbpops.appendChild(p.el);
+      this.pops.set(stat, p);
+    }
+    p.total += value; p.count++; p.t = 2.5;
+    p.el.textContent = `${fmtPct(p.total)} ${STATS[stat].label.toLowerCase()}${p.count > 1 ? ` ×${p.count}` : ''}`;
+    p.el.style.opacity = 1;
+  }
+
+  clearOrbs() { for (const p of this.pops.values()) p.el.remove(); this.pops.clear(); }
 
   // Red screen border when hurt (PLAN-playtest2 step 4). frac = share of max HP; small ticks add up.
   hurt(frac) { this.hurtLevel = Math.min(1, this.hurtLevel + 0.25 + frac * 4); }
@@ -60,6 +79,12 @@ export class Hud {
     if (this.toastTimer > 0 && (this.toastTimer -= dt) <= 0) this.el.toast.style.opacity = 0;
     this.hurtLevel = Math.max(0, this.hurtLevel - dt * 2.5);
     this.el.hurt.style.opacity = this.hurtLevel.toFixed(2);
+    for (const [stat, p] of this.pops) {
+      if ((p.t -= dt) <= 0) { p.el.remove(); this.pops.delete(stat); } else if (p.t < 0.6) p.el.style.opacity = (p.t / 0.6).toFixed(2);
+    }
+    const hold = game.restartHold / game.cfg.restartHold;
+    this.el.restart.style.display = hold > 0 ? 'block' : 'none';
+    if (hold > 0) this.el.restartfill.style.width = `${Math.min(100, hold * 100)}%`;
 
     const z = game.activeZone;
     this.el.zone.style.display = z ? 'block' : 'none';
@@ -81,6 +106,9 @@ export class Hud {
     this.slow = 0.1;
     const rem = director.remaining;
     this.el.clock.textContent = fmtClock(rem);
+    const [savedText, warn] = game.saver.status();
+    this.el.saved.textContent = savedText;
+    this.el.saved.classList.toggle('warn', warn);
     this.el.clock.classList.toggle('neg', rem < 0);
     this.el.level.textContent = `Lv ${combat.level}` + (cfg.levelMult > 1.001 ? ` · level damage ×${cfg.levelMult.toFixed(2)}` : '');
     this.el.tier.textContent = `Tier ${game.tier}  ${'★'.repeat(game.tier - 1)}${'☆'.repeat(6 - game.tier)}`;
@@ -109,7 +137,9 @@ export class Hud {
       `longest escape ${s.longestEscapeSec}s · dmg ground/up ${s.damageGround}/${s.damageElevated}\n` +
       `towers ${s.zonesHeld} (large ${s.largeTowersHeld}, ${game.rewards.largeLeft}/${game.rewards.largeTotal} left) · caches ${s.rooftopCaches}\n` +
       `orbs ${s.orbsTaken}/${game.orbs.count} · kills ${s.kills} · civilians ${s.civKilled}\n` +
-      `power ×${s.powerIndex} · vs playtest 1 ${s.powerVsPlaytest1}`;
+      `power ×${s.powerIndex} · vs playtest 1 ${s.powerVsPlaytest1}` +
+      (cfg.positionalBonus > 0.001 ? ` · height/air +${Math.round(cfg.positionalBonus * 100)}%` : '') +
+      (s.wallKicks ? `\nwall kicks ${s.wallKicks} (+${s.wallKickClimbM} m)` : '');
   }
 
   // Build panel: owned weapons and skills with levels, then the tower (stat) bonuses.

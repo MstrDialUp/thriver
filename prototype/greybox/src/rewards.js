@@ -175,7 +175,7 @@ export class Rewards {
       if ((large && !largeOn) || (!large && !smallOn)) { z.done = true; this.remove(z); continue; }
       const dx = z.x - player.pos.x, dz = z.z - player.pos.z, d = Math.hypot(dx, dz);
       const inside = d < z.r && Math.abs(player.pos.y - z.y) < ON_SURFACE;
-      const time = large ? cfg.largeHoldTime : cfg.holdTime;
+      const time = (large ? cfg.largeHoldTime : cfg.holdTime) / game.eff.towerFillSpeed;
       if (inside) {
         z.progress += dt / time;
         game.activeZone = z;

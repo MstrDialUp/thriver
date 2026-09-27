@@ -45,7 +45,7 @@ export class Build {
       if (s.owner) continue;
       const b = this.bonus[stat] ?? 0;
       if (s.mode === 'mult') e[stat] = 1 + b;
-      else if (s.mode === 'add') e[stat] = cfg[stat] + b;
+      else if (s.mode === 'add') e[stat] = (cfg[stat] ?? 0) + b;
       else if (s.mode === 'hyper') e[stat] = 1 - 1 / (1 + b);
       else e[stat] = cfg[stat] * Math.max(s.min ?? 0, 1 + b);
     }

@@ -34,7 +34,7 @@ export class Blaster {
     this.timer -= dt;
     if (this.timer > 0) return;
     this.timer = eff.fireInterval * Math.pow(0.97, lv) / rate;
-    const n = Math.min(20, eff.projectiles + Math.floor(lv / 3) + own('projectiles'));
+    const n = Math.min(20, eff.projectiles + eff.extraProjectiles + Math.floor(lv / 3) + own('projectiles'));
     const range = eff.range * (1 + own('range'));
     const aims = combat.targets(game, player, n, range);
     for (const [tx, ty, tz] of aims) {
@@ -308,10 +308,10 @@ export class GunDrone {
       p.lerp(this.tmp.set(tx, ty, tz), Math.min(1, 8 * dt));
       this.timers[k] = (this.timers[k] ?? (k * b.interval) / n) - dt;
       if (this.timers[k] <= 0) {
-        const [aim] = combat.targets(game, { pos: p, center: p.y }, 1, b.range);
-        if (aim) {
+        const aims = combat.targets(game, { pos: p, center: p.y }, 1 + eff.extraProjectiles, b.range);
+        if (aims.length) {
           this.timers[k] = b.interval / rate;
-          combat.fire(p.x, p.y, p.z, aim[0], aim[1], aim[2], eff.projectileSpeed, b.damage * dmg, this.id);
+          for (const aim of aims) combat.fire(p.x, p.y, p.z, aim[0], aim[1], aim[2], eff.projectileSpeed, b.damage * dmg, this.id);
           game.sfx?.play('droneShot', p.x, p.y, p.z);
         }
       }

@@ -2,7 +2,7 @@
 
 > **Status:** Seeded, with first design decisions (2026-09-22, three rounds). Pitch, pillars, Rich's decisions on Conflicts 1–6 and Q9–Q13, and the boss/tier structure.
 > **Working title:** Thriver (placeholder — from the project directory name)
-> **Last updated:** 2026-09-24 (playtest 2: two tower tiers, towers on any flat surface, towers never offer weapons or skills; §4, §7)
+> **Last updated:** 2026-09-27 (playtest 3 notes: the wall-jump climb, new grey-box stats and items, status effects, pick-up items deferred; §6, §7, §11–§15)
 >
 > ⚠️ **This document is still mostly empty.** It contains the pitch, the pillars the research supports, the decisions made so far, and the open questions. Sections marked `UNFILLED` are yours to write.
 >
@@ -157,6 +157,16 @@ Research inputs not yet decided: chained uninterrupted traversal; no fall damage
 >
 > Crackdown's failure mode: once Agility was maxed and every orb collected, the city's vertical challenge was gone. Upgradeable jumps and the grapple give us an upgrade curve, and the §5 decision relies on movement being at its best in the final minutes. Jump-height upgrades (the jump growing into a superjump) add another rising curve. Whether it keeps escalating to the end of a run instead of saturating at minute 8 is untested.
 
+> **OPEN — The wall-jump climb: keep it, gate it, or cut it?** *(Rich's playtest 3 notes, 2026-09-27.)*
+>
+> **What happened.** In the grey box through playtest 3, once wall-run time was spent, the player could keep climbing by mashing jump while pushing into a wall. Each wall touch allowed another wall jump and refilled the air jumps. Rich used it heavily in the run that was lost.
+>
+> **Rich's view.** "This is the kind of movement exploit I was going for", but how strong it is still needs to be seen. His proposal: without an item, you get as high as your jump count allows. An **item makes wall touches count as ground touches**.
+>
+> **Research input.** It fits "deep, exploit-friendly movement" above (Megabonk adopted bunny-hopping). It also works against Q1 and §12's unreachable-hiding-spots hazard: height the horde can't follow is an escape. Playtest 3's elevated damage (above ground damage in both runs) suggests the horde still reaches an elevated player, but that was measured without the climb being tracked.
+>
+> **🧪 Grey-box experiment (2026-09-27), not a decision.** The refresh is **off by default**: a wall jump needs wall-run time left and uses 0.5 s of it. The **Wall kick** tower card (Epic, once per run) or a debug toggle turns it back on. The metrics count the wall kicks and the height gained from them. See §11 for the engine side.
+
 ---
 
 ## 7. Weapons, Skills, and Perk Items
@@ -184,6 +194,22 @@ Decided elsewhere and relevant here: movement abilities are part of this pool (�
 
 **🧪 Grey-box stand-in (2026-09-23), not a decision.** The grey box implements all of the above with placeholder content: 6 weapons, 9 skills, a 10-stat tower table, five rarities (Megabonk's colours and a 55/26/12/5/2 roll), and an automatic per-level damage bonus that keeps power in line with playtest 1 (Rich: "let's try the automatic bonus for now"). The item names, numbers, the tower table and the level bonus are all placeholders. The full list and the reasoning are in [`PLAN-progression.md`](../../prototype/greybox/PLAN-progression.md).
 
+**🧪 Grey-box additions after playtest 3 (Rich's notes, 2026-09-27), not decisions.** Details are in [`PLAN-playtest3.md`](../../prototype/greybox/PLAN-playtest3.md).
+
+- **New tower-table character stats:**
+  - tower charge speed,
+  - **damage per 10 m of height** (to 60 m),
+  - **damage while airborne**,
+  - **+1 projectile** for projectile weapons (Epic),
+  - **Wall kick** (Epic; see §6).
+
+  The two damage stats reward being up high, so they feed straight into Q1.
+- **Breakaway**, the escape-damage item Rich asked for, is a placeholder skill. Dashing or jumping out of a crowd blows up the spot where the player was **last surrounded**. *(Rich, 2026-09-27: centre it there, "to get the most effectiveness out of it".)* What counts as an escape (5+ enemies within 8 m, left within 1.5 s of a jump or dash) is a proposal.
+
+**⏸ Deferred (Rich, 2026-09-27): world pick-up items**, like Megabonk's, which the player finds and carries rather than picks from a menu. They would need a lot of new logic, so they wait for the engine build. Until then, grey-box items are tower cards or skills.
+
+> **OPEN — Status effects (poison and similar).** *(Rich's playtest 3 note, 2026-09-27: design doc only for now.)* Rich wants a poison mechanic. It needs a status-effect system: damage over time, stacking rules, and how effects show on hundreds of enemies at once. That makes it a major logic addition, so it is not in the grey box. Research input: status effects are one route to the "conditional rather than build-agnostic" power in §12's build-convergence hazard. How they stack also touches the dominant-scaling-vector question below.
+
 Research inputs:
 
 - **Vampire Survivors' evolution system** — max weapon + paired passive + trigger → dramatically stronger form. Widely regarded as the best single system in the genre; turns stat items into goals and elite kills into anticipation.
@@ -197,6 +223,8 @@ Research inputs:
 > **OPEN — Can slots grow during a run?** *(The count is decided: 4 weapons + 4 skills, 2026-09-23.)* Meta-progression slot expansion is ruled out (it would be permanent power). In-run expansion (e.g. a rare item that adds a slot) is still possible and undecided.
 
 > **OPEN — Do we have a dominant unbounded scaling vector?** Megabonk's #1 criticism: when one scaling vector is unbounded (gold→damage) and others are bounded, the unbounded one wins at every skill ceiling and build diversity collapses. Either bound them all, or make several unbounded in *different directions*.
+>
+> **Grey-box evidence (playtest 3, 2026-09-24):** in both recorded runs **Mortar dealt 74% and 80% of all damage**, and power ran at 1.58× and 2.45× the playtest 1 curve. The Mortar is a placeholder, so this says little about the final roster. It does show how quickly one scaling path can take over. Playtest 4 includes a Mortar-free run.
 
 ---
 
@@ -321,6 +349,8 @@ Also available (research, undecided):
 
 Several open questions here, and some in §5 and §9, **can't be answered until engine and technical choices are made.** Those follow the Q2 spike.
 
+**Note for the engine spike (Rich's playtest 3 note, 2026-09-27; a proposal, not a decision):** movement "exploits" we want to keep must be **built on purpose, not inherited from a physics quirk**. The grey box's wall-jump climb (§6) comes from its own hand-written controller, and Rich flagged that "this kind of movement exploit may not carry over when we go into the engine". An engine's character controller will behave differently at wall contact, so any exploit we decide to keep needs an explicit rule and a test in the new build. The grey box's `wallJumpRefresh` / Wall kick split is that rule, written down.
+
 > **OPEN — Q2: What is our entity budget, and what architecture achieves it in 3D with verticality?**
 >
 > This is the project's dominant technical risk. Every reference point we have scales *against* us: we want 3D rather than sprites, real 3D pathfinding rather than "move toward player on a plane," physical urban geometry with collision, and comparable-or-higher entity counts than Vampire Survivors. **The 2026-09-22 decisions add to the load:** one huge map per run (partly procedurally generated), lots of flying enemies, and climbers on building walls.
@@ -356,7 +386,7 @@ Every reference game in our set has these. They are structural properties of the
 | **Build convergence at the ceiling** | Megabonk (its #1 criticism), Risk of Rain 2 | No single unbounded dominant scaling vector; conditional rather than build-agnostic power items |
 | **RNG dependency → restart-scumming** | Megabonk (launch) | Offer-steering: reroll, banish, lock. From day one. |
 | **Map exhaustion in 3D** | Megabonk (two maps at launch, three by Dec 2025) | Three cities *(decided)*; authored cores with generated outskirts *(decided)*; districts varied by verticality profile |
-| **Unreachable hiding spots** — geometry the horde can't reach | Megabonk ("caveman" exploit, patched Dec 2025) | Relocation *(direction)*; climbers and flyers *(direction)*; spawn and path coverage checks on every set piece |
+| **Unreachable hiding spots** — geometry the horde can't reach | Megabonk ("caveman" exploit, patched Dec 2025) | Relocation *(direction)*; climbers and flyers *(direction)*; spawn and path coverage checks on every set piece. **Movement can create them too:** the grey box's wall-jump climb (§6, 2026-09-27) reaches heights the player couldn't otherwise. Climbers and flyers have to reach any height a kept exploit allows |
 | **Meta currency outrunning its sinks** | Megabonk (silver glut; developer cut income) | Q12. A non-power sink that survives the shop being bought out. |
 | **Camera/target legibility in dense 3D combat** | Prototype (already strained at *its* density) | Unsolved. Needs original work — we cannot inherit a solution. Heavier with many flying enemies. |
 | **Dead stats poisoning the upgrade pool** | Megabonk (knockback and Luck non-functional at launch; knockback later removed from offers) | Ship no stat that does not work |
@@ -372,12 +402,12 @@ Kept in sync with [`00-synthesis.md`](../research/00-synthesis.md) §6.
 
 | # | Question | Blocks | Resolution method | Status |
 |---|---|---|---|---|
-| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box playtested twice (2026-09-22, 2026-09-24; single tester) — see [playtest log](../../prototype/greybox/README.md#playtest-log); preliminary. B's pull-down role set aside 2026-09-24 |
+| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box playtested three times (2026-09-22, 2026-09-24 ×2; single tester) — see [playtest log](../../prototype/greybox/README.md#playtest-log); preliminary. B's pull-down role set aside 2026-09-24. Playtest 3: 55–59% of time up high, and most damage taken there. Wall-jump climb under test (§6) |
 | **Q2** | Entity budget and horde architecture in 3D with verticality? | Content scope, engine, map size | Technical spike | 🔴 Open |
 | **Q3** | How do we prevent the enemy-stacking bug? | Combat feel, bosses | Spike alongside Q2 | 🟡 Direction set |
 | **Q4** | Manual movement + automatic combat — right input split? | Control scheme | Decided; feel validated in prototype | 🟢 Decided |
 | **Q5** | How much permanent meta-power? | Economy | — | 🟢 Decided: none |
-| **Q6** | Does the city stay interesting once traversal is maxed? | Retention | Prototype | 🔴 Open |
+| **Q6** | Does the city stay interesting once traversal is maxed? | Retention | Prototype | 🔴 Open (the wall-jump climb, §6, is one way traversal could stop being bounded) |
 | **Q7** | How much content per city (authored core, set-piece library)? | Production scope | Scoping after assembly is proven | 🟡 Partly decided (3 cities) |
 | **Q8** | Engine and tooling choice | Everything | Follows Q2; preliminary survey in [`engine-options.md`](../research/engine-options.md) | 🔴 Open (spike proposed: Godot and Unity; Unreal if both miss the goal) |
 | **Q9** | Run length, final-boss timing, nuke tuning; what replaces floor transitions? | Core loop | Design, then testing | 🟡 Mostly decided: 30 min, five scheduled lower bosses raise the tier, dev menu for exit. Open (testing/tuning): boss drops, tier size, nuke curve, snowball risk |
@@ -401,6 +431,10 @@ Recorded so that nothing in this document is mistaken for a commitment:
 - Fall damage *(a grey-box experiment, not a decision)*, and whether glide stays in the base kit or becomes an acquirable skill now that it prevents fall damage
 - The automatic per-level damage bonus *(on trial in the grey box)*
 - Auto-vault (Q13); camera behaviour in tight spaces (§6)
+- Whether the wall-jump climb stays, and if so whether it's an item (Wall kick) or the base kit (§6)
+- Status effects such as poison (§7)
+- World pick-up items (Megabonk-style), deferred to the engine build (§7)
+- The playtest 3 grey-box stats and items: tower charge speed, damage by height, damage while airborne, +1 projectile, Breakaway *(placeholders)*
 - The specific enemy roster and faction structure *(direction only: flyers at every tier, climbers, absurdism)*
 - The proportions of the Q1 resolution mix
 - Meta currency name and prices; end-game sink deferred (Q12)
@@ -463,6 +497,11 @@ Every decision in this document, in order. If it isn't here, it isn't a decision
 | 2026-09-24 | Crackdown-style stat orbs, 500 per map, including on building sides | §7 | 🧪 Experiment |
 | 2026-09-23 | Fall damage, with tower-offered reduction; wall contact and gliding prevent it | §6 | 🧪 Experiment |
 | 2026-09-23 | Automatic per-level damage bonus alongside pick-1-of-3 level-ups | §7 | 🧪 Experiment |
+| 2026-09-27 | Wall-jump refresh off by default; the Wall kick tower card (Epic, once per run) turns it on | §6 | 🧪 Experiment |
+| 2026-09-27 | New tower stats: tower charge speed, damage by height, damage while airborne, +1 projectile | §7 | 🧪 Experiment |
+| 2026-09-27 | Escape-damage item (Breakaway), centred on the player's last surrounded position | §7 | 🧪 Experiment |
+| 2026-09-27 | World pick-up items (Megabonk-style) wait for the engine build | §7 | ⏸ Deferred |
+| 2026-09-27 | Status effects (poison): design doc only for now | §7 | ⏸ Deferred |
 
 ---
 

@@ -1,8 +1,17 @@
 # Plan — Playtest 3 changes
 
-**Status:** Draft 2026-09-27, for Rich's review. Nothing built yet.
+**Status:** Agreed 2026-09-27 (review answers folded in below). **All 10 steps built** (2026-09-27). Next: playtest 4 (sessions in the [README](README.md#test-plan)).
 
-Source: Rich's [notes](../../playtest_thoughts_greybox3_20260927) and the two runs in [`playtest3_stats`](../../playtest3_stats) (2026-09-24; not yet in the [playtest log](README.md#playtest-log), see step 1).
+**Built differently from the plan:**
+- **Wall-jump refresh off (step 6).** The plan's first idea was "a wall touch still allows a wall jump, but air jumps only come back on the ground". That doesn't close the climb, because chained wall jumps gain height on their own. As built, with the refresh off, a wall jump **needs wall-run time left and uses 0.5 s of it** (`wallJumpCost`), and still refills the air jumps as before. Once the wall-run time is spent, a wall gives nothing. Height is then bounded by your jumps plus your wall-run stat, which is Rich's framing.
+- **The restart hold and the save age use real time**, not frame time. Frame dt is capped, so a slow frame rate would have stretched the 1 s hold. A restart marks the old file `restarted` only if the run is over 5 s old; shorter runs never get a file at all.
+- **Orb popups** sit at the right edge, a third of the way down, clear of the toast and the tower bar.
+- **Altitude and airborne damage feed `damageMult` each frame** (as Momentum does), so the HUD's power index includes them while they're active.
+- **+1 projectile applies to Blaster and Gun Drone only**, not Mortar shells. Mortar already dominated playtest 3.
+- **`levelPowerShare` stays at 0.3.** `tools/power-curve.mjs` now suggests 0.32 (Breakaway joined the level-up pool), but playtest 3 already ran above target.
+- **The high-pitched noise (step 9)** is most likely the orb hum. It was an 880 Hz sine that almost never stopped, because one of the 500 orbs is nearly always within 25 m. It's now 330 Hz and half the volume. The charge tone changed from a square wave to a triangle with a lower top pitch. A **hum volume** slider was added. Rich still has to confirm this was the noise.
+
+Source: Rich's [notes](../../playtests/greybox/playtest_thoughts_greybox3_20260927) and the two runs in [`playtest3_stats`](../../playtests/greybox/playtest3_stats) (2026-09-24).
 
 **Goal:** get the grey box to a place where Rich can **playtest continuously without losing data**, and move it closer to the intended loop. Engine work comes after this.
 
@@ -13,8 +22,11 @@ Source: Rich's [notes](../../playtest_thoughts_greybox3_20260927) and the two ru
 - **Into the grey box now:** damage by height, damage while airborne, global projectile count, tower fill speed.
 - **Escape AoE is an item:** while you own it, escapes trigger an area-damage effect.
 - **Poison (status effects): design doc only.** It needs a status-effect system, which is too big for the grey box right now.
+- **The escape AoE is centred on the player's last surrounded position before they escaped**, where it will hit the most enemies.
+- **Wall kick is a tower upgrade for now.** Megabonk-style pick-up items would need a lot of new logic. They wait for the engine build.
+- **The raw playtest files move to `playtests/greybox/`.**
 
-Everything else below is a placeholder proposal. Items marked **(review)** need Rich's call before or during the build.
+Everything else below is a placeholder proposal. All review items were answered on 2026-09-27.
 
 ## What playtest 3 showed (observations, not conclusions)
 
@@ -53,7 +65,7 @@ Stop the data loss first, then the quality-of-life fixes, then the loop addition
 | 5 | Orb pickup popups | S | |
 | 6 | Wall-jump refresh: toggle, item, metrics | S | Decision; Q1, Q6 |
 | 7 | New tower stats: fill speed, height damage, air damage, projectiles | M | Decision (numbers are placeholders) |
-| 8 | Escape AoE item | M | Decision; the trigger is a proposal (review) |
+| 8 | Escape AoE item | M | Decision |
 | 9 | High-pitched noise (web only) | S | Investigate |
 | 10 | Design doc updates | S | Docs only |
 
@@ -62,7 +74,7 @@ Stop the data loss first, then the quality-of-life fixes, then the loop addition
 - Add a **Playtest 3 — 2026-09-24** entry to the README playtest log: the table above, the observations, and Rich's 0927 notes, in the same shape as playtest 2.
 - Update the §13 Q1 row: three playtests, and "damage while elevated now exceeds ground damage".
 - Link `playtest3_stats` and the notes file.
-- **(review)** Move the raw files (`playtest2_stats`, `playtest3_stats`, `playtest_thoughts_*`) into `playtests/`, next to the autosaved runs from step 2, and fix the links. Or leave them at the repo root.
+- Move the raw files (`playtest_stats`, `playtest2_stats`, `playtest3_stats`, `playtest_thoughts_*`) into `playtests/greybox/`, next to the autosaved runs from step 2, and fix the links. *(Rich, 2026-09-27)*
 
 ## 2. Local save server and autosave
 
@@ -107,7 +119,7 @@ Stop the data loss first, then the quality-of-life fixes, then the loop addition
 
 - Picking up an orb shows a short popup, e.g. **`+0.3% jump height`**, in the orb's colour.
 - Quick pickups of the same stat merge into one popup that counts up (`+1.2% jump height ×4`). This avoids a stack of messages when you run through a line of orbs.
-- The popups use `hud.flash`'s area, or sit near the build panel (review which reads better in play).
+- The popups sit at the right edge of the screen (built; see the status notes).
 
 ## 6. Wall-jump refresh
 
@@ -116,9 +128,9 @@ Stop the data loss first, then the quality-of-life fixes, then the loop addition
 **After:**
 
 - A new **config toggle, `wallJumpRefresh`** (Movement folder), controls whether a wall jump refills air jumps.
-  - **Off (the new default):** a wall touch still allows a wall jump, but air jumps only come back on the ground. You get as high as your jump count allows, which is Rich's framing.
+  - **Off (the new default):** a wall jump needs wall-run time left and uses 0.5 s of it. Once the time is spent, a wall touch gives nothing, so you get as high as your jumps and wall-run stat allow, which is Rich's framing. *(Built this way; see the status notes for why the first idea didn't close the climb.)*
   - **On:** today's behaviour.
-- **A new Epic tower card, "Wall kick"**, turns the refresh on for the rest of the run. It's a movement trait, so it's a character stat under the 9/24 rule. **(review)** It could instead be a skill that takes a slot, which fits the "big abilities do double duty" rule better if it proves this strong.
+- **A new Epic tower card, "Wall kick"**, turns the refresh on for the rest of the run. It's a movement trait, so it's a character stat under the 9/24 rule. *(Rich, 2026-09-27: a tower upgrade for now. World pick-up items, as in Megabonk, need more logic and wait for the engine build.)*
 - **Metrics:** `wallRefreshes` (how many times a wall jump refilled jumps), `heightFromRefresh` (metres gained while airborne after a refresh), and `maxAltitude`, as now. These say how strong it is.
 
 ## 7. New tower stats
@@ -140,11 +152,10 @@ All go on the tower table as character stats (the 9/24 rule allows all-damage an
 
 Rich: an item that, while you own it, makes escapes trigger an area-damage effect.
 
-**Proposal (review):**
-
-- A **skill** (takes a slot, level-up offers, levels 1–8), because it carries combat weight.
-- It **fires when you break away from a crowd**: a dash, an air jump or a wall jump while **5 or more enemies are within 8 m**. It hits enemies around the spot you left, with a **3 s cooldown**. That turns "I escaped" into damage, without firing on every hop.
-- **Alternative trigger:** fire when the `escaped %` state starts (no enemy within 20 m). This is closer to the metric's meaning, but the burst lands far from any enemy.
+- A **skill** (takes a slot, level-up offers, levels 1–8), because it carries combat weight. *(Proposal.)*
+- **Last surrounded position** *(Rich, 2026-09-27)*: while 5 or more enemies are within 8 m, the game keeps updating the player's position. That spot is where the burst lands.
+- **Trigger** *(proposal)*: it fires when the player **breaks away**, meaning the count within 8 m drops below 5 within 1.5 s of a dash, air jump or wall jump. Breaking away is driven by movement, so a crowd that thins because it got killed doesn't count. **3 s cooldown.**
+- **Radius** 8 m, growing with level. **Damage** scales like the other area weapons.
 - Its damage is logged in `damageBySource`, and it clears enemy bullets like the other area weapons.
 
 ## 9. High-pitched noise (web only)

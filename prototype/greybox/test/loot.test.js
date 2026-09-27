@@ -42,13 +42,13 @@ test('cards only carry rarities their target supports', () => {
   }
 });
 
-test('extra jumps and dashes are about as rare as the Epic/Legendary weights', () => {
+test('Epic/Legendary tower cards (extra jumps, dashes, projectiles, Wall kick) are about as rare as their weights', () => {
   const r = rng(9), n = 50_000;
   let jumpCards = 0, cards = 0;
   for (let i = 0; i < n; i++) {
     for (const c of makeOffer(TOWER_TARGETS, 3, WEIGHTS, r)) {
       cards++;
-      if (c.effects.airJumps || c.effects.dashCharges) jumpCards++;
+      if (c.rarity === 'epic' || c.rarity === 'legendary') jumpCards++;
     }
   }
   // 7% of rolls are Epic or Legendary. Fallbacks shift this slightly; it must not balloon.
@@ -222,4 +222,54 @@ test('large towers: shifting rarity up one step never rolls Common and keeps the
   assert.deepEqual(shiftRarity(WEIGHTS, 0), WEIGHTS);
   const r = rng(11);
   for (let i = 0; i < 2000; i++) assert.notEqual(rollRarity(s, r), 'common');
+});
+
+// ---------- Playtest 3 (PLAN-playtest3) ----------
+import { fmtPct, describeEffects } from '../src/catalog.js';
+import { runPath } from '../serve.mjs';
+
+test('Wall kick: offered once per run, and never while the debug toggle already gives it', () => {
+  const b = new Build();
+  assert.ok(towerTargets(b, {}).some(t => t.id === 'wallKick'));
+  assert.ok(!towerTargets(b, { wallJumpRefresh: true }).some(t => t.id === 'wallKick'));
+  assert.ok(!towerTargets(b, { wallRunUnlimited: true }).some(t => t.id === 'wallKick'));
+  b.apply({ effects: { wallKick: 1 } });
+  assert.ok(!towerTargets(b, {}).some(t => t.id === 'wallKick'));
+  assert.equal(b.stats({}).wallKick, 1);
+});
+
+test('new tower stats: charge speed, altitude and air damage are multipliers; projectiles add', () => {
+  const b = new Build();
+  let e = b.stats({ extraProjectiles: 0 });
+  assert.equal(e.towerFillSpeed, 1);
+  assert.equal(e.altitudeDamage, 1);
+  assert.equal(e.airDamage, 1);
+  assert.equal(e.extraProjectiles, 0);
+  b.apply({ effects: { towerFillSpeed: 0.12, altitudeDamage: 0.025, extraProjectiles: 1 } });
+  e = b.stats({ extraProjectiles: 0 });
+  assert.ok(Math.abs(e.towerFillSpeed - 1.12) < 1e-9);
+  assert.ok(Math.abs(e.altitudeDamage - 1.025) < 1e-9);
+  assert.equal(e.extraProjectiles, 1);
+});
+
+test('+1 projectile raises Blaster and Gun Drone DPS estimates', () => {
+  const none = () => 0;
+  for (const id of ['blaster', 'gunDrone']) {
+    const base = WEAPONS[id].estDps(none, { ...defaults, extraProjectiles: 0 });
+    const more = WEAPONS[id].estDps(none, { ...defaults, extraProjectiles: 1 });
+    assert.ok(more > base * 1.4, `${id}: ${base} → ${more}`);
+  }
+});
+
+test('percentages show one decimal only when needed', () => {
+  assert.equal(fmtPct(0.015), '+1.5%');
+  assert.equal(fmtPct(0.03), '+3%');
+  assert.equal(fmtPct(-0.05), '−5%');
+  assert.equal(fmtPct(0.003), '+0.3%');
+  assert.equal(describeEffects({ altitudeDamage: 0.015 }), 'Damage per 10 m up +1.5%');
+});
+
+test('save server: run IDs map into playtests/greybox/<date>/, and nothing else gets through', () => {
+  assert.match(runPath('2026-09-27T16-40-12_s1'), /playtests[\\/]greybox[\\/]2026-09-27[\\/]2026-09-27T16-40-12_s1\.json$/);
+  for (const bad of ['../../etc/passwd', '2026-09-27T../../x', '2026-09-27T16/40', '', null, 42, 'x'.repeat(80)]) assert.equal(runPath(bad), null, String(bad));
 });

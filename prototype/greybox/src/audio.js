@@ -43,7 +43,10 @@ export class Sfx {
     this.master.connect(this.ctx.destination);
     this.buffers = this.makeBuffers();
     // Looping hums: the tower being held (pitch rises with progress), the nearest orb, the nearest large tower.
-    this.charge = this.loop('square', 0);
+    // Playtest 3 note: a constant high-pitched tone. The orb hum was an 880 Hz sine that almost
+    // never stops (500 orbs, one is nearly always within 25 m), and the charge tone a square wave.
+    // Both are lower and softer now, and the hums have their own volume (humVolume).
+    this.charge = this.loop('triangle', 0);
     this.orbHum = this.loop('sine', 0, true);
     this.towerHum = this.loop('triangle', 0, true);
   }
@@ -159,20 +162,20 @@ export class Sfx {
 
     // Tower charge: a rising tone while a tower fills.
     const z = game.activeZone, t = ctx.currentTime;
-    this.charge.gain.gain.setTargetAtTime(playing && z ? 0.05 : 0, t, 0.05);
-    if (z) this.charge.osc.frequency.setTargetAtTime(160 + 500 * z.progress, t, 0.05);
+    this.charge.gain.gain.setTargetAtTime(playing && z ? 0.08 * cfg.humVolume : 0, t, 0.05);
+    if (z) this.charge.osc.frequency.setTargetAtTime(160 + 280 * z.progress, t, 0.05);
 
     // Hums (Crackdown's orb hum): the nearest orb within 25 m, the nearest large tower within 70 m.
     const orb = playing ? game.orbs.nearest(p.pos.x, p.center, p.pos.z, 25) : null;
-    this.orbHum.gain.gain.setTargetAtTime(orb ? 0.12 : 0, t, 0.1);
-    if (orb) { this.setPos(this.orbHum.pan, orb.x, orb.y, orb.z); this.orbHum.osc.frequency.value = 880; }
+    this.orbHum.gain.gain.setTargetAtTime(orb ? 0.06 * cfg.humVolume : 0, t, 0.1);
+    if (orb) { this.setPos(this.orbHum.pan, orb.x, orb.y, orb.z); this.orbHum.osc.frequency.value = 330; }
     let tower = null, td = 70 * 70;
     if (playing) for (const zz of game.rewards.zones) {
       if (zz.tier !== 'large') continue;
       const d = (zz.x - p.pos.x) ** 2 + (zz.z - p.pos.z) ** 2;
       if (d < td) { td = d; tower = zz; }
     }
-    this.towerHum.gain.gain.setTargetAtTime(tower ? 0.15 : 0, t, 0.1);
+    this.towerHum.gain.gain.setTargetAtTime(tower ? 0.15 * cfg.humVolume : 0, t, 0.1);
     if (tower) { this.setPos(this.towerHum.pan, tower.x, tower.y + 2, tower.z); this.towerHum.osc.frequency.value = 110; }
   }
 }

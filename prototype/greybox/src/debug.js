@@ -1,5 +1,5 @@
 import GUI from 'lil-gui';
-import { summary } from './metrics.js';
+import { exportRun } from './metrics.js';
 import { RARITIES, WEAPONS, SKILLS } from './catalog.js';
 
 // Live tuning panel. Toggle with ` or Tab.
@@ -28,6 +28,8 @@ export function buildDebug(game) {
   mv.add(cfg, 'wallRunTime', 0, 10, 0.1);
   mv.add(cfg, 'wallMode', ['free', 'locked']).name('wall movement');
   mv.add(cfg, 'wallRunUnlimited').name('wall run unlimited');
+  mv.add(cfg, 'wallJumpRefresh').name('wall-jump refresh (PT1-3 climb)');
+  mv.add(cfg, 'wallJumpCost', 0, 2, 0.05).name('wall jump uses wall time (s)');
   mv.add(cfg, 'wallRunUpSpeed', 3, 25, 0.5);
   mv.add(cfg, 'glide');
   mv.add(cfg, 'glideFallSpeed', 0.5, 10, 0.25);
@@ -87,6 +89,7 @@ export function buildDebug(game) {
   tw.add(cfg, 'civOnlyTime', 0, 120, 5).name('civilians-only opening (s)');
   tw.add(cfg, 'sound');
   tw.add(cfg, 'volume', 0, 1, 0.05);
+  tw.add(cfg, 'humVolume', 0, 2, 0.05).name('hum volume (orbs, towers)');
   tw.close();
 
   const pr = gui.addFolder('Progression');
@@ -130,7 +133,7 @@ export function buildDebug(game) {
     skipToBoss: () => game.director.skipToNextBoss(),
     tierUp: () => { game.tier = Math.min(6, game.tier + 1); },
     copyMetrics: () => {
-      const data = JSON.stringify({ metrics: summary(game.stats, game), picks: game.stats.picks, power: game.stats.power, bonus: game.build.bonus, config: cfg }, null, 2);
+      const data = JSON.stringify({ runId: game.saver.runId, note: game.note, ...exportRun(game) }, null, 2);
       navigator.clipboard?.writeText(data).then(
         () => game.hud.flash('Metrics copied to clipboard'),
         () => { console.log(data); game.hud.flash('Clipboard blocked — metrics logged to console'); },
@@ -142,6 +145,10 @@ export function buildDebug(game) {
   run.add(actions, 'skipToBoss').name('Skip to next boss');
   run.add(actions, 'tierUp').name('Tier +1 (cheat)');
   run.add(actions, 'copyMetrics').name('Copy metrics JSON');
+  run.add(game, 'note').name('note (saved with the run)');
+  run.add({ save: () => { game.saver.save(game); game.hud.flash(game.saver.server ? 'Run saved' : 'Saved in the browser only'); } }, 'save').name('Save run now');
+  run.add({ dl: () => game.hud.flash(`Downloaded ${game.saver.downloadLocal()} browser-saved runs`) }, 'dl').name('Download browser-saved runs');
+  run.add(cfg, 'saveEvery', 5, 120, 5).name('autosave every (s)');
   run.add(actions, 'resetTuning').name('Reset all tuning');
 
   return gui;

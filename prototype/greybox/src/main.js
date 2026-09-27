@@ -17,7 +17,8 @@ import { towerTargets, levelTargets } from './catalog.js';
 import { Orbs } from './orbs.js';
 import { Civilians } from './civilians.js';
 import { Sfx } from './audio.js';
-import { newStats, tickStats, recordDamage, summary, fmtClock, samplePower } from './metrics.js';
+import { Saver } from './save.js';
+import { newStats, tickStats, recordDamage, recordDealt, summary, fmtClock, samplePower } from './metrics.js';
 
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -45,6 +46,10 @@ const game = {
   state: 'menu',            // menu | playing | choosing | paused | dead | wonMenu | left
   stats: newStats(),
   activeZone: null,
+  note: '',                 // debug panel: a note saved with the run
+  restartHold: 0,           // seconds R / Back has been held mid-run
+  restartArmed: true,       // false until R is released after a restart
+  restartFrom: 0,           // performance.now() when the current hold began
 };
 window.game = game;         // handy from the browser console
 
@@ -63,6 +68,7 @@ game.cam = new FollowCamera(camera);
 game.orbs = new Orbs(scene);
 game.civ = new Civilians(scene);
 game.sfx = new Sfx(camera);
+game.saver = new Saver();
 
 let worldKey = '';
 function buildWorld() {
@@ -75,6 +81,9 @@ function buildWorld() {
 }
 
 game.restart = () => {
+  if (game.saver.age() > 5) game.saver.save(game, 'restarted'); // no-op if the run already ended (died, left)
+  game.restartArmed = false;
+  game.restartHold = 0;
   buildWorld();
   game.tier = 1;
   game.stats = newStats();
@@ -92,10 +101,12 @@ game.restart = () => {
   const s = game.world.randomStreetPoint(0, 0, 0, 30, 60) ?? { x: 0, z: -game.world.half + 7 };
   game.player.reset(s.x, s.z);
   game.civ.reset(game);
+  game.hud.clearOrbs();
   game.iframes = 0;
   game.contactAcc = 0;
   game.player.hp = game.eff.maxHp;
   game.world.computeFlow(s.x, 0, s.z);
+  game.saver.start(config.seed);
   setState('playing');
 };
 
@@ -129,6 +140,7 @@ game.damagePlayer = (amount, kind = 'contact', source = -1) => {
     showOverlay('You died', `Clock at death: ${fmtClock(game.director.remaining)}` +
       (game.director.remaining < 0 ? '   ← overtime, screenshot it' : ''), [['Restart (R)', game.restart]]);
     setState('dead');
+    game.saver.save(game, 'died');
   }
 };
 
@@ -146,7 +158,7 @@ game.onLand = (fall) => {
   game.hud.flash(`Hard landing −${Math.round(dmg)}`);
 };
 
-game.offerTower = (large = false) => game.choice.offer(large ? 'largeTower' : 'tower', () => towerTargets(game.build), large ? config.largeTowerRarityShift : 0);
+game.offerTower = (large = false) => game.choice.offer(large ? 'largeTower' : 'tower', () => towerTargets(game.build, game.eff), large ? config.largeTowerRarityShift : 0);
 game.offerLevel = () => game.choice.offer('level', () => levelTargets(game.build, game.eff));
 
 // Debug: . levels up (through the normal XP path, so offers mode opens a menu);
@@ -176,6 +188,7 @@ game.areaHit = (x, y, z, r, civDmg, source, rehit = 0) => {
 game.damageEnemy = (i, amount, source) => {
   const h = game.horde;
   if (!h.alive[i] || amount <= 0) return;
+  recordDealt(game.stats, amount, game.player); // raw, like damageBySource
   h.hp[i] -= amount;
   h.hitFlash[i] = 0.08;
   const by = game.stats.damageBySource;
@@ -202,23 +215,35 @@ game.onFinalBossKilled = () => {
   // Development placeholder for the post-boss choice (design doc §5).
   showOverlay('Final boss defeated', `Clock: ${fmtClock(game.director.remaining)}\nContinue into overtime for score, or leave the run.`, [
     ['Continue into overtime (Enter)', () => setState('playing')],
-    ['Leave run', () => { showOverlay('Run won', `Left at ${fmtClock(game.director.remaining)}`, [['Restart (R)', game.restart]]); setState('left'); }],
+    ['Leave run', () => { showOverlay('Run won', `Left at ${fmtClock(game.director.remaining)}`, [['Restart (R)', game.restart]]); setState('left'); game.saver.save(game, 'left'); }],
   ]);
+  game.saver.save(game);
 };
 
 // ---------- overlay ----------
 const overlay = document.getElementById('overlay');
 const card = overlay.querySelector('.card');
+// Buttons first, then the text, then the run's stats in columns that scroll inside the card,
+// so a long run's stats can never push Resume off the screen (Rich's playtest 3 note).
 function showOverlay(title, text, buttons) {
   const m = summary(game.stats, game);
-  card.innerHTML = `<h1>${title}</h1><pre>${text}\n\n${JSON.stringify(m, null, 1).replace(/[{}"]/g, '')}</pre>`;
+  const fmt = v => (v && typeof v === 'object' ? (Array.isArray(v) ? v.join(', ') : Object.entries(v).map(([k, x]) => `${k} ${x}`).join(' · ')) : v);
+  card.innerHTML = `<h1>${title}</h1><div class="btns"></div><pre class="text">${text}</pre>` +
+    `<div class="stats">${Object.entries(m).map(([k, v]) => `<div><b>${k}</b> ${fmt(v)}</div>`).join('')}</div>`;
+  const row = card.querySelector('.btns');
   for (const [label, fn] of buttons) {
     const b = document.createElement('button');
     b.textContent = label;
     b.onclick = () => { fn(); if (game.state === 'playing') game.input.requestLock(); };
-    card.appendChild(b);
+    row.appendChild(b);
   }
   overlay.style.display = 'flex';
+}
+function pause(how) {
+  setState('paused');
+  game.pausedAt = performance.now();
+  showOverlay('Paused', `${how} · Esc / P / Start to resume · hold R to restart`, [['Resume', () => setState('playing')]]);
+  game.saver.save(game);
 }
 function setState(s) {
   game.state = s;
@@ -228,9 +253,13 @@ document.getElementById('play').onclick = () => { game.sfx.start(); game.restart
 canvas.addEventListener('click', () => { if (game.state === 'playing') game.input.requestLock(); });
 document.addEventListener('pointerlockchange', () => {
   if (!game.input.locked && game.state === 'playing' && game.input.lastDevice === 'mouse' && !guiVisible) {
-    setState('paused');
-    showOverlay('Paused', 'Click to resume.', [['Resume', () => setState('playing')]]);
+    pause('Mouse released');
   }
+});
+// A reload, a closed tab or a crash-to-desktop: save what we have (sendBeacon survives unload).
+addEventListener('pagehide', () => { if (game.state !== 'menu') game.saver.save(game, 'closed', { beacon: true }); });
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && game.state !== 'menu') game.saver.save(game, 'in-progress', { beacon: true });
 });
 
 buildWorld();
@@ -248,11 +277,28 @@ function frame(now) {
   game.skills.modifyStats(game.eff, game);
 
   if (inp.debugPressed) { guiVisible = !guiVisible; guiVisible ? gui.show() : gui.hide(); if (guiVisible) document.exitPointerLock?.(); }
-  if (inp.restartPressed && game.state !== 'menu') game.restart();
+  // Restart: instant on the end screens; mid-run, R / Back must be held (a tap cost Rich a
+  // playtest run). Each restart saves the run first. R must be released between restarts.
+  const midRun = ['playing', 'paused', 'choosing', 'wonMenu'].includes(game.state);
+  // Timed in real seconds: frame dt is capped, so a slow frame rate would stretch the hold.
+  if (!inp.restartHeld) { game.restartHold = 0; game.restartArmed = true; game.restartFrom = 0; }
+  if (inp.restartPressed && (game.state === 'dead' || game.state === 'left')) game.restart();
+  else if (midRun && inp.restartHeld && game.restartArmed) {
+    const t = performance.now(); // not the rAF timestamp, which can lag and then jump
+    game.restartFrom ||= t;
+    game.restartHold = (t - game.restartFrom) / 1000;
+    if (game.restartHold >= config.restartHold) game.restart();
+  }
   if (inp.pausePressed) {
-    if (game.state === 'playing') { setState('paused'); showOverlay('Paused', 'P / Start to resume.', [['Resume', () => setState('playing')]]); }
+    if (game.state === 'playing') pause('Paused');
     else if (game.state === 'paused') setState('playing');
   }
+  // Esc: the browser uses the first press to release the mouse (which pauses); a later one resumes.
+  if (inp.escPressed && game.state === 'paused' && performance.now() - game.pausedAt > 400) {
+    setState('playing');
+    game.input.requestLock();
+  }
+  if (game.saver.due(config.saveEvery)) game.saver.save(game);
   if (inp.confirmPressed && game.state === 'wonMenu') setState('playing');
   if (game.state === 'playing' && inp.levelUpPressed) game.levelUp();
   if (game.state === 'playing' && inp.levelDownPressed) game.levelDown();

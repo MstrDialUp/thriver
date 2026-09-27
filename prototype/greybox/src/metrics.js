@@ -24,6 +24,7 @@ export function newStats() {
     largeTowersDone: 0, towersOnRoof: 0, towersOnGround: 0,
     orbsTaken: 0, orbsByPlace: { roof: 0, wall: 0, street: 0 },
     bulletsDestroyed: 0, civKilled: 0, civFriendlyFire: 0,
+    dealtGround: 0, dealtElevated: 0, breakaways: 0,
   };
 }
 
@@ -38,6 +39,12 @@ export function tickStats(s, dt, player) {
     s.longestFree = Math.max(s.longestFree, s.freeStreak);
   } else s.freeStreak = 0;
   s.maxAltitude = Math.max(s.maxAltitude, player.pos.y);
+}
+
+// Damage the player deals, by where the player is (altitude and airborne damage, PLAN-playtest3 step 7).
+export function recordDealt(s, amount, player) {
+  if (player.pos.y > ELEVATED) s.dealtElevated += amount;
+  else s.dealtGround += amount;
 }
 
 // Fall damage is kept apart so ground/elevated stay comparable with playtest 1.
@@ -98,8 +105,18 @@ export function summary(s, game) {
     relocations: s.relocations,
     maxAltitude: Math.round(s.maxAltitude),
     bossKillMinutes: s.bossKillTimes,
+    damageDealtGround: Math.round(s.dealtGround),
+    damageDealtElevated: Math.round(s.dealtElevated),
+    wallKicks: game.player.wallKicks,
+    wallKickClimbM: Math.round(game.player.kickClimb),
+    breakaways: s.breakaways,
     damageBySource: Object.fromEntries(Object.entries(s.damageBySource).map(([k, v]) => [k, Math.round(v)])),
   };
+}
+
+// Everything a run records: what Copy metrics JSON copies and what the autosave writes.
+export function exportRun(game) {
+  return { metrics: summary(game.stats, game), picks: game.stats.picks, power: game.stats.power, bonus: game.build.bonus, config: game.cfg };
 }
 
 export function fmtClock(sec) {
