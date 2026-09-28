@@ -19,6 +19,8 @@ export class Saver {
     this.ended = null;      // set once the run is over; a finished run's file is final
     this.lastSaved = 0;     // performance.now() of the last save, 0 = never
     this.lastPing = 0;
+    this.lastError = null;  // why the last save to the server failed, for the HUD
+    this.retryTimer = null;
     this.ping();
   }
 
@@ -30,7 +32,7 @@ export class Saver {
       this.server = !!j?.ok;
       this.commit = j?.commit ?? this.commit;
     } catch { this.server = false; }
-    if (this.server) this.flushLocal();
+    if (this.server) await this.flushLocal();
     return this.server;
   }
 
@@ -65,9 +67,34 @@ export class Saver {
       if (!navigator.sendBeacon?.('/api/run', new Blob([body], { type: 'application/json' }))) this.local(body);
       return;
     }
-    fetch('/api/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: body.length < 60_000 })
-      .then(r => { if (!r.ok) throw new Error(r.status); })
-      .catch(() => { this.server = false; this.local(body); });
+    this.post(body);
+  }
+
+  // POST with retries. Playtest 4's final "died" save failed once and fell back to the browser
+  // with no retry and no reason recorded; now the reason is kept (HUD and console) and the
+  // browser copy is re-uploaded on its own once the server answers again.
+  async post(body, tries = 3) {
+    for (let n = 0; n < tries; n++) {
+      try {
+        const r = await fetch('/api/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: body.length < 60_000 });
+        if (r.ok) { this.lastError = null; return true; }
+        this.lastError = `HTTP ${r.status} ${(await r.text().catch(() => '')).slice(0, 120)}`;
+      } catch (e) { this.lastError = String(e?.message ?? e); }
+      await new Promise(res => setTimeout(res, 500 * 3 ** n));
+    }
+    console.warn(`Run save failed (${this.lastError}); kept in the browser, will retry.`);
+    this.server = false;
+    this.local(body);
+    this.retryLater(5_000);
+    return false;
+  }
+
+  // Keep pinging until the server answers and the browser-held runs are uploaded.
+  retryLater(ms = REPING_MS) {
+    clearTimeout(this.retryTimer);
+    this.retryTimer = setTimeout(async () => {
+      if (!(await this.ping()) || this.localCount) this.retryLater();
+    }, ms);
   }
 
   // ---------- browser fallback ----------
@@ -116,7 +143,7 @@ export class Saver {
   status() {
     if (!this.runId) return ['', false];
     const ago = this.lastSaved ? `${Math.round((performance.now() - this.lastSaved) / 1000)} s ago` : 'not yet';
-    if (this.server === false) return [`NOT SAVING TO REPO — browser only (run node serve.mjs) · saved ${ago}`, true];
+    if (this.server === false) return [`NOT SAVING TO REPO — browser only (${this.lastError ? `last error: ${this.lastError}` : 'run node serve.mjs'}) · saved ${ago}`, true];
     return [`saved ${ago} · ${this.runId}`, false];
   }
 }

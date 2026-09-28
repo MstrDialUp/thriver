@@ -1,21 +1,21 @@
 {
   "runId": "2026-09-27T20-03-00_s1",
-  "savedAt": "2026-09-28T01:52:29.064Z",
-  "ended": "in-progress",
+  "savedAt": "2026-09-28T01:52:54.187Z",
+  "ended": "died",
   "commit": "2f989c3",
   "note": "",
   "metrics": {
-    "runClock": "00:07",
-    "realSeconds": 1792,
-    "level": 87,
+    "runClock": "−00:16",
+    "realSeconds": 1816,
+    "level": 88,
     "tier": 6,
-    "kills": 18405,
+    "kills": 19205,
     "pctElevated": 63,
     "pctSurrounded": 17,
     "pctEscaped": 17,
     "longestEscapeSec": 34,
-    "damageGround": 520,
-    "damageElevated": 698,
+    "damageGround": 571,
+    "damageElevated": 807,
     "damageFall": 3,
     "hardLandings": 7,
     "maxFallM": 23,
@@ -30,15 +30,15 @@
       "wall": 32,
       "street": 80
     },
-    "bulletsDestroyed": 4966,
-    "civKilled": 259,
-    "civFriendlyFire": 41,
+    "bulletsDestroyed": 5041,
+    "civKilled": 261,
+    "civFriendlyFire": 44,
     "rooftopCaches": 22,
-    "upgradesPicked": 139,
-    "secondsInMenus": 959,
-    "powerIndex": 51320.68,
-    "powerVsPlaytest1": 1.04,
-    "relocations": 22737,
+    "upgradesPicked": 141,
+    "secondsInMenus": 960,
+    "powerIndex": 55513.34,
+    "powerVsPlaytest1": 0.99,
+    "relocations": 22850,
     "maxAltitude": 94,
     "bossKillMinutes": [
       8.4,
@@ -47,17 +47,17 @@
       16.5,
       21.02
     ],
-    "damageDealtGround": 235843818,
-    "damageDealtElevated": 810201851,
+    "damageDealtGround": 277746282,
+    "damageDealtElevated": 1000776007,
     "wallKicks": 48,
     "wallKickClimbM": 177,
-    "breakaways": 52,
+    "breakaways": 55,
     "damageBySource": {
-      "blaster": 243182098,
-      "pulse": 70204286,
-      "arc": 155308785,
-      "meleeDrone": 5305000,
-      "breakaway": 572045500
+      "blaster": 302402799,
+      "pulse": 90056781,
+      "arc": 180992384,
+      "meleeDrone": 5756237,
+      "breakaway": 699314088
     }
   },
   "picks": [
@@ -1684,6 +1684,26 @@
       "offered": [
         "filler@common"
       ]
+    },
+    {
+      "t": 1792,
+      "clock": "00:07",
+      "level": 87,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1806,
+      "clock": "−00:05",
+      "level": 88,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
     }
   ],
   "power": [
@@ -2105,6 +2125,13 @@
       "level": 85,
       "xp": 88371,
       "index": 49657.19,
+      "vsPlaytest1": 1.01
+    },
+    {
+      "t": 1800,
+      "level": 87,
+      "xp": 92481,
+      "index": 51718.7,
       "vsPlaytest1": 1.01
     }
   ],

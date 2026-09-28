@@ -18,7 +18,7 @@ import { Orbs } from './orbs.js';
 import { Civilians } from './civilians.js';
 import { Sfx } from './audio.js';
 import { Saver } from './save.js';
-import { newStats, tickStats, recordDamage, recordDealt, summary, fmtClock, samplePower } from './metrics.js';
+import { newStats, tickStats, recordDamage, recordDealt, recordEffective, recordKill, summary, fmtClock, samplePower } from './metrics.js';
 
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -189,11 +189,15 @@ game.damageEnemy = (i, amount, source) => {
   const h = game.horde;
   if (!h.alive[i] || amount <= 0) return;
   recordDealt(game.stats, amount, game.player); // raw, like damageBySource
+  recordEffective(game.stats, source, Math.min(amount, h.hp[i]));
   h.hp[i] -= amount;
   h.hitFlash[i] = 0.08;
   const by = game.stats.damageBySource;
   by[source] = (by[source] ?? 0) + amount;
-  if (h.hp[i] <= 0) game.onEnemyKilled(i);
+  if (h.hp[i] <= 0) {
+    recordKill(game.stats, source);
+    game.onEnemyKilled(i);
+  }
 };
 
 game.onEnemyKilled = (i) => {

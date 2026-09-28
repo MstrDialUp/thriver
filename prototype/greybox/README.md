@@ -17,7 +17,7 @@ node serve.mjs
 # open http://localhost:8000
 ```
 
-**Every run saves itself** into the repo at `playtests/greybox/<date>/<runId>.json`: every 30 s, and on death, leaving, restarting, pausing and closing the tab. A restart or a crash never loses a run. Commit those files to record a playtest. Each file holds the metrics, every pick, the power samples, the full config, the commit the build came from, and a free-text `note` (debug panel → Run). The HUD shows `saved n s ago` bottom right.
+**Every run saves itself** into the repo at `playtests/greybox/<date>/<runId>.json`: every 30 s, and on death, leaving, restarting, pausing and closing the tab. A restart or a crash never loses a run. Commit those files to record a playtest. Each file holds the metrics, every pick, the power samples, the full config, the commit the build came from, and a free-text `note` (debug panel → Run). The HUD shows `saved n s ago` bottom right. **If a save to the server fails** (after playtest 4, whose final save didn't land), the game retries three times, keeps the run in the browser, shows the error on the HUD (`NOT SAVING TO REPO — last error: …`) and in the console, and uploads the run on its own as soon as the server answers again. The server never replaces a run file with an older save, and prints any failed write to its console.
 
 Any static server still works (`python3 -m http.server 8000`), but runs are then **saved only in the browser**, and the HUD warns `NOT SAVING TO REPO` in amber. Those runs upload the next time `serve.mjs` is running, or can be downloaded from debug panel → Run → *Download browser-saved runs*.
 
@@ -137,6 +137,13 @@ Earlier sessions, 10 minutes each at clock speed 2–3:
 - `breakaways`: how many times Breakaway fired.
 
 The HUD shows your current height/air damage bonus and your wall kicks.
+
+**Added after playtest 4:**
+- `killsBySource`: which weapon or skill landed each kill.
+- `effectiveDamageBySource`: damage that actually came off enemies' HP, **overkill excluded**. `damageBySource` stays raw so it compares with playtests 2–4, but a big area hit on a dense crowd scores far beyond what it removes there (Breakaway's 55% in playtest 4).
+- `dealtPerSec` in each power sample: effective damage per second over the last 30 s, **measured, skills included**. The power index is still an estimate of weapons only.
+- `finalBossKillMinute`: `bossKillMinutes` only ever held the five lower bosses.
+- **Power index fix:** the level-1 Blaster baseline no longer counts the tower +1 projectile bonus. Before, each +1 projectile pick *lowered* `powerVsPlaytest1` (for non-Blaster weapons, by a third on the first pick). Playtest 4's late slide to about 1.0 is mostly this bug. Earlier playtests are unaffected: the item didn't exist yet.
 
 **Copy metrics JSON** also includes every pick (with what was offered alongside it), the power index every 30 s, damage per weapon/skill, fall damage, and time spent in menus.
 
@@ -288,6 +295,55 @@ Two recorded runs, single tester (the designer; a second tester is still needed)
 | power vs playtest 1 | 1.58 | 2.45 |
 | boss kill times (min) | 5.08, 9.24, 13.34 | 5.3, 9.35, 15.17 |
 | top damage source | Mortar 74% | Mortar 80% |
+
+### Playtest 4 — 2026-09-27 (analysed 2026-09-28)
+
+One full run, single tester (the designer; a second tester is still needed). Build `2f989c3`: level-up mode `offers`, the `mixed` layout, seed 1, 600 enemies, clock speed 1. **The wall-jump refresh was switched on in the debug panel**; Wall kick never turned up at a tower. Raw data: [`2026-09-27T20-03-00_s1.json`](../../playtests/greybox/2026-09-27/2026-09-27T20-03-00_s1.json). The server copy stopped at 00:07 (`in-progress`); the final save fell back to the browser, and Rich recovered it, so the file in the repo is the final one.
+
+**Rich's notes:**
+
+- **Went the full 30 minutes** at the 600 cap, killed the final boss, and died to the nuke 16 s into overtime. "It felt decent as I still needed to maneuver around and be smart about my placement or I would get killed."
+- **Impact and fall reduction** (2026-09-28): high fall reduction shouldn't cancel Impact. Impact should always do damage from the height that would hurt a level-1, un-upgraded player, growing with height, so an Impact player is rewarded for taking fall reduction, not punished. Recorded as a decision in the design doc (§6). **Not changed in the grey box.**
+
+**What the numbers show** (observations, not conclusions):
+
+- **Up high most of the time, and hurt there:** 63% of the run elevated, and 59% of damage taken while elevated (807 of 1,378). **Surrounded 17%**, the highest since playtest 1's debugged run. Longest escape 34 s. The horde still threatened an elevated player through a whole run.
+- **Traversal was stacked hard and still didn't become a permanent escape:** 6 air jumps, 5 dash charges, Updraft, +32% dash speed. The wall-jump climb gave 48 kicks for 177 m (about 3.7 m each).
+- **Height rewards pulled the player up:** 22 rooftop caches (against 0–14 before, 2–3 in playtest 3), roof orbs the largest group (91, against street 80), all 12 large towers held, max altitude 94 m, 78% of damage dealt while elevated.
+- **The build ran out:** all 8 slots were at level 8 by the last real item pick at level 67 (22.3 min in). After that, **24 of the run's 141 picks were "Patch up" filler**. 9 of the 12 large towers were taken after 18 minutes, when towers were the only progress left.
+- **No Mortar, by chance:** it was never offered. The weapon slots were full at level 10 (Blaster, Pulse, Arc, Melee Drone).
+- **Breakaway: 55% of raw damage** from level 37 on (55 triggers). Raw damage counts overkill, so its share of real damage and kills is unknown (now measured; see *Added after playtest 4*). **Melee Drone: 0.5% at level 8.**
+- **Power vs playtest 1 ended at 0.99, but that's understated:** each of the three +1 projectile picks lowered the index (bug, now fixed), and skills aren't in it.
+- **Sustain matched pressure:** 0.8 HP/s regen by the end, 24 filler heals (30 each), 12 large-tower heals (50 each), and the Shield, against 1,378 damage taken. **Fall damage: 3 HP** over 7 hard landings (32% fall reduction, glide, Updraft).
+- **960 s in upgrade menus**, about 35% of time at the keyboard (141 picks).
+
+**Raw stats:**
+
+| | Run 1 |
+|---|---|
+| Clock at end | −00:16 (nuke) |
+| Real seconds | 1816 |
+| Level / tier | 88 / 6 |
+| Kills | 19205 |
+| up % (elevated) | 63 |
+| surrounded % | 17 |
+| escaped % | 17 |
+| longest escape (s) | 34 |
+| damage ground | 571 |
+| damage elevated | 807 |
+| damage fall (hard landings) | 3 (7) |
+| zones held (large) | 54 (12) |
+| towers held on roof / ground | 23 / 31 |
+| orbs (roof / wall / street) | 91 / 32 / 80 |
+| rooftop caches | 22 |
+| civilians destroyed | 261 |
+| relocations | 22850 |
+| max altitude (m) | 94 |
+| seconds in menus | 960 |
+| power vs playtest 1 | 0.99 (understated; see above) |
+| boss kill times (min) | 8.4, 8.82, 12.58, 16.5, 21.02; final boss about 22.3 (from the XP jump; not recorded) |
+| wall kicks (m climbed) | 48 (177) |
+| top damage source (raw) | Breakaway 55% |
 
 ## Performance notes
 

@@ -49,6 +49,16 @@ function readBody(req) {
   });
 }
 
+// On the Windows filesystem, an editor, the indexer or antivirus can hold a run file for a moment.
+async function writeWithRetry(file, data, tries = 5) {
+  for (let n = 0; ; n++) {
+    try { return await fs.writeFile(file, data); } catch (e) {
+      if (n + 1 >= tries || !['EBUSY', 'EPERM', 'EACCES'].includes(e.code)) throw e;
+      await new Promise(r => setTimeout(r, 100 * 2 ** n));
+    }
+  }
+}
+
 const send = (res, code, body, type = 'application/json') => {
   res.writeHead(code, { 'Content-Type': type, 'Cache-Control': 'no-store' });
   res.end(typeof body === 'string' || Buffer.isBuffer(body) ? body : JSON.stringify(body));
@@ -64,7 +74,12 @@ async function handle(req, res) {
     if (!file) return send(res, 400, { ok: false, error: 'bad runId' });
     run.commit ??= gitCommit();
     await fs.mkdir(path.dirname(file), { recursive: true });
-    await fs.writeFile(file, JSON.stringify(run, null, 2) + '\n');
+    // Retries and browser re-uploads can arrive out of order: never replace a newer save.
+    const prev = await fs.readFile(file, 'utf8').then(JSON.parse).catch(() => null);
+    if (prev?.savedAt && run.savedAt && prev.savedAt > run.savedAt) {
+      return send(res, 200, { ok: true, stale: true, file: path.relative(REPO, file) });
+    }
+    await writeWithRetry(file, JSON.stringify(run, null, 2) + '\n');
     if (run.ended && run.ended !== 'in-progress') console.log(`saved ${path.relative(REPO, file)} (${run.ended})`);
     return send(res, 200, { ok: true, file: path.relative(REPO, file) });
   }
@@ -83,7 +98,10 @@ async function handle(req, res) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  http.createServer((req, res) => handle(req, res).catch(e => send(res, 500, { ok: false, error: String(e.message ?? e) })))
+  http.createServer((req, res) => handle(req, res).catch(e => {
+    console.error(`${req.method} ${req.url} failed: ${e.code ?? ''} ${e.message ?? e}`);
+    send(res, 500, { ok: false, error: String(e.message ?? e) });
+  }))
     .listen(PORT, '127.0.0.1', () => {
       console.log(`Grey box: http://localhost:${PORT}`);
       console.log(`Runs save to ${path.relative(process.cwd(), RUNS) || RUNS}/<date>/<runId>.json`);

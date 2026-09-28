@@ -77,6 +77,8 @@ These are proposed, not ratified. Strike any that do not match your intent.
 
 > **OPEN — the proportions.** How much reward sits high vs. low, how fast the flying share rises, and how aggressive relocation is. Answered by the Q1 prototype, which should have each of A/B/C/D as a toggle. One thing to check specifically: **climbing still has to buy a few seconds of breathing room**, or traversal loses the relief that makes it feel good.
 
+> **Playtest 4 (2026-09-27, single tester, one full 30-minute run; preliminary):** 63% of the run up high and 59% of damage taken there, surrounded 17% of the time, longest escape 34 s, with traversal stacked hard (6 air jumps, 5 dash charges, Updraft). Rich: "it felt decent as I still needed to maneuver around and be smart about my placement or I would get killed." This is the target above, climbing buys breathing room but not safety, holding for a whole run at the 600 cap. On *does going up still cost something?*: fall damage was 3 HP for the whole run (32% fall reduction, glide, Updraft), so late in a run the fall cost is gone and C is doing all of it. See [the playtest log](../../prototype/greybox/README.md#playtest-4--2026-09-27-analysed-2026-09-28).
+
 > **Playtest 2 (2026-09-24, single tester, five runs):** most damage was taken on the ground, and rooftop caches were almost ignored. See [the playtest log](../../prototype/greybox/README.md#playtest-2--2026-09-24). Also preliminary.
 
 > **Early signal (playtest 1, 2026-09-22, single tester — preliminary):** with wall-run kept low-level, tall buildings acted as barriers that pen the player in at height rather than an escape route — the opposite of this section's "trivially defeated" framing. See [`prototype/greybox/README.md`](../../prototype/greybox/README.md#playtest-log). Not a conclusion; needs a second tester and more runs.
@@ -156,6 +158,8 @@ Research inputs not yet decided: chained uninterrupted traversal; no fall damage
 > **OPEN — Q6: Does the city stay interesting once traversal is maxed?**
 >
 > Crackdown's failure mode: once Agility was maxed and every orb collected, the city's vertical challenge was gone. Upgradeable jumps and the grapple give us an upgrade curve, and the §5 decision relies on movement being at its best in the final minutes. Jump-height upgrades (the jump growing into a superjump) add another rising curve. Whether it keeps escalating to the end of a run instead of saturating at minute 8 is untested.
+>
+> **Playtest 4 (2026-09-27, one run):** traversal ended heavily stacked (6 air jumps, 5 dash charges, +32% dash speed, Updraft) and the horde still threatened the player to the end (§4). So traversal didn't break the run, but whether the *city* stays interesting wasn't measured. Separately, the **build** saturated: see the §7 note on the build running out.
 
 > **OPEN — The wall-jump climb: keep it, gate it, or cut it?** *(Rich's playtest 3 notes, 2026-09-27.)*
 >
@@ -166,6 +170,12 @@ Research inputs not yet decided: chained uninterrupted traversal; no fall damage
 > **Research input.** It fits "deep, exploit-friendly movement" above (Megabonk adopted bunny-hopping). It also works against Q1 and §12's unreachable-hiding-spots hazard: height the horde can't follow is an escape. Playtest 3's elevated damage (above ground damage in both runs) suggests the horde still reaches an elevated player, but that was measured without the climb being tracked.
 >
 > **🧪 Grey-box experiment (2026-09-27), not a decision.** The refresh is **off by default**: a wall jump needs wall-run time left and uses 0.5 s of it. The **Wall kick** tower card (Epic, once per run) or a debug toggle turns it back on. The metrics count the wall kicks and the height gained from them. See §11 for the engine side.
+>
+> **Playtest 4 (2026-09-27):** with the refresh switched on in the debug panel (Wall kick was never offered), 48 wall kicks gained 177 m in a 30-minute run, about 3.7 m each. It didn't turn into a permanent escape (§4).
+
+**✅ Decided (Rich, 2026-09-28) — Impact works from a fixed height, and fall reduction helps it.** Impact always does damage on a landing from above the height that would hurt a **level-1, un-upgraded player**, and it grows with the height of the drop. Taking fall damage reduction must not weaken it: an Impact player should be **rewarded for taking fall reduction, not punished**. Not changed in the grey box for now (Rich).
+
+*Research note on the grey box (not a decision):* there, fall reduction only scales the damage the player takes, so it doesn't touch Impact. What erodes Impact is **jump height**: fall damage and Impact share one safe height, `max(8 m, 3 × jump height)`, so every jump-height upgrade raises the drop Impact needs and shrinks the part of the drop it scales with. Under the rule above, Impact's threshold is fixed at the level-1 value (8 m with the grey box's numbers) while fall damage's safe height can keep rising with jump height. Playtest 4's fall damage (3 HP all run) shows how easily falls stop costing anything, which is the situation where the two must not be tied together.
 
 ---
 
@@ -220,11 +230,17 @@ Research inputs:
 - **Multiplicative stack amplifiers** for the genre's characteristic exponential blowups
 - **Earned screen-clearing ultimates** (Prototype's Critical Mass → Devastators) as a pressure release valve
 
+> **OPEN — The build runs out before the run does.** *(Research finding from playtest 4, 2026-09-27; not a decision.)* With 4 + 4 slots and items capped at level 8, every slot was maxed by **22.3 minutes** into a 30-minute run. After that, **24 of the run's 141 picks were "Patch up" filler** (a heal plus XP), and the player turned to large towers, the only progress left (9 of 12 taken after 18 minutes). The last quarter had no build decisions, which cuts against §5's intent that the player is at their strongest, and still growing, in the final minutes. Options already in this doc or its research: evolutions (below), in-run slot growth (next OPEN), a longer item ladder, or fewer, bigger level-ups. Related: **960 s were spent in upgrade menus**, about 35% of the time at the keyboard.
+>
+> Source: [playtest 4](../../prototype/greybox/README.md#playtest-4--2026-09-27-analysed-2026-09-28).
+
 > **OPEN — Can slots grow during a run?** *(The count is decided: 4 weapons + 4 skills, 2026-09-23.)* Meta-progression slot expansion is ruled out (it would be permanent power). In-run expansion (e.g. a rare item that adds a slot) is still possible and undecided.
 
 > **OPEN — Do we have a dominant unbounded scaling vector?** Megabonk's #1 criticism: when one scaling vector is unbounded (gold→damage) and others are bounded, the unbounded one wins at every skill ceiling and build diversity collapses. Either bound them all, or make several unbounded in *different directions*.
 >
 > **Grey-box evidence (playtest 3, 2026-09-24):** in both recorded runs **Mortar dealt 74% and 80% of all damage**, and power ran at 1.58× and 2.45× the playtest 1 curve. The Mortar is a placeholder, so this says little about the final roster. It does show how quickly one scaling path can take over. Playtest 4 includes a Mortar-free run.
+>
+> **Playtest 4 (2026-09-27):** Mortar was never offered (the weapon slots filled at level 10), and **Breakaway took over instead: 55% of raw damage**, from level 37 on. That's a second item in two playtests dwarfing the rest, though raw damage counts overkill, which flatters a big area hit on a dense crowd; the grey box now records damage without overkill and kills by source. Melee Drone did 0.5% at level 8.
 
 ---
 
@@ -404,12 +420,12 @@ Kept in sync with [`00-synthesis.md`](../research/00-synthesis.md) §6.
 
 | # | Question | Blocks | Resolution method | Status |
 |---|---|---|---|---|
-| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box playtested three times (2026-09-22, 2026-09-24 ×2; single tester) — see [playtest log](../../prototype/greybox/README.md#playtest-log); preliminary. B's pull-down role set aside 2026-09-24. Playtest 3: 55–59% of time up high, and most damage taken there. Wall-jump climb under test (§6). Engine trials start alongside it (2026-09-27); the grey box continues |
+| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box playtested three times (2026-09-22, 2026-09-24 ×2; single tester) — see [playtest log](../../prototype/greybox/README.md#playtest-log); preliminary. B's pull-down role set aside 2026-09-24. Playtest 3: 55–59% of time up high, and most damage taken there. Wall-jump climb under test (§6). Playtest 4 (2026-09-27): a full 30-minute run, 63% up high, 59% of damage taken there, surrounded 17%; placement still mattered (Rich). Engine trials start alongside it (2026-09-27); the grey box continues |
 | **Q2** | Entity budget and horde architecture in 3D with verticality? | Content scope, engine, map size | Technical spike: engine trials ([`prototype/engine-trials`](../../prototype/engine-trials/README.md)), Godot first | 🔴 Open (Godot trial planned 2026-09-27) |
 | **Q3** | How do we prevent the enemy-stacking bug? | Combat feel, bosses | Spike alongside Q2 | 🟡 Direction set |
 | **Q4** | Manual movement + automatic combat — right input split? | Control scheme | Decided; feel validated in prototype | 🟢 Decided |
 | **Q5** | How much permanent meta-power? | Economy | — | 🟢 Decided: none |
-| **Q6** | Does the city stay interesting once traversal is maxed? | Retention | Prototype | 🔴 Open (the wall-jump climb, §6, is one way traversal could stop being bounded) |
+| **Q6** | Does the city stay interesting once traversal is maxed? | Retention | Prototype | 🔴 Open (the wall-jump climb, §6, is one way traversal could stop being bounded). Playtest 4: heavily stacked traversal didn't break the run; the build, not traversal, saturated at about 22 min (§7) |
 | **Q7** | How much content per city (authored core, set-piece library)? | Production scope | Scoping after assembly is proven | 🟡 Partly decided (3 cities) |
 | **Q8** | Engine and tooling choice | Everything | Follows Q2; preliminary survey in [`engine-options.md`](../research/engine-options.md) | 🔴 Open (spike proposed: Godot and Unity; Unreal if both miss the goal). Godot trial planned 2026-09-27; not a decision |
 | **Q9** | Run length, final-boss timing, nuke tuning; what replaces floor transitions? | Core loop | Design, then testing | 🟡 Mostly decided: 30 min, five scheduled lower bosses raise the tier, dev menu for exit. Open (testing/tuning): boss drops, tier size, nuke curve, snowball risk |
@@ -505,6 +521,7 @@ Every decision in this document, in order. If it isn't here, it isn't a decision
 | 2026-09-27 | World pick-up items (Megabonk-style) wait for the engine build | §7 | ⏸ Deferred |
 | 2026-09-27 | Status effects (poison): design doc only for now | §7 | ⏸ Deferred |
 | 2026-09-27 | Engine trials: a throwaway Godot build (GDScript + C++ GDExtension) runs the Q2 horde test and logs the dev experience; Unity and maybe Unreal may follow; not an engine decision | §11 | 🧪 Experiment |
+| 2026-09-28 | Impact triggers from the level-1 un-upgraded fall-damage height and grows with drop height; fall reduction must not weaken it (grey box unchanged for now) | §6 | ✅ Decided |
 
 ---
 
