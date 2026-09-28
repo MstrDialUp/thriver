@@ -349,6 +349,8 @@ Also available (research, undecided):
 
 Several open questions here, and some in §5 and §9, **can't be answered until engine and technical choices are made.** Those follow the Q2 spike.
 
+**🧪 Experiment (Rich, 2026-09-27) — engine trials, starting with Godot.** A throwaway Godot build (4.7.2, GDScript plus a C++ GDExtension horde), developed on the Linux desktop and measured on the Deck. It builds the Q2 horde test from [`engine-options.md`](../research/engine-options.md) §11, and logs **what it's like to set up and develop in the engine**. Unity, and possibly Unreal, may get the same trial. **It is not an engine decision; Q8 stays open.** The grey box keeps running alongside it. Shared spec: [`../../prototype/engine-trials/README.md`](../../prototype/engine-trials/README.md). Godot plan: [`../../prototype/engine-trials/godot/PLAN.md`](../../prototype/engine-trials/godot/PLAN.md).
+
 **Note for the engine spike (Rich's playtest 3 note, 2026-09-27; a proposal, not a decision):** movement "exploits" we want to keep must be **built on purpose, not inherited from a physics quirk**. The grey box's wall-jump climb (§6) comes from its own hand-written controller, and Rich flagged that "this kind of movement exploit may not carry over when we go into the engine". An engine's character controller will behave differently at wall contact, so any exploit we decide to keep needs an explicit rule and a test in the new build. The grey box's `wallJumpRefresh` / Wall kick split is that rule, written down.
 
 > **OPEN — Q2: What is our entity budget, and what architecture achieves it in 3D with verticality?**
@@ -402,14 +404,14 @@ Kept in sync with [`00-synthesis.md`](../research/00-synthesis.md) §6.
 
 | # | Question | Blocks | Resolution method | Status |
 |---|---|---|---|---|
-| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box playtested three times (2026-09-22, 2026-09-24 ×2; single tester) — see [playtest log](../../prototype/greybox/README.md#playtest-log); preliminary. B's pull-down role set aside 2026-09-24. Playtest 3: 55–59% of time up high, and most damage taken there. Wall-jump climb under test (§6) |
-| **Q2** | Entity budget and horde architecture in 3D with verticality? | Content scope, engine, map size | Technical spike | 🔴 Open |
+| **Q1** | How do we make a horde threatening to a player with Prototype-grade traversal? (Incl. height-vs-ground reward balance.) | Everything | Browser grey box with A/B/C/D toggles ([`prototype/greybox`](../../prototype/greybox/README.md)) | 🟡 Direction set; grey box playtested three times (2026-09-22, 2026-09-24 ×2; single tester) — see [playtest log](../../prototype/greybox/README.md#playtest-log); preliminary. B's pull-down role set aside 2026-09-24. Playtest 3: 55–59% of time up high, and most damage taken there. Wall-jump climb under test (§6). Engine trials start alongside it (2026-09-27); the grey box continues |
+| **Q2** | Entity budget and horde architecture in 3D with verticality? | Content scope, engine, map size | Technical spike: engine trials ([`prototype/engine-trials`](../../prototype/engine-trials/README.md)), Godot first | 🔴 Open (Godot trial planned 2026-09-27) |
 | **Q3** | How do we prevent the enemy-stacking bug? | Combat feel, bosses | Spike alongside Q2 | 🟡 Direction set |
 | **Q4** | Manual movement + automatic combat — right input split? | Control scheme | Decided; feel validated in prototype | 🟢 Decided |
 | **Q5** | How much permanent meta-power? | Economy | — | 🟢 Decided: none |
 | **Q6** | Does the city stay interesting once traversal is maxed? | Retention | Prototype | 🔴 Open (the wall-jump climb, §6, is one way traversal could stop being bounded) |
 | **Q7** | How much content per city (authored core, set-piece library)? | Production scope | Scoping after assembly is proven | 🟡 Partly decided (3 cities) |
-| **Q8** | Engine and tooling choice | Everything | Follows Q2; preliminary survey in [`engine-options.md`](../research/engine-options.md) | 🔴 Open (spike proposed: Godot and Unity; Unreal if both miss the goal) |
+| **Q8** | Engine and tooling choice | Everything | Follows Q2; preliminary survey in [`engine-options.md`](../research/engine-options.md) | 🔴 Open (spike proposed: Godot and Unity; Unreal if both miss the goal). Godot trial planned 2026-09-27; not a decision |
 | **Q9** | Run length, final-boss timing, nuke tuning; what replaces floor transitions? | Core loop | Design, then testing | 🟡 Mostly decided: 30 min, five scheduled lower bosses raise the tier, dev menu for exit. Open (testing/tuning): boss drops, tier size, nuke curve, snowball risk |
 | **Q10** | Map size; bounded, looping, or streamed? | Map generation, tech | Follows Q2 | 🟡 Bounded and massive (decided). Open: exact size, in-world reason for the boundary |
 | **Q11** | Real city names or parodies? | Branding, art | — | 🟢 Real names for now |
@@ -502,6 +504,7 @@ Every decision in this document, in order. If it isn't here, it isn't a decision
 | 2026-09-27 | Escape-damage item (Breakaway), centred on the player's last surrounded position | §7 | 🧪 Experiment |
 | 2026-09-27 | World pick-up items (Megabonk-style) wait for the engine build | §7 | ⏸ Deferred |
 | 2026-09-27 | Status effects (poison): design doc only for now | §7 | ⏸ Deferred |
+| 2026-09-27 | Engine trials: a throwaway Godot build (GDScript + C++ GDExtension) runs the Q2 horde test and logs the dev experience; Unity and maybe Unreal may follow; not an engine decision | §11 | 🧪 Experiment |
 
 ---
 

@@ -14,6 +14,8 @@ A 3D bullet heaven survivors-like set in a vertical urban environment, where you
 
 **[`prototype/greybox/`](prototype/greybox/README.md)** — the Q1 grey box. Run `node serve.mjs` in that folder and open `http://localhost:8000`. Runs save themselves into `playtests/greybox/`.
 
+**[`prototype/engine-trials/`](prototype/engine-trials/README.md)** — throwaway engine trials: the same horde test in each engine, plus a log of what developing in it is like. Godot first ([plan](prototype/engine-trials/godot/PLAN.md)). Not an engine decision.
+
 ---
 
 ## Repository layout
@@ -31,7 +33,8 @@ docs/
 └── design/
     └── design-doc.md          # Living design document
 prototype/
-└── greybox/                   # Q1 grey box (browser, Three.js) — throwaway
+├── greybox/                   # Q1 grey box (browser, Three.js) — throwaway
+└── engine-trials/             # Throwaway engine trials for Q2/Q8 (Godot first) — not an engine decision
 playtests/
 └── greybox/                   # Raw playtest data and notes; autosaved runs in <date>/ folders
 ```

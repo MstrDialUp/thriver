@@ -2,7 +2,7 @@
 
 ## What this project is
 
-A 3D bullet heaven survivors-like set in a vertical urban environment. Currently **design research plus a throwaway Q1 grey box** ([`prototype/greybox/`](prototype/greybox/README.md), browser, Three.js). **No production engine has been chosen.** The grey box is not an engine decision and does not answer Q2/Q8.
+A 3D bullet heaven survivors-like set in a vertical urban environment. Currently **design research plus a throwaway Q1 grey box** ([`prototype/greybox/`](prototype/greybox/README.md), browser, Three.js). **No production engine has been chosen.** The grey box is not an engine decision and does not answer Q2/Q8. Engine **trials** ([`prototype/engine-trials/`](prototype/engine-trials/README.md), Godot first) are throwaway too: they measure the horde and the dev experience, and do not decide Q8.
 
 **Pitch:** A 3D bullet heaven survivors-like that takes place in an urban environment with lots of verticality where you collect weapons, skills, and perk items to overcome large amounts of enemies.
 

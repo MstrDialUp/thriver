@@ -298,6 +298,8 @@ A proposal for how to turn this report into an answer. It follows the design doc
 
 **Record for each engine:** the counts held at 60, 45 and 30 fps on each machine, measured against the floor, goal and stretch in §8; the implementation effort; and the pain points. That's the input Q8 needs.
 
+**Now being run (2026-09-27):** as engine trials, starting with Godot. The test is pinned down in [`../../prototype/engine-trials/README.md`](../../prototype/engine-trials/README.md) (the same spec for every engine), and the Godot steps are in [`../../prototype/engine-trials/godot/PLAN.md`](../../prototype/engine-trials/godot/PLAN.md). Rich's framing: the trials also measure what it's like to set up and develop in each engine, not only the enemy count.
+
 ---
 
 ## 12. Open questions raised by this report
