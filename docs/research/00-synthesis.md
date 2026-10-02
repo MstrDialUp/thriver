@@ -3,7 +3,7 @@
 > **Read this one first.** The five game documents are the evidence. This is the argument.
 >
 > **Status:** Living document. Updated as research and prototyping change our conclusions.
-> **Last updated:** 2026-09-24 (playtest 2 tower decisions folded into Conflict 1 and §5; see design doc §4, §7)
+> **Last updated:** 2026-09-27 (playtest 3 observations added to Conflict 1; Q1 register row synced with design doc §13)
 
 ---
 
@@ -126,6 +126,8 @@ D was missing from the first version of this doc. It is arguably **the main reas
 > - **D: enemies teleport back** when the player gets far enough away (VS-style), so distance is never a permanent escape.
 >
 > **Update (Rich, 2026-09-24, after playtest 2):** towers can now spawn on **any flat surface**, and **large towers go almost exclusively on rooftops** to push players up. **B's pull-down role is set aside for now**, because rooftops had too little to do (playtest 2 rooftop caches: 0–2 per run). See design doc §4 and §7.
+>
+> **Playtest 3 observations (2026-09-24, two runs, single tester; not conclusions):** the player spent **55–59% of each run above 3 m** (18–39% in playtest 2) and took **most of their damage up there** (492 and 424 elevated, against 202 and 155 on the ground). So with large rooftop towers pulling the player up, C (climbers, flyers, closets) still threatens them at height. Rich also found a **wall-jump climb**: repeated wall jumps refill the air jumps, allowing unlimited height. That is a possible new permanent escape, so the grey box now gates it behind an item and measures it (design doc §6).
 >
 > **What this does not settle:** the *proportions*. How much reward sits high vs. low, how fast the flying share ramps, and how often the relocation fires are still **Q1, to be answered by the grey-box prototype**. This direction tells the prototype what to test, not what the answer is.
 
@@ -377,7 +379,7 @@ These are carried into `docs/design/design-doc.md` §13 and should be resolved b
 
 | # | Question | Blocking | Method | Status |
 |---|---|---|---|---|
-| **Q1** | **How do we make a horde threatening to a player with Prototype-grade traversal?** Includes the height-vs-ground reward balance. | Everything | Grey-box prototype: full movement kit, a horde, A/B/C/D toggles. Built in the browser at [`prototype/greybox`](../../prototype/greybox/README.md). | 🟡 Direction set (mix of A/B/C/D); grey box playtested twice (2026-09-22, 2026-09-24), preliminary. B's pull-down role set aside 2026-09-24 |
+| **Q1** | **How do we make a horde threatening to a player with Prototype-grade traversal?** Includes the height-vs-ground reward balance. | Everything | Grey-box prototype: full movement kit, a horde, A/B/C/D toggles. Built in the browser at [`prototype/greybox`](../../prototype/greybox/README.md). | 🟡 Direction set (mix of A/B/C/D); grey box playtested three times (2026-09-22, 2026-09-24 ×2), preliminary. B's pull-down role set aside 2026-09-24. Playtest 3: 55–59% of time up high, and most damage taken there. Wall-jump climb under test (design doc §6) |
 | **Q2** | **What is our entity budget, and what architecture achieves it in 3D with verticality?** | Content scope, engine choice, map size | Technical spike. Evaluate ECS/data-oriented approaches against a target count. | 🔴 Open |
 | **Q3** | **How do we prevent the Megabonk enemy-stacking bug?** | Combat feel, boss design | Spike alongside Q2. | 🟡 Direction set (tiered collision, flow fields, credit director) |
 | **Q4** | **Manual movement + automatic combat — is that the right input split?** | Entire control scheme | Confirm in the prototype | 🟢 Decided (validate feel in prototype) |

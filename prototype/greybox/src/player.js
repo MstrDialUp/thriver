@@ -12,6 +12,11 @@ import * as THREE from 'three';
 //
 // Skill hooks (skills.js sets these on the effective stats): spider (run up a wall
 // from the ground), updraftTime/updraftSpeed (gliding lifts), wallJumpUp.
+//
+// Wall-jump refresh (PLAN-playtest3 step 6): with it off, a wall jump needs wall-run time left
+// and uses wallJumpCost of it. With it on (debug toggle or the Wall kick card), a wall jump
+// works at any wall and refills the air jumps: playtests 1-3, where mashing jump against a
+// wall climbs without limit. `wallKicks` / `kickClimb` measure how much that is used.
 
 const RADIUS = 0.4;
 const STAND_H = 1.8;
@@ -49,6 +54,10 @@ export class Player {
     this.wallUp = 0;          // free mode: share of the input going into the wall (0..1), for the mantle
     this.lastWallNormal = null;
     this.sinceJump = 99;
+    this.sinceMove = 99;      // since the last jump or dash (Breakaway)
+    this.wallKicks = 0;       // wall jumps made with wall-run time spent (refresh on)
+    this.kickClimb = 0;       // metres climbed while airborne after one
+    this.kicking = false;
     this.gliding = false;
     this.lifting = false;     // Updraft: gliding upward
     this.updraftLeft = 0;
@@ -63,6 +72,7 @@ export class Player {
   update(dt, inp, camYaw, world, cfg) {
     const v = this.vel;
     this.sinceJump += dt;
+    this.sinceMove += dt;
 
     // Wish direction, relative to the camera.
     const fx = -Math.sin(camYaw), fz = -Math.cos(camYaw);
@@ -86,23 +96,29 @@ export class Player {
       this.dashCharges--;
       this.dashTimer = cfg.dashTime;
       this.dashCount++;
+      this.sinceMove = 0;
       if (hasWish) this.dashDir.set(wx, 0, wz).normalize();
       else this.dashDir.set(fx, 0, fz);
       this.slideTimer = 0;
     }
 
+    const refresh = cfg.wallJumpRefresh || cfg.wallKick > 0;
+    const wallTimeLeft = cfg.wallRunUnlimited || this.wallRunTimer < cfg.wallRunTime;
     if (inp.jumpPressed) {
+      if (this.grounded || wall || this.airJumpsLeft > 0) this.sinceMove = 0;
       if (this.grounded) {
         v.y = jumpV;
         this.grounded = false;
         this.slideTimer = 0; // slide-jump keeps the slide's horizontal speed
         this.sinceJump = 0;
         this.updraftLeft = cfg.updraftTime;
-      } else if (wall) {
+      } else if (wall && (refresh || wallTimeLeft)) {
         v.x = wall.nx * cfg.wallJumpPush + wx * 3;
         v.z = wall.nz * cfg.wallJumpPush + wz * 3;
         v.y = jumpV * 0.95 * cfg.wallJumpUp;
+        if (!wallTimeLeft) { this.wallKicks++; this.kicking = true; }
         this.airJumpsLeft = cfg.airJumps;
+        if (!refresh && !cfg.wallRunUnlimited) this.wallRunTimer += cfg.wallJumpCost;
         this.wallState = 0;
         this.sinceJump = 0;
         this.updraftLeft = cfg.updraftTime;
@@ -217,6 +233,7 @@ export class Player {
       // cannot stand up under something; stay low
     } else this.height = targetH;
 
+    if (this.kicking && v.y > 0) this.kickClimb += v.y * dt;
     const hitX = this.moveAxis(world, 'x', v.x * dt, cfg);
     const hitZ = this.moveAxis(world, 'z', v.z * dt, cfg);
     if (hitX) v.x = 0;
@@ -240,6 +257,7 @@ export class Player {
       this.airJumpsLeft = cfg.airJumps;
       this.wallRunTimer = 0;
       this.wallState = 0;
+      this.kicking = false;
     }
 
     // Invisible walls.

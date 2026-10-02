@@ -38,6 +38,9 @@ export const defaults = {
   wallRunTime: 2.5,        // seconds of wall running per landing
   wallMode: 'free',        // free = climb and run along at once (diagonals); locked = playtest 1-2 (up OR along)
   wallRunUnlimited: false, // Prototype-style unlimited wall running (ignores wallRunTime)
+  wallJumpRefresh: false,  // on = playtests 1-3: wall jumps work after wall-run time is spent and refill air jumps
+                           // (the mash-jump climb). Off: only while wall-run time remains. The Wall kick card turns it on.
+  wallJumpCost: 0.5,       // seconds of wall-run time a wall jump uses while the refresh is off
   wallRunUpSpeed: 9,
   wallRunSideGravity: 0.2,
   wallJumpPush: 11,
@@ -109,6 +112,7 @@ export const defaults = {
   // --- Weapon: blaster (starting weapon) ---
   fireInterval: 0.45,
   projectiles: 2,
+  extraProjectiles: 0,     // +N for every projectile weapon (tower card)
   damage: 12,
   range: 28,
   projectileSpeed: 45,
@@ -135,9 +139,14 @@ export const defaults = {
   orbRoofShare: 0.4,
   orbWallShare: 0.3,       // the rest go at street level
 
+  // --- Playtest data (PLAN-playtest3 step 2) ---
+  saveEvery: 30,           // real seconds between autosaves
+  restartHold: 1,          // seconds R / Back must be held to restart mid-run
+
   // --- Sound ---
   sound: true,
   volume: 0.5,
+  humVolume: 1,            // orb / large-tower hums and the tower charge tone, relative to volume
 
   // --- World ---
   layout: 'mixed',         // mixed = Chicago-like towers west, Paris-like low-rise east

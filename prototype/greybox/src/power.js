@@ -19,7 +19,9 @@ export function powerIndex(build, eff, level) {
   for (const id of Object.keys(build.items)) {
     if (WEAPONS[id]) dps += WEAPONS[id].estDps(s => build.own(id, s), eff);
   }
-  return eff.levelMult * tower * dps / WEAPONS.blaster.estDps(none, eff);
+  // The baseline is a plain level-1 blaster: without the tower +1 projectile bonus, which would
+  // otherwise raise the baseline and make each +1 projectile pick lower the index (playtest 4).
+  return eff.levelMult * tower * dps / WEAPONS.blaster.estDps(none, { ...eff, extraProjectiles: 0 });
 }
 
 // Playtest 1 (auto) level reached with the same total XP (continuous).

@@ -1,0 +1,2316 @@
+{
+  "runId": "2026-09-27T20-03-00_s1",
+  "savedAt": "2026-09-28T01:52:54.187Z",
+  "ended": "died",
+  "commit": "2f989c3",
+  "note": "",
+  "metrics": {
+    "runClock": "−00:16",
+    "realSeconds": 1816,
+    "level": 88,
+    "tier": 6,
+    "kills": 19205,
+    "pctElevated": 63,
+    "pctSurrounded": 17,
+    "pctEscaped": 17,
+    "longestEscapeSec": 34,
+    "damageGround": 571,
+    "damageElevated": 807,
+    "damageFall": 3,
+    "hardLandings": 7,
+    "maxFallM": 23,
+    "zonesHeld": 54,
+    "largeTowersHeld": 12,
+    "towersHeldOnRoof": 23,
+    "towersHeldOnGround": 31,
+    "secondsInZones": 431,
+    "orbsTaken": 203,
+    "orbsByPlace": {
+      "roof": 91,
+      "wall": 32,
+      "street": 80
+    },
+    "bulletsDestroyed": 5041,
+    "civKilled": 261,
+    "civFriendlyFire": 44,
+    "rooftopCaches": 22,
+    "upgradesPicked": 141,
+    "secondsInMenus": 960,
+    "powerIndex": 55513.34,
+    "powerVsPlaytest1": 0.99,
+    "relocations": 22850,
+    "maxAltitude": 94,
+    "bossKillMinutes": [
+      8.4,
+      8.82,
+      12.58,
+      16.5,
+      21.02
+    ],
+    "damageDealtGround": 277746282,
+    "damageDealtElevated": 1000776007,
+    "wallKicks": 48,
+    "wallKickClimbM": 177,
+    "breakaways": 55,
+    "damageBySource": {
+      "blaster": 302402799,
+      "pulse": 90056781,
+      "arc": 180992384,
+      "meleeDrone": 5756237,
+      "breakaway": 699314088
+    }
+  },
+  "picks": [
+    {
+      "t": 29,
+      "clock": "29:30",
+      "level": 2,
+      "source": "level",
+      "picked": "magnet@common",
+      "offered": [
+        "magnet@common",
+        "pulse@common",
+        "retaliation@uncommon"
+      ]
+    },
+    {
+      "t": 29,
+      "clock": "29:30",
+      "level": 2,
+      "source": "tower",
+      "picked": "dashCharge@epic",
+      "offered": [
+        "maxHp@common",
+        "dashCharge@epic",
+        "fallReduction@common"
+      ]
+    },
+    {
+      "t": 63,
+      "clock": "28:57",
+      "level": 3,
+      "source": "level",
+      "picked": "updraft@epic",
+      "offered": [
+        "blaster@common",
+        "updraft@epic",
+        "slipstream@uncommon"
+      ]
+    },
+    {
+      "t": 99,
+      "clock": "28:21",
+      "level": 3,
+      "source": "tower",
+      "picked": "maxHp@uncommon",
+      "offered": [
+        "fallReduction@rare",
+        "maxHp@uncommon",
+        "moveSpeed@rare"
+      ]
+    },
+    {
+      "t": 106,
+      "clock": "28:14",
+      "level": 4,
+      "source": "level",
+      "picked": "shield@uncommon",
+      "offered": [
+        "updraft@common",
+        "shield@uncommon",
+        "arc@common"
+      ]
+    },
+    {
+      "t": 110,
+      "clock": "28:09",
+      "level": 5,
+      "source": "level",
+      "picked": "blaster@epic",
+      "offered": [
+        "blaster@epic",
+        "shield@common",
+        "momentum@uncommon"
+      ]
+    },
+    {
+      "t": 110,
+      "clock": "28:09",
+      "level": 5,
+      "source": "largeTower",
+      "picked": "airJump@epic",
+      "offered": [
+        "airJump@epic",
+        "wallRunTime@uncommon",
+        "dashSpeed@uncommon"
+      ]
+    },
+    {
+      "t": 124,
+      "clock": "27:55",
+      "level": 6,
+      "source": "level",
+      "picked": "pulse@common",
+      "offered": [
+        "pulse@common",
+        "arc@common",
+        "blaster@common"
+      ]
+    },
+    {
+      "t": 124,
+      "clock": "27:55",
+      "level": 6,
+      "source": "tower",
+      "picked": "hpRegen@common",
+      "offered": [
+        "wallRunUpSpeed@common",
+        "damageReduction@common",
+        "hpRegen@common"
+      ]
+    },
+    {
+      "t": 187,
+      "clock": "26:52",
+      "level": 7,
+      "source": "level",
+      "picked": "shield@rare",
+      "offered": [
+        "meleeDrone@uncommon",
+        "shield@rare",
+        "blaster@common"
+      ]
+    },
+    {
+      "t": 203,
+      "clock": "26:36",
+      "level": 8,
+      "source": "level",
+      "picked": "magnet@common",
+      "offered": [
+        "pulse@common",
+        "magnet@common",
+        "blaster@common"
+      ]
+    },
+    {
+      "t": 203,
+      "clock": "26:36",
+      "level": 8,
+      "source": "largeTower",
+      "picked": "dashCharge@epic",
+      "offered": [
+        "airDamage@uncommon",
+        "dashCharge@epic",
+        "xpGain@rare"
+      ]
+    },
+    {
+      "t": 263,
+      "clock": "25:36",
+      "level": 9,
+      "source": "level",
+      "picked": "arc@common",
+      "offered": [
+        "pulse@common",
+        "updraft@uncommon",
+        "arc@common"
+      ]
+    },
+    {
+      "t": 279,
+      "clock": "25:21",
+      "level": 10,
+      "source": "level",
+      "picked": "meleeDrone@uncommon",
+      "offered": [
+        "updraft@epic",
+        "blaster@common",
+        "meleeDrone@uncommon"
+      ]
+    },
+    {
+      "t": 300,
+      "clock": "25:00",
+      "level": 11,
+      "source": "level",
+      "picked": "meleeDrone@common",
+      "offered": [
+        "shield@common",
+        "meleeDrone@common",
+        "slipstream@uncommon"
+      ]
+    },
+    {
+      "t": 300,
+      "clock": "25:00",
+      "level": 11,
+      "source": "tower",
+      "picked": "damageMult@rare",
+      "offered": [
+        "jumpHeight@common",
+        "fireRateMult@common",
+        "damageMult@rare"
+      ]
+    },
+    {
+      "t": 326,
+      "clock": "24:34",
+      "level": 12,
+      "source": "level",
+      "picked": "magnet@uncommon",
+      "offered": [
+        "magnet@uncommon",
+        "shield@common",
+        "meleeDrone@uncommon"
+      ]
+    },
+    {
+      "t": 370,
+      "clock": "23:50",
+      "level": 13,
+      "source": "level",
+      "picked": "magnet@common",
+      "offered": [
+        "arc@common",
+        "magnet@common",
+        "shield@common"
+      ]
+    },
+    {
+      "t": 377,
+      "clock": "23:43",
+      "level": 13,
+      "source": "tower",
+      "picked": "xpGain@uncommon",
+      "offered": [
+        "xpGain@uncommon",
+        "maxHp@common",
+        "moveSpeed@common"
+      ]
+    },
+    {
+      "t": 394,
+      "clock": "23:25",
+      "level": 14,
+      "source": "level",
+      "picked": "blaster@uncommon",
+      "offered": [
+        "meleeDrone@common",
+        "blaster@uncommon",
+        "pulse@uncommon"
+      ]
+    },
+    {
+      "t": 401,
+      "clock": "23:19",
+      "level": 14,
+      "source": "tower",
+      "picked": "jumpHeight@common",
+      "offered": [
+        "jumpHeight@common",
+        "xpGain@common",
+        "dashCooldown@common"
+      ]
+    },
+    {
+      "t": 421,
+      "clock": "22:59",
+      "level": 15,
+      "source": "level",
+      "picked": "meleeDrone@common",
+      "offered": [
+        "meleeDrone@common",
+        "slipstream@uncommon",
+        "blaster@common"
+      ]
+    },
+    {
+      "t": 424,
+      "clock": "22:56",
+      "level": 15,
+      "source": "tower",
+      "picked": "fallReduction@rare",
+      "offered": [
+        "fallReduction@rare",
+        "wallRunUpSpeed@uncommon",
+        "damageReduction@common"
+      ]
+    },
+    {
+      "t": 436,
+      "clock": "22:43",
+      "level": 16,
+      "source": "level",
+      "picked": "magnet@rare",
+      "offered": [
+        "magnet@rare",
+        "breakaway@uncommon",
+        "pulse@rare"
+      ]
+    },
+    {
+      "t": 436,
+      "clock": "22:43",
+      "level": 16,
+      "source": "tower",
+      "picked": "airJump@epic",
+      "offered": [
+        "dashSpeed@uncommon",
+        "maxHp@common",
+        "airJump@epic"
+      ]
+    },
+    {
+      "t": 445,
+      "clock": "22:34",
+      "level": 17,
+      "source": "level",
+      "picked": "updraft@legendary",
+      "offered": [
+        "magnet@common",
+        "updraft@legendary",
+        "shield@uncommon"
+      ]
+    },
+    {
+      "t": 448,
+      "clock": "22:31",
+      "level": 17,
+      "source": "tower",
+      "picked": "dashSpeed@uncommon",
+      "offered": [
+        "dashCooldown@uncommon",
+        "fireRateMult@uncommon",
+        "dashSpeed@uncommon"
+      ]
+    },
+    {
+      "t": 460,
+      "clock": "22:19",
+      "level": 17,
+      "source": "tower",
+      "picked": "dashCooldown@rare",
+      "offered": [
+        "moveSpeed@uncommon",
+        "airDamage@common",
+        "dashCooldown@rare"
+      ]
+    },
+    {
+      "t": 482,
+      "clock": "21:57",
+      "level": 18,
+      "source": "level",
+      "picked": "pulse@common",
+      "offered": [
+        "pulse@common",
+        "shield@common",
+        "breakaway@uncommon"
+      ]
+    },
+    {
+      "t": 482,
+      "clock": "21:57",
+      "level": 18,
+      "source": "tower",
+      "picked": "towerFillSpeed@uncommon",
+      "offered": [
+        "wallRunTime@rare",
+        "towerFillSpeed@uncommon",
+        "fireRateMult@rare"
+      ]
+    },
+    {
+      "t": 500,
+      "clock": "21:39",
+      "level": 18,
+      "source": "tower",
+      "picked": "xpGain@uncommon",
+      "offered": [
+        "altitudeDamage@common",
+        "damageReduction@common",
+        "xpGain@uncommon"
+      ]
+    },
+    {
+      "t": 504,
+      "clock": "21:35",
+      "level": 19,
+      "source": "level",
+      "picked": "blaster@uncommon",
+      "offered": [
+        "updraft@common",
+        "arc@common",
+        "blaster@uncommon"
+      ]
+    },
+    {
+      "t": 504,
+      "clock": "21:35",
+      "level": 20,
+      "source": "level",
+      "picked": "meleeDrone@rare",
+      "offered": [
+        "updraft@common",
+        "meleeDrone@rare",
+        "magnet@common"
+      ]
+    },
+    {
+      "t": 529,
+      "clock": "21:10",
+      "level": 21,
+      "source": "level",
+      "picked": "blaster@common",
+      "offered": [
+        "impact@uncommon",
+        "shield@common",
+        "blaster@common"
+      ]
+    },
+    {
+      "t": 530,
+      "clock": "21:10",
+      "level": 22,
+      "source": "level",
+      "picked": "updraft@uncommon",
+      "offered": [
+        "shield@common",
+        "updraft@uncommon",
+        "pulse@uncommon"
+      ]
+    },
+    {
+      "t": 531,
+      "clock": "21:09",
+      "level": 22,
+      "source": "tower",
+      "picked": "glideSpeedMult@uncommon",
+      "offered": [
+        "glideSpeedMult@uncommon",
+        "wallRunUpSpeed@common",
+        "maxHp@common"
+      ]
+    },
+    {
+      "t": 562,
+      "clock": "20:37",
+      "level": 23,
+      "source": "level",
+      "picked": "meleeDrone@epic",
+      "offered": [
+        "shield@uncommon",
+        "magnet@common",
+        "meleeDrone@epic"
+      ]
+    },
+    {
+      "t": 572,
+      "clock": "20:28",
+      "level": 23,
+      "source": "largeTower",
+      "picked": "towerFillSpeed@uncommon",
+      "offered": [
+        "towerFillSpeed@uncommon",
+        "dashCharge@epic",
+        "wallRunTime@uncommon"
+      ]
+    },
+    {
+      "t": 574,
+      "clock": "20:26",
+      "level": 24,
+      "source": "level",
+      "picked": "magnet@common",
+      "offered": [
+        "magnet@common",
+        "pulse@common",
+        "shield@common"
+      ]
+    },
+    {
+      "t": 594,
+      "clock": "20:06",
+      "level": 24,
+      "source": "tower",
+      "picked": "fireRateMult@rare",
+      "offered": [
+        "wallRunUpSpeed@common",
+        "magnetRadius@uncommon",
+        "fireRateMult@rare"
+      ]
+    },
+    {
+      "t": 610,
+      "clock": "19:49",
+      "level": 25,
+      "source": "level",
+      "picked": "shield@rare",
+      "offered": [
+        "blaster@common",
+        "shield@rare",
+        "pulse@uncommon"
+      ]
+    },
+    {
+      "t": 641,
+      "clock": "19:19",
+      "level": 26,
+      "source": "level",
+      "picked": "magnet@epic",
+      "offered": [
+        "pulse@rare",
+        "arc@common",
+        "magnet@epic"
+      ]
+    },
+    {
+      "t": 641,
+      "clock": "19:19",
+      "level": 26,
+      "source": "tower",
+      "picked": "moveSpeed@common",
+      "offered": [
+        "xpGain@common",
+        "moveSpeed@common",
+        "fireRateMult@common"
+      ]
+    },
+    {
+      "t": 647,
+      "clock": "19:13",
+      "level": 26,
+      "source": "tower",
+      "picked": "towerFillSpeed@rare",
+      "offered": [
+        "towerFillSpeed@rare",
+        "fireRateMult@common",
+        "jumpHeight@common"
+      ]
+    },
+    {
+      "t": 666,
+      "clock": "18:53",
+      "level": 27,
+      "source": "level",
+      "picked": "updraft@epic",
+      "offered": [
+        "magnet@common",
+        "shield@uncommon",
+        "updraft@epic"
+      ]
+    },
+    {
+      "t": 699,
+      "clock": "18:21",
+      "level": 28,
+      "source": "level",
+      "picked": "updraft@rare",
+      "offered": [
+        "meleeDrone@common",
+        "updraft@rare",
+        "pulse@common"
+      ]
+    },
+    {
+      "t": 724,
+      "clock": "17:55",
+      "level": 29,
+      "source": "level",
+      "picked": "shield@uncommon",
+      "offered": [
+        "pulse@common",
+        "meleeDrone@common",
+        "shield@uncommon"
+      ]
+    },
+    {
+      "t": 725,
+      "clock": "17:55",
+      "level": 29,
+      "source": "tower",
+      "picked": "glideSpeedMult@rare",
+      "offered": [
+        "glideSpeedMult@rare",
+        "airDamage@common",
+        "jumpHeight@common"
+      ]
+    },
+    {
+      "t": 743,
+      "clock": "17:36",
+      "level": 30,
+      "source": "level",
+      "picked": "updraft@uncommon",
+      "offered": [
+        "shield@common",
+        "blaster@common",
+        "updraft@uncommon"
+      ]
+    },
+    {
+      "t": 755,
+      "clock": "17:24",
+      "level": 30,
+      "source": "tower",
+      "picked": "hpRegen@uncommon",
+      "offered": [
+        "magnetRadius@common",
+        "jumpHeight@common",
+        "hpRegen@uncommon"
+      ]
+    },
+    {
+      "t": 761,
+      "clock": "17:19",
+      "level": 31,
+      "source": "level",
+      "picked": "blaster@rare",
+      "offered": [
+        "updraft@common",
+        "blaster@rare",
+        "impact@uncommon"
+      ]
+    },
+    {
+      "t": 763,
+      "clock": "17:17",
+      "level": 31,
+      "source": "tower",
+      "picked": "xpGain@uncommon",
+      "offered": [
+        "xpGain@uncommon",
+        "moveSpeed@common",
+        "wallRunTime@common"
+      ]
+    },
+    {
+      "t": 785,
+      "clock": "16:55",
+      "level": 32,
+      "source": "level",
+      "picked": "arc@uncommon",
+      "offered": [
+        "arc@uncommon",
+        "magnet@common",
+        "spider@rare"
+      ]
+    },
+    {
+      "t": 796,
+      "clock": "16:43",
+      "level": 32,
+      "source": "tower",
+      "picked": "magnetRadius@rare",
+      "offered": [
+        "magnetRadius@rare",
+        "damageReduction@common",
+        "slideBoost@common"
+      ]
+    },
+    {
+      "t": 803,
+      "clock": "16:36",
+      "level": 33,
+      "source": "level",
+      "picked": "blaster@common",
+      "offered": [
+        "shield@common",
+        "blaster@common",
+        "spider@rare"
+      ]
+    },
+    {
+      "t": 815,
+      "clock": "16:25",
+      "level": 33,
+      "source": "tower",
+      "picked": "airDamage@rare",
+      "offered": [
+        "airDamage@rare",
+        "xpGain@uncommon",
+        "magnetRadius@common"
+      ]
+    },
+    {
+      "t": 839,
+      "clock": "16:01",
+      "level": 33,
+      "source": "tower",
+      "picked": "hpRegen@uncommon",
+      "offered": [
+        "airDamage@common",
+        "hpRegen@uncommon",
+        "glideSpeedMult@common"
+      ]
+    },
+    {
+      "t": 842,
+      "clock": "15:57",
+      "level": 34,
+      "source": "level",
+      "picked": "updraft@rare",
+      "offered": [
+        "updraft@rare",
+        "meleeDrone@common",
+        "shield@common"
+      ]
+    },
+    {
+      "t": 854,
+      "clock": "15:46",
+      "level": 35,
+      "source": "level",
+      "picked": "meleeDrone@rare",
+      "offered": [
+        "arc@common",
+        "meleeDrone@rare",
+        "updraft@common"
+      ]
+    },
+    {
+      "t": 879,
+      "clock": "15:20",
+      "level": 35,
+      "source": "tower",
+      "picked": "fallReduction@uncommon",
+      "offered": [
+        "dashCooldown@common",
+        "fallReduction@uncommon",
+        "glideSpeedMult@common"
+      ]
+    },
+    {
+      "t": 880,
+      "clock": "15:20",
+      "level": 36,
+      "source": "level",
+      "picked": "pulse@epic",
+      "offered": [
+        "arc@common",
+        "shield@uncommon",
+        "pulse@epic"
+      ]
+    },
+    {
+      "t": 896,
+      "clock": "15:04",
+      "level": 37,
+      "source": "level",
+      "picked": "breakaway@uncommon",
+      "offered": [
+        "blaster@common",
+        "magnet@common",
+        "breakaway@uncommon"
+      ]
+    },
+    {
+      "t": 906,
+      "clock": "14:54",
+      "level": 38,
+      "source": "level",
+      "picked": "breakaway@common",
+      "offered": [
+        "breakaway@common",
+        "pulse@common",
+        "magnet@common"
+      ]
+    },
+    {
+      "t": 917,
+      "clock": "14:43",
+      "level": 39,
+      "source": "level",
+      "picked": "breakaway@rare",
+      "offered": [
+        "breakaway@rare",
+        "blaster@rare",
+        "pulse@rare"
+      ]
+    },
+    {
+      "t": 933,
+      "clock": "14:26",
+      "level": 39,
+      "source": "tower",
+      "picked": "dashSpeed@rare",
+      "offered": [
+        "glideSpeedMult@common",
+        "dashSpeed@rare",
+        "wallRunTime@rare"
+      ]
+    },
+    {
+      "t": 936,
+      "clock": "14:24",
+      "level": 40,
+      "source": "level",
+      "picked": "meleeDrone@common",
+      "offered": [
+        "meleeDrone@common",
+        "updraft@common",
+        "breakaway@common"
+      ]
+    },
+    {
+      "t": 942,
+      "clock": "14:18",
+      "level": 40,
+      "source": "tower",
+      "picked": "glideSpeedMult@uncommon",
+      "offered": [
+        "glideSpeedMult@uncommon",
+        "wallRunTime@common",
+        "towerFillSpeed@common"
+      ]
+    },
+    {
+      "t": 953,
+      "clock": "14:07",
+      "level": 41,
+      "source": "level",
+      "picked": "blaster@uncommon",
+      "offered": [
+        "meleeDrone@common",
+        "blaster@uncommon",
+        "magnet@common"
+      ]
+    },
+    {
+      "t": 956,
+      "clock": "14:04",
+      "level": 41,
+      "source": "tower",
+      "picked": "fallReduction@rare",
+      "offered": [
+        "fallReduction@rare",
+        "dashCharge@epic",
+        "towerFillSpeed@uncommon"
+      ]
+    },
+    {
+      "t": 962,
+      "clock": "13:57",
+      "level": 42,
+      "source": "level",
+      "picked": "arc@legendary",
+      "offered": [
+        "shield@uncommon",
+        "breakaway@common",
+        "arc@legendary"
+      ]
+    },
+    {
+      "t": 963,
+      "clock": "13:57",
+      "level": 43,
+      "source": "level",
+      "picked": "magnet@uncommon",
+      "offered": [
+        "meleeDrone@common",
+        "magnet@uncommon",
+        "arc@common"
+      ]
+    },
+    {
+      "t": 969,
+      "clock": "13:50",
+      "level": 43,
+      "source": "tower",
+      "picked": "towerFillSpeed@uncommon",
+      "offered": [
+        "towerFillSpeed@uncommon",
+        "maxHp@common",
+        "glideSpeedMult@uncommon"
+      ]
+    },
+    {
+      "t": 978,
+      "clock": "13:41",
+      "level": 44,
+      "source": "level",
+      "picked": "breakaway@uncommon",
+      "offered": [
+        "updraft@rare",
+        "meleeDrone@uncommon",
+        "breakaway@uncommon"
+      ]
+    },
+    {
+      "t": 991,
+      "clock": "13:29",
+      "level": 45,
+      "source": "level",
+      "picked": "pulse@uncommon",
+      "offered": [
+        "breakaway@common",
+        "pulse@uncommon",
+        "meleeDrone@common"
+      ]
+    },
+    {
+      "t": 991,
+      "clock": "13:29",
+      "level": 46,
+      "source": "level",
+      "picked": "meleeDrone@uncommon",
+      "offered": [
+        "pulse@common",
+        "shield@common",
+        "meleeDrone@uncommon"
+      ]
+    },
+    {
+      "t": 1000,
+      "clock": "13:20",
+      "level": 47,
+      "source": "level",
+      "picked": "arc@uncommon",
+      "offered": [
+        "arc@uncommon",
+        "breakaway@common",
+        "shield@common"
+      ]
+    },
+    {
+      "t": 1012,
+      "clock": "13:08",
+      "level": 48,
+      "source": "level",
+      "picked": "breakaway@rare",
+      "offered": [
+        "shield@common",
+        "breakaway@rare",
+        "arc@common"
+      ]
+    },
+    {
+      "t": 1039,
+      "clock": "12:41",
+      "level": 49,
+      "source": "level",
+      "picked": "updraft@uncommon",
+      "offered": [
+        "updraft@uncommon",
+        "shield@common",
+        "breakaway@common"
+      ]
+    },
+    {
+      "t": 1065,
+      "clock": "12:14",
+      "level": 49,
+      "source": "largeTower",
+      "picked": "extraProjectiles@epic",
+      "offered": [
+        "extraProjectiles@epic",
+        "dashCharge@epic",
+        "glideSpeedMult@uncommon"
+      ]
+    },
+    {
+      "t": 1092,
+      "clock": "11:47",
+      "level": 50,
+      "source": "level",
+      "picked": "pulse@uncommon",
+      "offered": [
+        "arc@common",
+        "pulse@uncommon",
+        "shield@common"
+      ]
+    },
+    {
+      "t": 1092,
+      "clock": "11:47",
+      "level": 50,
+      "source": "largeTower",
+      "picked": "jumpAndDash@legendary",
+      "offered": [
+        "jumpAndDash@legendary",
+        "hpRegen@uncommon",
+        "slideBoost@rare"
+      ]
+    },
+    {
+      "t": 1111,
+      "clock": "11:29",
+      "level": 50,
+      "source": "tower",
+      "picked": "dashSpeed@rare",
+      "offered": [
+        "dashSpeed@rare",
+        "airDamage@uncommon",
+        "altitudeDamage@common"
+      ]
+    },
+    {
+      "t": 1136,
+      "clock": "11:03",
+      "level": 50,
+      "source": "largeTower",
+      "picked": "slideBoost@rare",
+      "offered": [
+        "dashCooldown@rare",
+        "xpGain@uncommon",
+        "slideBoost@rare"
+      ]
+    },
+    {
+      "t": 1144,
+      "clock": "10:55",
+      "level": 51,
+      "source": "level",
+      "picked": "arc@rare",
+      "offered": [
+        "pulse@uncommon",
+        "arc@rare",
+        "breakaway@rare"
+      ]
+    },
+    {
+      "t": 1144,
+      "clock": "10:55",
+      "level": 51,
+      "source": "tower",
+      "picked": "fireRateMult@rare",
+      "offered": [
+        "fireRateMult@rare",
+        "airJump@epic",
+        "xpGain@common"
+      ]
+    },
+    {
+      "t": 1168,
+      "clock": "10:32",
+      "level": 51,
+      "source": "largeTower",
+      "picked": "magnetRadius@rare",
+      "offered": [
+        "magnetRadius@rare",
+        "damageReduction@uncommon",
+        "airDamage@rare"
+      ]
+    },
+    {
+      "t": 1180,
+      "clock": "10:19",
+      "level": 52,
+      "source": "level",
+      "picked": "shield@uncommon",
+      "offered": [
+        "pulse@common",
+        "shield@uncommon",
+        "breakaway@common"
+      ]
+    },
+    {
+      "t": 1190,
+      "clock": "10:09",
+      "level": 53,
+      "source": "level",
+      "picked": "arc@common",
+      "offered": [
+        "breakaway@common",
+        "arc@common",
+        "pulse@common"
+      ]
+    },
+    {
+      "t": 1204,
+      "clock": "09:56",
+      "level": 54,
+      "source": "level",
+      "picked": "arc@rare",
+      "offered": [
+        "pulse@common",
+        "shield@uncommon",
+        "arc@rare"
+      ]
+    },
+    {
+      "t": 1239,
+      "clock": "09:21",
+      "level": 55,
+      "source": "level",
+      "picked": "arc@epic",
+      "offered": [
+        "arc@epic",
+        "breakaway@rare",
+        "pulse@common"
+      ]
+    },
+    {
+      "t": 1249,
+      "clock": "09:10",
+      "level": 55,
+      "source": "largeTower",
+      "picked": "jumpAndDash@legendary",
+      "offered": [
+        "glideSpeedMult@uncommon",
+        "damageMult@uncommon",
+        "jumpAndDash@legendary"
+      ]
+    },
+    {
+      "t": 1259,
+      "clock": "09:01",
+      "level": 56,
+      "source": "level",
+      "picked": "pulse@rare",
+      "offered": [
+        "breakaway@common",
+        "pulse@rare",
+        "shield@common"
+      ]
+    },
+    {
+      "t": 1262,
+      "clock": "08:58",
+      "level": 56,
+      "source": "tower",
+      "picked": "airDamage@uncommon",
+      "offered": [
+        "airDamage@uncommon",
+        "hpRegen@common",
+        "dashCooldown@common"
+      ]
+    },
+    {
+      "t": 1264,
+      "clock": "08:56",
+      "level": 57,
+      "source": "level",
+      "picked": "shield@legendary",
+      "offered": [
+        "shield@legendary",
+        "pulse@common",
+        "breakaway@uncommon"
+      ]
+    },
+    {
+      "t": 1264,
+      "clock": "08:55",
+      "level": 58,
+      "source": "level",
+      "picked": "shield@uncommon",
+      "offered": [
+        "shield@uncommon",
+        "pulse@common",
+        "breakaway@common"
+      ]
+    },
+    {
+      "t": 1269,
+      "clock": "08:51",
+      "level": 59,
+      "source": "level",
+      "picked": "shield@rare",
+      "offered": [
+        "shield@rare",
+        "pulse@uncommon",
+        "breakaway@common"
+      ]
+    },
+    {
+      "t": 1274,
+      "clock": "08:45",
+      "level": 60,
+      "source": "level",
+      "picked": "pulse@epic",
+      "offered": [
+        "pulse@epic",
+        "breakaway@common",
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1288,
+      "clock": "08:32",
+      "level": 60,
+      "source": "tower",
+      "picked": "damageMult@common",
+      "offered": [
+        "damageMult@common",
+        "dashCooldown@common",
+        "slideBoost@common"
+      ]
+    },
+    {
+      "t": 1289,
+      "clock": "08:31",
+      "level": 61,
+      "source": "level",
+      "picked": "breakaway@uncommon",
+      "offered": [
+        "pulse@common",
+        "breakaway@uncommon",
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1297,
+      "clock": "08:23",
+      "level": 62,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "breakaway@common",
+        "pulse@common",
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1320,
+      "clock": "08:00",
+      "level": 63,
+      "source": "level",
+      "picked": "pulse@common",
+      "offered": [
+        "pulse@common",
+        "breakaway@common",
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1335,
+      "clock": "07:44",
+      "level": 64,
+      "source": "level",
+      "picked": "breakaway@epic",
+      "offered": [
+        "breakaway@epic",
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1336,
+      "clock": "07:43",
+      "level": 67,
+      "source": "level",
+      "picked": "breakaway@uncommon",
+      "offered": [
+        "breakaway@uncommon",
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1336,
+      "clock": "07:43",
+      "level": 67,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1336,
+      "clock": "07:43",
+      "level": 67,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1336,
+      "clock": "07:43",
+      "level": 68,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1336,
+      "clock": "07:43",
+      "level": 69,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1341,
+      "clock": "07:39",
+      "level": 70,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1351,
+      "clock": "07:28",
+      "level": 71,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1367,
+      "clock": "07:13",
+      "level": 72,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1380,
+      "clock": "07:00",
+      "level": 73,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1380,
+      "clock": "06:59",
+      "level": 73,
+      "source": "tower",
+      "picked": "dashSpeed@uncommon",
+      "offered": [
+        "dashSpeed@uncommon",
+        "fallReduction@common",
+        "airDamage@common"
+      ]
+    },
+    {
+      "t": 1386,
+      "clock": "06:53",
+      "level": 73,
+      "source": "tower",
+      "picked": "moveSpeed@rare",
+      "offered": [
+        "moveSpeed@rare",
+        "jumpHeight@rare",
+        "damageMult@uncommon"
+      ]
+    },
+    {
+      "t": 1389,
+      "clock": "06:51",
+      "level": 74,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1413,
+      "clock": "06:27",
+      "level": 75,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1434,
+      "clock": "06:05",
+      "level": 76,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1438,
+      "clock": "06:02",
+      "level": 76,
+      "source": "tower",
+      "picked": "xpGain@uncommon",
+      "offered": [
+        "altitudeDamage@common",
+        "airDamage@uncommon",
+        "xpGain@uncommon"
+      ]
+    },
+    {
+      "t": 1456,
+      "clock": "05:44",
+      "level": 76,
+      "source": "tower",
+      "picked": "damageReduction@uncommon",
+      "offered": [
+        "damageReduction@uncommon",
+        "magnetRadius@common",
+        "slideBoost@common"
+      ]
+    },
+    {
+      "t": 1460,
+      "clock": "05:40",
+      "level": 77,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1478,
+      "clock": "05:22",
+      "level": 78,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1482,
+      "clock": "05:17",
+      "level": 78,
+      "source": "largeTower",
+      "picked": "extraProjectiles@epic",
+      "offered": [
+        "jumpAndDash@legendary",
+        "extraProjectiles@epic",
+        "airDamage@uncommon"
+      ]
+    },
+    {
+      "t": 1498,
+      "clock": "05:02",
+      "level": 79,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1533,
+      "clock": "04:26",
+      "level": 79,
+      "source": "largeTower",
+      "picked": "extraProjectiles@epic",
+      "offered": [
+        "jumpAndDash@legendary",
+        "magnetRadius@uncommon",
+        "extraProjectiles@epic"
+      ]
+    },
+    {
+      "t": 1543,
+      "clock": "04:17",
+      "level": 79,
+      "source": "tower",
+      "picked": "damageReduction@uncommon",
+      "offered": [
+        "dashSpeed@common",
+        "altitudeDamage@common",
+        "damageReduction@uncommon"
+      ]
+    },
+    {
+      "t": 1551,
+      "clock": "04:09",
+      "level": 79,
+      "source": "tower",
+      "picked": "damageReduction@common",
+      "offered": [
+        "maxHp@common",
+        "hpRegen@common",
+        "damageReduction@common"
+      ]
+    },
+    {
+      "t": 1561,
+      "clock": "03:58",
+      "level": 80,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1574,
+      "clock": "03:45",
+      "level": 80,
+      "source": "largeTower",
+      "picked": "altitudeDamage@rare",
+      "offered": [
+        "jumpAndDash@legendary",
+        "altitudeDamage@rare",
+        "damageMult@rare"
+      ]
+    },
+    {
+      "t": 1600,
+      "clock": "03:20",
+      "level": 80,
+      "source": "tower",
+      "picked": "damageMult@rare",
+      "offered": [
+        "fireRateMult@common",
+        "damageMult@rare",
+        "slideBoost@common"
+      ]
+    },
+    {
+      "t": 1636,
+      "clock": "02:44",
+      "level": 81,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1636,
+      "clock": "02:44",
+      "level": 81,
+      "source": "largeTower",
+      "picked": "airJump@epic",
+      "offered": [
+        "maxHp@uncommon",
+        "fallReduction@rare",
+        "airJump@epic"
+      ]
+    },
+    {
+      "t": 1648,
+      "clock": "02:32",
+      "level": 81,
+      "source": "tower",
+      "picked": "airDamage@uncommon",
+      "offered": [
+        "moveSpeed@uncommon",
+        "towerFillSpeed@common",
+        "airDamage@uncommon"
+      ]
+    },
+    {
+      "t": 1660,
+      "clock": "02:20",
+      "level": 82,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1672,
+      "clock": "02:07",
+      "level": 82,
+      "source": "tower",
+      "picked": "towerFillSpeed@uncommon",
+      "offered": [
+        "towerFillSpeed@uncommon",
+        "dashCooldown@common",
+        "slideBoost@common"
+      ]
+    },
+    {
+      "t": 1677,
+      "clock": "02:03",
+      "level": 83,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1691,
+      "clock": "01:49",
+      "level": 84,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1692,
+      "clock": "01:48",
+      "level": 84,
+      "source": "tower",
+      "picked": "towerFillSpeed@uncommon",
+      "offered": [
+        "wallRunUpSpeed@common",
+        "towerFillSpeed@uncommon",
+        "hpRegen@common"
+      ]
+    },
+    {
+      "t": 1698,
+      "clock": "01:41",
+      "level": 84,
+      "source": "tower",
+      "picked": "towerFillSpeed@rare",
+      "offered": [
+        "towerFillSpeed@rare",
+        "hpRegen@common",
+        "dashSpeed@common"
+      ]
+    },
+    {
+      "t": 1727,
+      "clock": "01:13",
+      "level": 85,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1786,
+      "clock": "00:14",
+      "level": 86,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1792,
+      "clock": "00:07",
+      "level": 87,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    },
+    {
+      "t": 1806,
+      "clock": "−00:05",
+      "level": 88,
+      "source": "level",
+      "picked": "filler@common",
+      "offered": [
+        "filler@common"
+      ]
+    }
+  ],
+  "power": [
+    {
+      "t": 0,
+      "level": 1,
+      "xp": 0,
+      "index": 1,
+      "vsPlaytest1": 1
+    },
+    {
+      "t": 30,
+      "level": 2,
+      "xp": 58,
+      "index": 1,
+      "vsPlaytest1": 0.41
+    },
+    {
+      "t": 60,
+      "level": 2,
+      "xp": 104,
+      "index": 1.01,
+      "vsPlaytest1": 0.34
+    },
+    {
+      "t": 90,
+      "level": 3,
+      "xp": 137,
+      "index": 1.01,
+      "vsPlaytest1": 0.31
+    },
+    {
+      "t": 120,
+      "level": 5,
+      "xp": 414,
+      "index": 3.54,
+      "vsPlaytest1": 0.4
+    },
+    {
+      "t": 150,
+      "level": 6,
+      "xp": 581,
+      "index": 7.36,
+      "vsPlaytest1": 0.56
+    },
+    {
+      "t": 180,
+      "level": 6,
+      "xp": 623,
+      "index": 7.43,
+      "vsPlaytest1": 0.54
+    },
+    {
+      "t": 210,
+      "level": 8,
+      "xp": 845,
+      "index": 14.44,
+      "vsPlaytest1": 0.75
+    },
+    {
+      "t": 240,
+      "level": 8,
+      "xp": 867,
+      "index": 14.57,
+      "vsPlaytest1": 0.74
+    },
+    {
+      "t": 270,
+      "level": 9,
+      "xp": 1101,
+      "index": 22.9,
+      "vsPlaytest1": 0.98
+    },
+    {
+      "t": 300,
+      "level": 11,
+      "xp": 1554,
+      "index": 48.8,
+      "vsPlaytest1": 1.18
+    },
+    {
+      "t": 330,
+      "level": 12,
+      "xp": 1835,
+      "index": 55.92,
+      "vsPlaytest1": 1.19
+    },
+    {
+      "t": 360,
+      "level": 12,
+      "xp": 2033,
+      "index": 56.21,
+      "vsPlaytest1": 0.98
+    },
+    {
+      "t": 390,
+      "level": 13,
+      "xp": 2395,
+      "index": 70.86,
+      "vsPlaytest1": 1.08
+    },
+    {
+      "t": 420,
+      "level": 14,
+      "xp": 2789,
+      "index": 82.46,
+      "vsPlaytest1": 1.1
+    },
+    {
+      "t": 450,
+      "level": 17,
+      "xp": 3744,
+      "index": 118.04,
+      "vsPlaytest1": 1.19
+    },
+    {
+      "t": 480,
+      "level": 17,
+      "xp": 3984,
+      "index": 118.35,
+      "vsPlaytest1": 1.12
+    },
+    {
+      "t": 510,
+      "level": 20,
+      "xp": 5048,
+      "index": 175.69,
+      "vsPlaytest1": 1.3
+    },
+    {
+      "t": 540,
+      "level": 22,
+      "xp": 6323,
+      "index": 220.01,
+      "vsPlaytest1": 1.27
+    },
+    {
+      "t": 570,
+      "level": 23,
+      "xp": 6656,
+      "index": 249.32,
+      "vsPlaytest1": 1.36
+    },
+    {
+      "t": 600,
+      "level": 24,
+      "xp": 7553,
+      "index": 298.77,
+      "vsPlaytest1": 1.29
+    },
+    {
+      "t": 630,
+      "level": 25,
+      "xp": 8189,
+      "index": 331.04,
+      "vsPlaytest1": 1.29
+    },
+    {
+      "t": 660,
+      "level": 26,
+      "xp": 8777,
+      "index": 365.38,
+      "vsPlaytest1": 1.3
+    },
+    {
+      "t": 690,
+      "level": 27,
+      "xp": 9403,
+      "index": 401.77,
+      "vsPlaytest1": 1.3
+    },
+    {
+      "t": 720,
+      "level": 28,
+      "xp": 10246,
+      "index": 441.28,
+      "vsPlaytest1": 1.28
+    },
+    {
+      "t": 750,
+      "level": 30,
+      "xp": 11199,
+      "index": 530.72,
+      "vsPlaytest1": 1.36
+    },
+    {
+      "t": 780,
+      "level": 31,
+      "xp": 12413,
+      "index": 581.2,
+      "vsPlaytest1": 1.29
+    },
+    {
+      "t": 810,
+      "level": 33,
+      "xp": 13420,
+      "index": 705.71,
+      "vsPlaytest1": 1.4
+    },
+    {
+      "t": 840,
+      "level": 33,
+      "xp": 13990,
+      "index": 707.52,
+      "vsPlaytest1": 1.31
+    },
+    {
+      "t": 870,
+      "level": 35,
+      "xp": 15554,
+      "index": 943.59,
+      "vsPlaytest1": 1.35
+    },
+    {
+      "t": 900,
+      "level": 37,
+      "xp": 16889,
+      "index": 1059.92,
+      "vsPlaytest1": 1.47
+    },
+    {
+      "t": 930,
+      "level": 39,
+      "xp": 19169,
+      "index": 1257.24,
+      "vsPlaytest1": 1.41
+    },
+    {
+      "t": 960,
+      "level": 41,
+      "xp": 21346,
+      "index": 1647.48,
+      "vsPlaytest1": 1.4
+    },
+    {
+      "t": 990,
+      "level": 44,
+      "xp": 24463,
+      "index": 2112.92,
+      "vsPlaytest1": 1.4
+    },
+    {
+      "t": 1020,
+      "level": 48,
+      "xp": 28567,
+      "index": 3122.65,
+      "vsPlaytest1": 1.54
+    },
+    {
+      "t": 1050,
+      "level": 49,
+      "xp": 29608,
+      "index": 3392.59,
+      "vsPlaytest1": 1.56
+    },
+    {
+      "t": 1080,
+      "level": 49,
+      "xp": 30262,
+      "index": 2290.41,
+      "vsPlaytest1": 1.11
+    },
+    {
+      "t": 1110,
+      "level": 50,
+      "xp": 31058,
+      "index": 2526.29,
+      "vsPlaytest1": 1.16
+    },
+    {
+      "t": 1140,
+      "level": 50,
+      "xp": 31557,
+      "index": 2526.29,
+      "vsPlaytest1": 1.12
+    },
+    {
+      "t": 1170,
+      "level": 51,
+      "xp": 32011,
+      "index": 2997.39,
+      "vsPlaytest1": 1.2
+    },
+    {
+      "t": 1200,
+      "level": 53,
+      "xp": 35103,
+      "index": 3893.06,
+      "vsPlaytest1": 1.17
+    },
+    {
+      "t": 1230,
+      "level": 54,
+      "xp": 36478,
+      "index": 4291.04,
+      "vsPlaytest1": 1.19
+    },
+    {
+      "t": 1260,
+      "level": 56,
+      "xp": 38065,
+      "index": 4818.52,
+      "vsPlaytest1": 1.34
+    },
+    {
+      "t": 1290,
+      "level": 61,
+      "xp": 45425,
+      "index": 9148.71,
+      "vsPlaytest1": 1.43
+    },
+    {
+      "t": 1320,
+      "level": 63,
+      "xp": 48128,
+      "index": 10940.9,
+      "vsPlaytest1": 1.49
+    },
+    {
+      "t": 1350,
+      "level": 70,
+      "xp": 60870,
+      "index": 18538.24,
+      "vsPlaytest1": 1.4
+    },
+    {
+      "t": 1380,
+      "level": 73,
+      "xp": 64609,
+      "index": 19974.94,
+      "vsPlaytest1": 1.49
+    },
+    {
+      "t": 1410,
+      "level": 74,
+      "xp": 67971,
+      "index": 21509.17,
+      "vsPlaytest1": 1.39
+    },
+    {
+      "t": 1440,
+      "level": 76,
+      "xp": 70393,
+      "index": 28916.11,
+      "vsPlaytest1": 1.47
+    },
+    {
+      "t": 1470,
+      "level": 77,
+      "xp": 73007,
+      "index": 26895.64,
+      "vsPlaytest1": 1.42
+    },
+    {
+      "t": 1500,
+      "level": 79,
+      "xp": 75553,
+      "index": 25258.95,
+      "vsPlaytest1": 1.21
+    },
+    {
+      "t": 1530,
+      "level": 79,
+      "xp": 76209,
+      "index": 25321.47,
+      "vsPlaytest1": 1.18
+    },
+    {
+      "t": 1560,
+      "level": 79,
+      "xp": 77417,
+      "index": 21837.54,
+      "vsPlaytest1": 0.97
+    },
+    {
+      "t": 1590,
+      "level": 80,
+      "xp": 78711,
+      "index": 30678.56,
+      "vsPlaytest1": 0.99
+    },
+    {
+      "t": 1620,
+      "level": 80,
+      "xp": 79109,
+      "index": 28790.79,
+      "vsPlaytest1": 0.98
+    },
+    {
+      "t": 1650,
+      "level": 81,
+      "xp": 79716,
+      "index": 36892.47,
+      "vsPlaytest1": 1.03
+    },
+    {
+      "t": 1680,
+      "level": 83,
+      "xp": 84144,
+      "index": 38902.39,
+      "vsPlaytest1": 1.01
+    },
+    {
+      "t": 1710,
+      "level": 84,
+      "xp": 87000,
+      "index": 41670.87,
+      "vsPlaytest1": 0.98
+    },
+    {
+      "t": 1740,
+      "level": 85,
+      "xp": 87981,
+      "index": 48354.97,
+      "vsPlaytest1": 1.02
+    },
+    {
+      "t": 1770,
+      "level": 85,
+      "xp": 88371,
+      "index": 49657.19,
+      "vsPlaytest1": 1.01
+    },
+    {
+      "t": 1800,
+      "level": 87,
+      "xp": 92481,
+      "index": 51718.7,
+      "vsPlaytest1": 1.01
+    }
+  ],
+  "bonus": {
+    "moveSpeed": 0.17200000000000004,
+    "damageMult": 0.30700000000000005,
+    "magnetRadius": 0.339,
+    "dashCharges": 4,
+    "maxHp": 0.1680000000000001,
+    "blaster.projectiles": 1,
+    "airJumps": 5,
+    "hpRegen": 0.8,
+    "jumpHeight": 0.14700000000000005,
+    "wallRunTime": 0.09600000000000004,
+    "shield.delay": -0.52,
+    "magnet.radius": 1.0999999999999999,
+    "meleeDrone.spin": 0.21000000000000002,
+    "xpGain": 0.2,
+    "blaster.damage": 0.16,
+    "meleeDrone.damage": 0.42,
+    "fallReduction": 0.32,
+    "updraft.time": 1.5499999999999998,
+    "dashSpeed": 0.32,
+    "dashCooldown": -0.08,
+    "pulse.size": 0.34,
+    "towerFillSpeed": 0.64,
+    "blaster.fireRate": 0.05,
+    "glideSpeedMult": 0.18,
+    "fireRateMult": 0.16,
+    "blaster.range": 0.25,
+    "arc.fireRate": 0.49,
+    "airDamage": 0.22,
+    "pulse.damage": 0.24,
+    "breakaway.radius": 0.5299999999999999,
+    "arc.chainRange": 0.2,
+    "breakaway.damage": 0.08,
+    "extraProjectiles": 3,
+    "slideBoost": 0.1,
+    "arc.damage": 0.12,
+    "shield.amount": 0.5,
+    "pulse.fireRate": 0.12,
+    "breakaway.cooldown": -0.08,
+    "damageReduction": 0.08,
+    "altitudeDamage": 0.025
+  },
+  "config": {
+    "rewardsAtHeight": true,
+    "holdZones": true,
+    "largeTowers": true,
+    "climbers": true,
+    "flyers": true,
+    "rooftopClosets": true,
+    "relocation": true,
+    "fallDamage": true,
+    "timeScale": 1,
+    "runLength": 1800,
+    "bossTimes": [
+      4,
+      8,
+      11,
+      15,
+      20
+    ],
+    "finalBossMinTime": 22,
+    "nuke": true,
+    "godMode": false,
+    "moveSpeed": 9,
+    "accelGround": 70,
+    "accelAir": 18,
+    "gravity": 30,
+    "jumpHeight": 2.5,
+    "airJumps": 1,
+    "dashSpeed": 30,
+    "dashTime": 0.16,
+    "dashCooldown": 0.9,
+    "dashCharges": 1,
+    "slideBoost": 1.35,
+    "slideTime": 0.8,
+    "slideFriction": 3,
+    "wallRunTime": 2.5,
+    "wallMode": "free",
+    "wallRunUnlimited": false,
+    "wallJumpRefresh": true,
+    "wallJumpCost": 0.5,
+    "wallRunUpSpeed": 9,
+    "wallRunSideGravity": 0.2,
+    "wallJumpPush": 11,
+    "glide": true,
+    "glideFallSpeed": 3,
+    "glideSpeedMult": 1.2,
+    "autoVault": false,
+    "fallSafeHeight": 8,
+    "fallSafeJumpMult": 3,
+    "fallDmgPerM": 1.5,
+    "maxHp": 100,
+    "hpRegen": 0,
+    "iFrames": 0.5,
+    "contactHitChunk": 5,
+    "bulletMaxHitPct": 0.25,
+    "camDistance": 7,
+    "mouseSensitivity": 0.0025,
+    "stickSensitivity": 3,
+    "invertY": false,
+    "maxEnemies": 600,
+    "spawnPerSec": 3,
+    "spawnGrowthPerMin": 1,
+    "climberShare": 0.3,
+    "flyerShare": 0.25,
+    "closetShare": 0.3,
+    "relocateDistance": 70,
+    "spawnRingMin": 30,
+    "spawnRingMax": 45,
+    "fodderOverlap": 0.6,
+    "bulletSpeedMin": 9,
+    "bulletSpeedMax": 18,
+    "bulletSpeedRampMin": 12,
+    "bulletDmgExp": 0.5,
+    "bossHpMult": 3,
+    "bossXpLevels": 2,
+    "finalBossXpLevels": 5,
+    "civilians": true,
+    "civPedestrians": 300,
+    "civCars": 60,
+    "civOnlyTime": 30,
+    "civRing": 100,
+    "civFleeRadius": 12,
+    "civPedXp": 0.3,
+    "civCarXp": 0.6,
+    "slidingPerMin": 0.08,
+    "tierMult": 1.6,
+    "upgradeMode": "offers",
+    "levelXpMult": 4,
+    "levelPower": "curve",
+    "levelPowerShare": 0.3,
+    "levelDamageBonus": 0.11,
+    "maxItemLevel": 8,
+    "autoPick": false,
+    "weaponSlots": 4,
+    "skillSlots": 4,
+    "towerUpgrades": true,
+    "rarityWeights": {
+      "common": 55,
+      "uncommon": 26,
+      "rare": 12,
+      "epic": 5,
+      "legendary": 2
+    },
+    "fireInterval": 0.45,
+    "projectiles": 2,
+    "extraProjectiles": 0,
+    "damage": 12,
+    "range": 28,
+    "projectileSpeed": 45,
+    "magnetRadius": 4,
+    "cacheCount": 18,
+    "cacheRespawn": 45,
+    "holdZoneCount": 3,
+    "holdZoneRadius": 6,
+    "holdTime": 6,
+    "holdDrain": 1.5,
+    "smallTowerRoofShare": 0.5,
+    "largeTowerCount": 12,
+    "largeTowerRadius": 9,
+    "largeHoldTime": 20,
+    "largeTowerRoofShare": 0.9,
+    "largeTowerXpMult": 3,
+    "largeTowerHeal": 50,
+    "largeTowerRarityShift": 1,
+    "orbs": true,
+    "orbCount": 500,
+    "orbValue": 0.003,
+    "orbRoofShare": 0.4,
+    "orbWallShare": 0.3,
+    "saveEvery": 30,
+    "restartHold": 1,
+    "sound": true,
+    "volume": 0.5,
+    "humVolume": 1,
+    "layout": "mixed",
+    "seed": 1
+  }
+}

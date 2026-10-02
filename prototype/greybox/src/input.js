@@ -51,6 +51,8 @@ export class Input {
       slidePressed: p.has('ControlLeft') || p.has('KeyC'),
       pausePressed: p.has('KeyP'),
       restartPressed: p.has('KeyR'),
+      restartHeld: k.has('KeyR'),
+      escPressed: p.has('Escape'),
       debugPressed: p.has('Backquote') || p.has('Tab'),
       confirmPressed: p.has('Enter'),
       choicePressed: p.has('Digit1') ? 1 : p.has('Digit2') ? 2 : p.has('Digit3') ? 3 : 0,
@@ -82,6 +84,7 @@ export class Input {
       s.dashPressed ||= edge(5) || edge(2) || edge(7); // RB, X, RT
       s.pausePressed ||= edge(9);      // Start
       s.restartPressed ||= edge(8);    // Back/Select
+      s.restartHeld ||= btn(8);
       s.confirmPressed ||= edge(0);
       s.skipPressed ||= edge(3);       // Y
       s.navPressed += (edge(15) ? 1 : 0) - (edge(14) ? 1 : 0); // d-pad right / left

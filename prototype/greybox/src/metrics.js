@@ -24,6 +24,9 @@ export function newStats() {
     largeTowersDone: 0, towersOnRoof: 0, towersOnGround: 0,
     orbsTaken: 0, orbsByPlace: { roof: 0, wall: 0, street: 0 },
     bulletsDestroyed: 0, civKilled: 0, civFriendlyFire: 0,
+    dealtGround: 0, dealtElevated: 0, breakaways: 0,
+    effectiveBySource: {}, effectiveTotal: 0, effectiveAtSample: 0, killsBySource: {},
+    finalBossKillMinute: null,
   };
 }
 
@@ -40,6 +43,25 @@ export function tickStats(s, dt, player) {
   s.maxAltitude = Math.max(s.maxAltitude, player.pos.y);
 }
 
+// Damage the player deals, by where the player is (altitude and airborne damage, PLAN-playtest3 step 7).
+export function recordDealt(s, amount, player) {
+  if (player.pos.y > ELEVATED) s.dealtElevated += amount;
+  else s.dealtGround += amount;
+}
+
+// Damage that actually came off an enemy's HP (overkill excluded), and the source of each kill.
+// damageBySource stays raw so it's comparable with playtests 2–4, but a big area hit on a dense
+// crowd scores far beyond what it removes there (Breakaway, playtest 4).
+export function recordEffective(s, source, amount) {
+  if (amount <= 0) return;
+  s.effectiveBySource[source] = (s.effectiveBySource[source] ?? 0) + amount;
+  s.effectiveTotal += amount;
+}
+
+export function recordKill(s, source) {
+  s.killsBySource[source] = (s.killsBySource[source] ?? 0) + 1;
+}
+
 // Fall damage is kept apart so ground/elevated stay comparable with playtest 1.
 export function recordDamage(s, amount, player, kind) {
   if (kind === 'fall') s.damageFall += amount;
@@ -54,12 +76,15 @@ export function power(s, game) {
   return { index, vsPlaytest1: index / (autoCurve(autoLevelAtXp(s.xpTotal), game.eff.projectiles) * game.eff.damageMult * game.eff.fireRateMult) };
 }
 
-// One sample every 30 real seconds, for Copy metrics JSON.
+// One sample every 30 real seconds, for Copy metrics JSON. The index estimates weapons only;
+// dealtPerSec is measured (effective damage over the last 30 s, skills included).
 export function samplePower(s, game) {
   if (s.time < s.nextPowerSample) return;
   s.nextPowerSample += 30;
   const p = power(s, game);
-  s.power.push({ t: Math.round(s.time), level: game.combat.level, xp: Math.round(s.xpTotal), index: +p.index.toFixed(2), vsPlaytest1: +p.vsPlaytest1.toFixed(2) });
+  const dealtPerSec = Math.round((s.effectiveTotal - s.effectiveAtSample) / 30);
+  s.effectiveAtSample = s.effectiveTotal;
+  s.power.push({ t: Math.round(s.time), level: game.combat.level, xp: Math.round(s.xpTotal), index: +p.index.toFixed(2), vsPlaytest1: +p.vsPlaytest1.toFixed(2), dealtPerSec });
 }
 
 export function summary(s, game) {
@@ -98,8 +123,21 @@ export function summary(s, game) {
     relocations: s.relocations,
     maxAltitude: Math.round(s.maxAltitude),
     bossKillMinutes: s.bossKillTimes,
+    damageDealtGround: Math.round(s.dealtGround),
+    damageDealtElevated: Math.round(s.dealtElevated),
+    wallKicks: game.player.wallKicks,
+    wallKickClimbM: Math.round(game.player.kickClimb),
+    breakaways: s.breakaways,
     damageBySource: Object.fromEntries(Object.entries(s.damageBySource).map(([k, v]) => [k, Math.round(v)])),
+    effectiveDamageBySource: Object.fromEntries(Object.entries(s.effectiveBySource).map(([k, v]) => [k, Math.round(v)])),
+    killsBySource: { ...s.killsBySource },
+    finalBossKillMinute: s.finalBossKillMinute,
   };
+}
+
+// Everything a run records: what Copy metrics JSON copies and what the autosave writes.
+export function exportRun(game) {
+  return { metrics: summary(game.stats, game), picks: game.stats.picks, power: game.stats.power, bonus: game.build.bonus, config: game.cfg };
 }
 
 export function fmtClock(sec) {

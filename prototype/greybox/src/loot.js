@@ -44,7 +44,7 @@ export function makeOffer(targets, n, weights, rng = Math.random) {
       const t = ok[Math.floor(rng() * ok.length)];
       left.splice(left.indexOf(t), 1);
       const opts = t.rolls[r], effects = Array.isArray(opts) ? opts[Math.floor(rng() * opts.length)] : opts;
-      cards.push({ targetId: t.id, name: t.name, rarity: r, effects, item: t.item, kind: t.kind, isNew: t.isNew });
+      cards.push({ targetId: t.id, name: t.name, desc: t.desc, rarity: r, effects, item: t.item, kind: t.kind, isNew: t.isNew });
       break;
     }
   }

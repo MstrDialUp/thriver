@@ -89,6 +89,7 @@ export class Orbs {
       stats.orbsTaken++;
       stats.orbsByPlace[o.place]++;
       game.sfx?.play('orb', o.x, o.y, o.z);
+      game.hud?.orb(o.stat, cfg.orbValue, o.color);
       this.mesh.setMatrixAt(k, new THREE.Matrix4().makeScale(0, 0, 0));
     }
     if (changed) this.mesh.instanceMatrix.needsUpdate = true;

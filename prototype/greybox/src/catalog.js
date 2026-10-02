@@ -30,6 +30,12 @@ export const STATS = {
   slideBoost:     { mode: 'pct', label: 'Slide speed' },
   airJumps:       { mode: 'add', label: 'Air jumps' },
   dashCharges:    { mode: 'add', label: 'Dash charges' },
+  // Playtest 3 notes (PLAN-playtest3 steps 6-7).
+  towerFillSpeed: { mode: 'mult', label: 'Tower charge speed' },
+  altitudeDamage: { mode: 'mult', label: 'Damage per 10 m up' },
+  airDamage:      { mode: 'mult', label: 'Damage while airborne' },
+  extraProjectiles: { mode: 'add', label: 'Projectiles (all weapons)' },
+  wallKick:       { mode: 'add', label: 'Wall kick' },
 };
 
 // A percentage stat on the tower ladder: [common, uncommon, rare].
@@ -64,9 +70,19 @@ export const TOWER_TARGETS = [
   { id: 'airJump', name: '+1 air jump', rolls: { epic: { airJumps: 1 } } },
   { id: 'dashCharge', name: '+1 dash charge', rolls: { epic: { dashCharges: 1 } } },
   { id: 'jumpAndDash', name: '+1 air jump and +1 dash', rolls: { legendary: { airJumps: 1, dashCharges: 1 } } },
+  // Playtest 3 notes (Rich, 2026-09-27). Numbers are placeholders.
+  towerPct('towerFillSpeed', [0.05, 0.08, 0.12]),
+  towerPct('altitudeDamage', [0.01, 0.015, 0.025]),
+  towerPct('airDamage', [0.04, 0.06, 0.10]),
+  { id: 'extraProjectiles', name: '+1 projectile', desc: '+1 projectile for Blaster and Gun Drone.', rolls: { epic: { extraProjectiles: 1 } } },
+  // Wall kick (PLAN-playtest3 step 6): the wall-jump refresh as an item. Once per run, and
+  // never offered while the debug toggle already gives it (a dead card).
+  { id: 'wallKick', name: 'Wall kick', desc: 'Wall jumps work even after your wall-run time is spent, and refill your air jumps.',
+    rolls: { epic: { wallKick: 1 } }, once: true, dead: cfg => cfg?.wallJumpRefresh || cfg?.wallRunUnlimited },
 ];
 
-export const towerTargets = build => TOWER_TARGETS.filter(t => !t.requires || build.items[t.requires]);
+export const towerTargets = (build, cfg) => TOWER_TARGETS.filter(t =>
+  (!t.requires || build.items[t.requires]) && !(t.once && build.bonus[t.id]) && !t.dead?.(cfg));
 
 // Crackdown-style orbs (PLAN-playtest2 step 7): one colour per stat.
 export const ORB_STATS = [
@@ -106,7 +122,7 @@ export const WEAPONS = {
   blaster: {
     name: 'Blaster', offerRarity: null, desc: 'Auto-fires at the nearest enemies.',
     stats: { damage: DMG, fireRate: RATE, projectiles: count('Projectiles'), range: { label: 'Range', ladder: LADDER_PCT } },
-    estDps: (own, eff) => eff.damage * (1 + own('damage')) * Math.min(20, eff.projectiles + own('projectiles')) * (1 + own('fireRate')) / eff.fireInterval,
+    estDps: (own, eff) => eff.damage * (1 + own('damage')) * Math.min(20, eff.projectiles + (eff.extraProjectiles ?? 0) + own('projectiles')) * (1 + own('fireRate')) / eff.fireInterval,
   },
   pulse: {
     name: 'Pulse', offerRarity: 'common', desc: 'Damages everything around you in a sphere, on a beat.',
@@ -139,9 +155,9 @@ export const WEAPONS = {
     name: 'Gun Drone', offerRarity: 'rare', desc: 'Drones follow you and shoot for a while, then recharge.',
     base: { damage: 16, interval: 0.4, range: 22, lifetime: 12, cooldown: 5, count: 1 },
     stats: { damage: DMG, fireRate: RATE, cooldown: COOLDOWN, lifetime: { label: 'Lifetime', ladder: LADDER_PCT }, count: count('Drones') },
-    estDps(own) {
+    estDps(own, eff) {
       const b = this.base, life = b.lifetime * (1 + own('lifetime'));
-      return b.damage * (1 + own('damage')) * (b.count + own('count')) * (1 + own('fireRate')) / b.interval * life / (life + b.cooldown * cdMult(own));
+      return b.damage * (1 + own('damage')) * (b.count + own('count')) * (1 + (eff?.extraProjectiles ?? 0)) * (1 + own('fireRate')) / b.interval * life / (life + b.cooldown * cdMult(own));
     },
   },
 };
@@ -182,6 +198,13 @@ export const SKILLS = {
   hacker: {
     name: 'Hacker', offerRarity: 'rare', desc: 'While you hold a tower zone, enemies in its sphere take 15 damage per second.',
     base: { dps: 15, tick: 0.25 }, stats: { size: PCT('Sphere size'), damage: PCT('Damage') },
+  },
+  breakaway: {
+    name: 'Breakaway', offerRarity: 'uncommon', desc: 'Dash or jump out of a crowd and the spot where you were surrounded explodes.',
+    // crowd: enemies within 8 m that count as "surrounded" for this skill; window: seconds after a
+    // dash or jump in which leaving the crowd counts as breaking away (PLAN-playtest3 step 8).
+    base: { damage: 60, radius: 8, crowd: 5, window: 1.5, cooldown: 3 },
+    stats: { damage: PCT('Damage'), radius: PCT('Radius'), cooldown: { label: 'Cooldown', ladder: LADDER_CD } },
   },
   updraft: {
     name: 'Updraft', offerRarity: 'epic', desc: 'Gliding lifts you for up to 2 s per jump.',
@@ -229,10 +252,16 @@ export const FILLER = { targetId: 'filler', name: 'Patch up', rarity: 'common', 
 
 export const fmtNum = v => (Number.isInteger(v) ? String(v) : v.toFixed(1));
 
+// Signed percentage, to one decimal only when needed: 0.015 → "+1.5%", 0.03 → "+3%".
+export function fmtPct(v) {
+  const x = Math.round(Math.abs(v) * 1000) / 10;
+  return `${v >= 0 ? '+' : '−'}${Number.isInteger(x) ? x : x.toFixed(1)}%`;
+}
+
 export function describeEffects(effects) {
   return Object.entries(effects).map(([stat, v]) => {
     const s = STATS[stat];
     if (s.mode === 'add') return `${v > 0 ? '+' : ''}${fmtNum(v)}${s.unit ?? ''} ${s.label.toLowerCase()}`;
-    return `${s.label} ${v > 0 ? '+' : '−'}${Math.round(Math.abs(v) * 100)}%`;
+    return `${s.label} ${fmtPct(v)}`;
   }).join(', ');
 }

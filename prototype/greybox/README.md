@@ -9,13 +9,17 @@ It is **not** the game, and **not** an engine decision. It answers Q1, and it he
 
 ## Run it
 
-Needs any static file server (ES modules don't load from `file://`) and an internet connection (Three.js and lil-gui load from jsDelivr).
+Needs Node (for the save server) and an internet connection (Three.js and lil-gui load from jsDelivr).
 
 ```bash
 cd prototype/greybox
-python3 -m http.server 8000
+node serve.mjs
 # open http://localhost:8000
 ```
+
+**Every run saves itself** into the repo at `playtests/greybox/<date>/<runId>.json`: every 30 s, and on death, leaving, restarting, pausing and closing the tab. A restart or a crash never loses a run. Commit those files to record a playtest. Each file holds the metrics, every pick, the power samples, the full config, the commit the build came from, and a free-text `note` (debug panel → Run). The HUD shows `saved n s ago` bottom right. **If a save to the server fails** (after playtest 4, whose final save didn't land), the game retries three times, keeps the run in the browser, shows the error on the HUD (`NOT SAVING TO REPO — last error: …`) and in the console, and uploads the run on its own as soon as the server answers again. The server never replaces a run file with an older save, and prints any failed write to its console.
+
+Any static server still works (`python3 -m http.server 8000`), but runs are then **saved only in the browser**, and the HUD warns `NOT SAVING TO REPO` in amber. Those runs upload the next time `serve.mjs` is running, or can be downloaded from debug panel → Run → *Download browser-saved runs*.
 
 Keyboard + mouse or a controller both work. Click the page to capture the mouse.
 
@@ -26,10 +30,11 @@ Keyboard + mouse or a controller both work. Click the page to capture the mouse.
 | Jump / double jump | Space | A |
 | Glide | Hold Space while falling | Hold A |
 | Wall run | Jump into a wall and push: into it climbs, along it runs, diagonally does both (`wall movement: free`; `locked` = playtests 1–2) | same |
-| Wall jump | Space while touching a wall | A |
+| Wall jump | Space while touching a wall, while you have wall-run time left (each one uses 0.5 s of it). With **Wall kick** (or the `wall-jump refresh` toggle): at any wall, and it refills your air jumps. That is the playtest 1–3 mash-jump climb | A |
 | Dash | Shift | RB or X |
 | Slide | Ctrl or C (while moving) | B |
-| Pause / Restart | P / R | Start / Back |
+| Pause / resume | P or Esc | Start |
+| Restart (saves the run first) | **Hold** R for 1 s; a tap does nothing mid-run | Hold Back |
 | Upgrade menu: pick / skip | 1 2 3 or click / 4 | d-pad + A / Y |
 | Debug: level up / level down (undoes that level's pick) | . / , | — |
 | Debug: freeze the horde | F | — |
@@ -43,7 +48,7 @@ Keyboard + mouse or a controller both work. Click the page to capture the mouse.
 | East half: uniform 15–20 m perimeter blocks with courtyards | Paris (low verticality) |
 | Dark blue boxes in streets | Parked cars (snag test for auto-vault) |
 | Tan boxes on sidewalks, grey cars in the inner lanes | Civilians: pedestrians wander and run from you, cars drive and ignore you (they shove you aside; you can ride them). Enemies are swapped in for pedestrians over the run; civilians only for the first 30 s. Destroy them for a little XP. Enemies never target them, but enemy bullets hit them |
-| Coloured orbs (500) | Crackdown-style stat orbs, +0.3% each, colour = stat: green move speed, yellow jump height, orange wall-run time, red max health, purple damage, cyan pickup radius. On roofs, off building walls, and at street level. Same layout every run for a seed |
+| Coloured orbs (500) | Crackdown-style stat orbs, +0.3% each, colour = stat: green move speed, yellow jump height, orange wall-run time, red max health, purple damage, cyan pickup radius. On roofs, off building walls, and at street level. Same layout every run for a seed. A popup names what each one gave (`+0.3% jump height`), merging quick pickups of the same stat |
 | Faint red walls at the map edge | Invisible walls (design doc §9) |
 | **A** — gold beams | XP caches on rooftops |
 | **B** — blue beams / rings | Small towers: on any flat surface near you (roof or street), 6 s to charge, respawning. Stand inside to fill; leaving drains it |
@@ -61,14 +66,19 @@ Keyboard + mouse or a controller both work. Click the page to capture the mouse.
 
 Built from [`PLAN-progression.md`](PLAN-progression.md). Every number is a grey-box placeholder.
 
-- **Towers** ([`PLAN-playtest2.md`](PLAN-playtest2.md)). Completing a tower pays XP and a heal, then offers a **pick 1 of 3** character upgrade rolled on a rarity table (Common → Legendary). **Never weapons or skills.** Percentage boosts are Common–Rare: move speed, jump height, wall-run time and climb speed, glide speed, dash cooldown and distance, slide speed, fall-damage reduction, damage reduction, max health, health regen, XP gain, pickup radius, all damage, all fire rate, and impact damage (only once you own Impact). +1 air jump or +1 dash is Epic; both together is Legendary. Large towers roll one rarity step higher.
+- **Towers** ([`PLAN-playtest2.md`](PLAN-playtest2.md)). Completing a tower pays XP and a heal, then offers a **pick 1 of 3** character upgrade rolled on a rarity table (Common → Legendary). **Never weapons or skills.** Percentage boosts are Common–Rare: move speed, jump height, wall-run time and climb speed, glide speed, dash cooldown and distance, slide speed, fall-damage reduction, damage reduction, max health, health regen, XP gain, pickup radius, all damage, all fire rate, and impact damage (only once you own Impact). +1 air jump or +1 dash is Epic; both together is Legendary. Large towers roll one rarity step higher. **Added after playtest 3** ([`PLAN-playtest3.md`](PLAN-playtest3.md)):
+  - tower charge speed,
+  - **damage per 10 m up** (counts to 60 m),
+  - **damage while airborne** (wall running counts),
+  - **+1 projectile** for Blaster and Gun Drone (Epic),
+  - **Wall kick** (Epic, once per run: the wall-jump refresh).
 - **Level-ups** (mode `offers`, the default) also offer a pick 1 of 3: upgrades to weapons and skills you own, and **new** ones while you have a free slot (**4 weapons, 4 skills**). One card per weapon or skill, never two for the same one. Items max out at level 8.
 - **Weapons:** Blaster (starting), **Pulse** (damage sphere around you), **Arc** (chain lightning), **Melee Drone** (orbiting satellites), **Mortar** (shells into the densest crowd, +50% to enemies below you), **Gun Drone** (drones that follow and shoot, then recharge).
-- **Skills:** **XP Magnet**, **Shield** (recharging; bar under HP), **Retaliation** (touch or shoot you, take damage back), **Slipstream** (dash through enemies to hit them), **Momentum** (damage from speed above run speed, falls included; on the HUD), **Impact** (a shockwave when you land from above the safe height; bigger drops hit harder; a glide landing doesn't trigger it), **Spider** (run into a wall to run up it; also vaults cars), **Hacker** (while you hold a zone, its sphere damages enemies), **Updraft** (Epic: gliding lifts you for 2 s per jump).
+- **Skills:** **XP Magnet**, **Shield** (recharging; bar under HP), **Retaliation** (touch or shoot you, take damage back), **Slipstream** (dash through enemies to hit them), **Momentum** (damage from speed above run speed, falls included; on the HUD), **Impact** (a shockwave when you land from above the safe height; bigger drops hit harder; a glide landing doesn't trigger it), **Spider** (run into a wall to run up it; also vaults cars), **Hacker** (while you hold a zone, its sphere damages enemies), **Updraft** (Epic: gliding lifts you for 2 s per jump), **Breakaway** (dash or jump out of a crowd of 5+ enemies within 8 m, and the spot where you were last surrounded explodes; 3 s cooldown).
 - **Pace and power.** A level costs 4× playtest 1's XP, so there are about half as many level-ups. To keep power in line with playtest 1, each level also gives an automatic damage bonus that follows playtest 1's curve (×N next to your level). `node tools/power-curve.mjs` sets its size; see the plan's *Power budget*. The HUD's `power ×N · vs playtest 1 R` line compares your weapons against playtest 1 at the same XP (1.0 = as strong). It counts weapons only, not skill damage.
 - **HUD build panel** (top left): weapons and skills, with `[ ]` for each free slot, then stat bonuses from towers and orbs.
 - **Balance (playtest 2).** Lower bosses have 3× HP and drop XP worth two levels (the final boss, five). Enemy bullets start at 9 m/s and reach 18 m/s at 12 minutes; their damage scales with the square root of the enemy damage multiplier, and one bullet takes at most 25% of max HP. **I-frames:** 0.5 s after a hit (contact damage counts as a hit once it has dealt 5 HP in a burst); the player flickers and the screen border flashes red. **Your weapons destroy enemy bullets**: shots stop on them, and area weapons (Pulse, Arc strikes, Melee Drone, Mortar, Impact, Hacker) clear them.
-- **Sound.** Synthesised in code (no files), positional, fading with distance up and down as well as across: weapon fire (not Pulse), drones and shooting enemies, footsteps, wall steps, landings, damage (a different sound when the shield takes it), tower charge-up (rising pitch), a completion chime, orb pickups, and hums from the nearest orb and large tower. Volume and mute in the debug panel.
+- **Sound.** Synthesised in code (no files), positional, fading with distance up and down as well as across: weapon fire (not Pulse), drones and shooting enemies, footsteps, wall steps, landings, damage (a different sound when the shield takes it), tower charge-up (rising pitch), a completion chime, orb pickups, and hums from the nearest orb and large tower. Volume, hum volume and mute are in the debug panel. *(After playtest 3: the orb hum was a near-constant 880 Hz tone, which is the likely source of Rich's "high-pitched noise". It is now 330 Hz and quieter, and the charge tone is softer.)*
 - Level-up mode `auto` restores playtest 1 exactly (no menus; every level scales the blaster) for comparison. `off` = no level scaling at all.
 
 Still out of scope: meta-progression, evolutions, reroll/banish, art, procedural generation.
@@ -84,6 +94,15 @@ The HUD tracks the Q1 numbers continuously:
 - **escaped %** / **longest escape** — time with no enemy within 20 m
 - **damage ground / up** — where the player actually gets hurt
 - **towers** (large held, large left), **orbs** taken, **civilians** destroyed
+
+**Playtest 4 sessions** (from [`PLAN-playtest3.md`](PLAN-playtest3.md)). Runs save themselves now, so just play; add a `note` in the debug panel if something stands out.
+
+1. **Wall-jump refresh off vs on** (Movement folder, same seed). Compare `up %`, `maxAltitude`, `escaped %` and longest escape. Then a run where Wall kick turns up naturally at a tower. Watch `wallKicks` and `wallKickClimbM`.
+2. **Height rewards.** Take altitude and airborne damage whenever they're offered. Does `up %` go past 60, and does the horde still threaten you up there? Compare `damageDealtElevated` with `damageDealtGround`.
+3. **Mortar-free run** (skip Mortar whenever offered). Mortar did 74–80% of all damage in playtest 3. Is power still near target without it?
+4. **Breakaway.** Does turning an escape into damage change how you fight crowds? Watch `breakaways` and its line in `damageBySource`.
+5. **Continuous play.** Several runs back to back, including deliberate restarts. Check that `playtests/greybox/<date>/` has one complete file per run.
+6. **The high-pitched noise.** Is it gone? If not, set hum volume to 0 to tell whether it was the hums.
 
 **Playtest 3 sessions** (from [`PLAN-playtest2.md`](PLAN-playtest2.md)):
 
@@ -111,6 +130,20 @@ Earlier sessions, 10 minutes each at clock speed 2–3:
 12. **First five minutes.** The level bonus is weakest early (about 0.4–0.7 of playtest 1 until old level ~20). Does the opening feel sluggish?
 
 **Debug tools** (debug panel → Progression, plus keys): `.` level up, `,` level down (undoes that level's pick), `F` freeze the horde (you move, nothing else does), vacuum all XP, grant any weapon/skill, force the next offer's rarity, auto-pick (resolves every offer, rarest card first), rarity weights, and the level-bonus settings.
+
+**Added after playtest 3:**
+- `damageDealtGround` / `damageDealtElevated`: the damage you deal, split by where you are when you deal it.
+- `wallKicks` / `wallKickClimbM`: wall jumps made with wall-run time already spent, and the metres climbed after them.
+- `breakaways`: how many times Breakaway fired.
+
+The HUD shows your current height/air damage bonus and your wall kicks.
+
+**Added after playtest 4:**
+- `killsBySource`: which weapon or skill landed each kill.
+- `effectiveDamageBySource`: damage that actually came off enemies' HP, **overkill excluded**. `damageBySource` stays raw so it compares with playtests 2–4, but a big area hit on a dense crowd scores far beyond what it removes there (Breakaway's 55% in playtest 4).
+- `dealtPerSec` in each power sample: effective damage per second over the last 30 s, **measured, skills included**. The power index is still an estimate of weapons only.
+- `finalBossKillMinute`: `bossKillMinutes` only ever held the five lower bosses.
+- **Power index fix:** the level-1 Blaster baseline no longer counts the tower +1 projectile bonus. Before, each +1 projectile pick *lowered* `powerVsPlaytest1` (for non-Blaster weapons, by a third on the first pick). Playtest 4's late slide to about 1.0 is mostly this bug. Earlier playtests are unaffected: the item didn't exist yet.
 
 **Copy metrics JSON** also includes every pick (with what was offered alongside it), the power index every 30 s, damage per weapon/skill, fall damage, and time spent in menus.
 
@@ -153,7 +186,7 @@ Three runs, single tester (the designer — a second tester is still needed, per
 
 ### Playtest 2 — 2026-09-24
 
-Five runs, single tester (the designer; a second tester is still needed). All runs used the progression build (level-up mode `offers`), the `mixed` layout and the default 600-enemy cap. Raw data: [`playtest2_stats`](../../playtest2_stats). Notes: [`playtest_thoughts_greybox1_20260924`](../../playtest_thoughts_greybox1_20260924).
+Five runs, single tester (the designer; a second tester is still needed). All runs used the progression build (level-up mode `offers`), the `mixed` layout and the default 600-enemy cap. Raw data: [`playtest2_stats`](../../playtests/greybox/playtest2_stats). Notes: [`playtest_thoughts_greybox1_20260924`](../../playtests/greybox/playtest_thoughts_greybox1_20260924).
 
 **What the numbers show** (observations, not conclusions):
 
@@ -203,12 +236,121 @@ The grey-box changes are planned in [`PLAN-playtest2.md`](PLAN-playtest2.md).
 | power vs playtest 1 | 1.07 | 1.21 | 1.39 | 0.74 | 1.30 |
 | boss kill times (min) | 4.18 | — | 4.13, 8.35 | — | 4.22 |
 
+### Playtest 3 — 2026-09-24 (notes 2026-09-27)
+
+Two recorded runs, single tester (the designer; a second tester is still needed). Level-up mode `offers`, the `mixed` layout, 600 enemies, clock speed 1. A third run, which leaned hardest on the wall-jump climb, was lost to an accidental R press before its metrics were copied. Raw data: [`playtest3_stats`](../../playtests/greybox/playtest3_stats). Notes: [`playtest_thoughts_greybox3_20260927`](../../playtests/greybox/playtest_thoughts_greybox3_20260927).
+
+**What the numbers show** (observations, not conclusions):
+
+- **Most of each run was spent up high:** 55% and 59%, against 18–39% in playtest 2. Large rooftop towers and the wall-jump climb are both candidates for why.
+- **Most of the damage was taken up there too:** 492 and 424 while elevated, against 202 and 155 on the ground. That reverses playtest 2. The horde still threatens an elevated player.
+- **Runs lasted:** three lower bosses killed in each, level 36–38, 9,341 and 14,524 kills. The playtest 2 balance changes did their job.
+- **Power ran above target:** 1.58 and 2.45 against playtest 1.
+- **Mortar dealt 74% and 80% of all damage.** This is evidence for the design doc §7 OPEN on a dominant scaling vector.
+- **Orbs were taken** (93 and 111, mostly at street level), and **rooftop caches were still mostly ignored** (3 and 2).
+- **194–238 s per run were spent in upgrade menus.**
+
+**Rich's notes:**
+
+- **Data loss:** the grey box must save metrics on its own. Runs keep getting lost to restarts, accidental or not.
+- **Pause menu:** late in a run the stats push Resume off the screen. R restarts, and Esc doesn't resume.
+- **Wall-jump climb:** once wall-run time is spent, mashing jump against a wall keeps climbing, because a wall touch refills the jumps. "This is the kind of movement exploit I was going for", but how strong it is still needs measuring. Proposed: an item that makes wall touches count as ground touches. The engine may not reproduce it by accident, so it has to be kept in mind for the move.
+- **New items:** tower charge speed (from towers), damage by height, damage while airborne, more projectiles overall, area damage on escape (an item).
+- **Orb pickups** should say what they gave.
+- A **high-pitched noise** (web version only).
+- **Poison / status effects:** wanted, but for the design doc only for now.
+
+**What came out of it** (Rich, 2026-09-27; built in [`PLAN-playtest3.md`](PLAN-playtest3.md)):
+
+- Runs autosave into the repo, and restarting mid-run needs R to be held.
+- The pause menu fits on screen, and Esc resumes.
+- The wall-jump refresh is off by default. Wall kick (an Epic tower card) or the toggle turns it back on.
+- The new tower stats, and Breakaway, which is centred on where you were last surrounded (Rich's call).
+- The playtest files moved to `playtests/greybox/`.
+- World pick-up items, as in Megabonk, **wait for the engine build**.
+
+**Raw stats:**
+
+| | Run 1 | Run 2 |
+|---|---|---|
+| Clock at end | 14:31 | 10:19 |
+| Real seconds | 929 | 1180 |
+| Level / tier | 38 / 4 | 36 / 4 |
+| Kills | 9341 | 14524 |
+| up % (elevated) | 55 | 59 |
+| surrounded % | 10 | 8 |
+| escaped % | 10 | 5 |
+| longest escape (s) | 34 | 33 |
+| damage ground | 202 | 155 |
+| damage elevated | 492 | 424 |
+| damage fall (hard landings) | 23 (9) | 57 (15) |
+| zones held (large) | 22 (5) | 24 (3) |
+| towers held on roof / ground | 7 / 15 | 10 / 14 |
+| orbs (roof / wall / street) | 25 / 11 / 57 | 39 / 10 / 62 |
+| rooftop caches | 3 | 2 |
+| civilians destroyed | 221 | 376 |
+| relocations | 3819 | 8753 |
+| max altitude (m) | 66 | 72 |
+| seconds in menus | 194 | 238 |
+| power vs playtest 1 | 1.58 | 2.45 |
+| boss kill times (min) | 5.08, 9.24, 13.34 | 5.3, 9.35, 15.17 |
+| top damage source | Mortar 74% | Mortar 80% |
+
+### Playtest 4 — 2026-09-27 (analysed 2026-09-28)
+
+One full run, single tester (the designer; a second tester is still needed). Build `2f989c3`: level-up mode `offers`, the `mixed` layout, seed 1, 600 enemies, clock speed 1. **The wall-jump refresh was switched on in the debug panel**; Wall kick never turned up at a tower. Raw data: [`2026-09-27T20-03-00_s1.json`](../../playtests/greybox/2026-09-27/2026-09-27T20-03-00_s1.json). The server copy stopped at 00:07 (`in-progress`); the final save fell back to the browser, and Rich recovered it, so the file in the repo is the final one.
+
+**Rich's notes:**
+
+- **Went the full 30 minutes** at the 600 cap, killed the final boss, and died to the nuke 16 s into overtime. "It felt decent as I still needed to maneuver around and be smart about my placement or I would get killed."
+- **Impact and fall reduction** (2026-09-28): high fall reduction shouldn't cancel Impact. Impact should always do damage from the height that would hurt a level-1, un-upgraded player, growing with height, so an Impact player is rewarded for taking fall reduction, not punished. Recorded as a decision in the design doc (§6). **Not changed in the grey box.**
+
+**What the numbers show** (observations, not conclusions):
+
+- **Up high most of the time, and hurt there:** 63% of the run elevated, and 59% of damage taken while elevated (807 of 1,378). **Surrounded 17%**, the highest since playtest 1's debugged run. Longest escape 34 s. The horde still threatened an elevated player through a whole run.
+- **Traversal was stacked hard and still didn't become a permanent escape:** 6 air jumps, 5 dash charges, Updraft, +32% dash speed. The wall-jump climb gave 48 kicks for 177 m (about 3.7 m each).
+- **Height rewards pulled the player up:** 22 rooftop caches (against 0–14 before, 2–3 in playtest 3), roof orbs the largest group (91, against street 80), all 12 large towers held, max altitude 94 m, 78% of damage dealt while elevated.
+- **The build ran out:** all 8 slots were at level 8 by the last real item pick at level 67 (22.3 min in). After that, **24 of the run's 141 picks were "Patch up" filler**. 9 of the 12 large towers were taken after 18 minutes, when towers were the only progress left.
+- **No Mortar, by chance:** it was never offered. The weapon slots were full at level 10 (Blaster, Pulse, Arc, Melee Drone).
+- **Breakaway: 55% of raw damage** from level 37 on (55 triggers). Raw damage counts overkill, so its share of real damage and kills is unknown (now measured; see *Added after playtest 4*). **Melee Drone: 0.5% at level 8.**
+- **Power vs playtest 1 ended at 0.99, but that's understated:** each of the three +1 projectile picks lowered the index (bug, now fixed), and skills aren't in it.
+- **Sustain matched pressure:** 0.8 HP/s regen by the end, 24 filler heals (30 each), 12 large-tower heals (50 each), and the Shield, against 1,378 damage taken. **Fall damage: 3 HP** over 7 hard landings (32% fall reduction, glide, Updraft).
+- **960 s in upgrade menus**, about 35% of time at the keyboard (141 picks).
+
+**Raw stats:**
+
+| | Run 1 |
+|---|---|
+| Clock at end | −00:16 (nuke) |
+| Real seconds | 1816 |
+| Level / tier | 88 / 6 |
+| Kills | 19205 |
+| up % (elevated) | 63 |
+| surrounded % | 17 |
+| escaped % | 17 |
+| longest escape (s) | 34 |
+| damage ground | 571 |
+| damage elevated | 807 |
+| damage fall (hard landings) | 3 (7) |
+| zones held (large) | 54 (12) |
+| towers held on roof / ground | 23 / 31 |
+| orbs (roof / wall / street) | 91 / 32 / 80 |
+| rooftop caches | 22 |
+| civilians destroyed | 261 |
+| relocations | 22850 |
+| max altitude (m) | 94 |
+| seconds in menus | 960 |
+| power vs playtest 1 | 0.99 (understated; see above) |
+| boss kill times (min) | 8.4, 8.82, 12.58, 16.5, 21.02; final boss about 22.3 (from the XP jump; not recorded) |
+| wall kicks (m climbed) | 48 (177) |
+| top damage source (raw) | Breakaway 55% |
+
 ## Performance notes
 
 Measured headless in software rendering on the dev machine, so treat them as upper bounds. With 600 enemies all crowded onto a stationary player, simulation costs about 8 ms per frame. With 1,500 it's about 12–20 ms. Separation (the tiered overlap rule) is the dominant cost. The `maxEnemies` slider goes to 2,500 if you want to find where the browser gives out, but that number does not transfer to a native engine.
 
 ## Files
 
-`src/config.js` holds all tunables. `world.js` is the city boxes, collision queries, and flow field. `player.js` is the movement kit (and fall height). `enemies.js` is the horde, separation, and enemy bullets. `director.js` is the clock, spawning, bosses, tiers, and nuke. `rewards.js` is A (caches) and B (small and large towers). `orbs.js` is the stat orbs; `civilians.js` is pedestrians and cars; `audio.js` is the synthesised sound. `combat.js` is the loadout, projectiles, XP, and levels. `weapons.js` and `skills.js` are the items; `catalog.js` is their data and the tower table; `loot.js` rolls rarities and offers; `build.js` is the run's build and effective stats; `choice.js` is the pick-1-of-3 menu; `power.js` is the power index. `metrics.js`, `hud.js`, and `debug.js` handle measurement and UI.
+`src/config.js` holds all tunables. `world.js` is the city boxes, collision queries, and flow field. `player.js` is the movement kit (and fall height). `enemies.js` is the horde, separation, and enemy bullets. `director.js` is the clock, spawning, bosses, tiers, and nuke. `rewards.js` is A (caches) and B (small and large towers). `orbs.js` is the stat orbs; `civilians.js` is pedestrians and cars; `audio.js` is the synthesised sound. `combat.js` is the loadout, projectiles, XP, and levels. `weapons.js` and `skills.js` are the items; `catalog.js` is their data and the tower table; `loot.js` rolls rarities and offers; `build.js` is the run's build and effective stats; `choice.js` is the pick-1-of-3 menu; `power.js` is the power index. `metrics.js`, `hud.js`, and `debug.js` handle measurement and UI. `save.js` is the autosave (to the save server, or the browser as a fallback), and `serve.mjs` is the dev server that writes runs into `playtests/greybox/`.
 
 `npm test` runs the unit tests in `test/` (offer rules, stacking, slot caps, tower rules). `node tools/power-curve.mjs` checks the power curve against playtest 1.

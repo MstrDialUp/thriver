@@ -158,6 +158,7 @@ export class Director {
     const g = this.game, t = TYPES[g.horde.type[i]];
     if (t.final) {
       this.finalKilled = true;
+      g.stats.finalBossKillMinute = +(this.t / 60).toFixed(2);
       g.onFinalBossKilled();
     } else if (t.boss) {
       this.bossesKilled++;

@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import { SKILLS } from './catalog.js';
 
-// The nine skills (PLAN-progression.md). Each reads its numbers from SKILLS[id].base
+// The skills (PLAN-progression.md; Breakaway: PLAN-playtest3 step 8). Each reads its numbers from SKILLS[id].base
 // plus its own upgrades (build.own). Hooks, called from main.js:
-//   modifyStats(eff, game) — every frame, after build.stats: passive stat skills
+//   modifyStats(eff, game) — every frame, after build.stats: passive stat skills, and the
+//                            altitude / airborne damage tower stats (they depend on position)
 //   update(dt, game, eff)  — every simulated frame, after the horde moves
 //   absorb(amount)         — Shield, before damage reaches HP
 //   onHit(game, kind, src) — Retaliation against shooters
@@ -33,6 +34,9 @@ export class Skills {
     this.slipHits = new Set();   // enemy serials hit during the current dash
     this.slipDash = -1;
     this.hackerTick = 0;
+    this.crowdAt = null;         // Breakaway: last position where the player was surrounded
+    this.inCrowd = false;
+    this.breakCd = 0;
     for (const w of this.waves ?? []) this.scene.remove(w.mesh);
     this.waves = [];
   }
@@ -61,6 +65,10 @@ export class Skills {
       eff.updraftSpeed = b.speed * (1 + this.own(game, 'updraft', 'speed'));
     }
     if (has(game, 'momentum')) eff.damageMult *= 1 + this.momentum;
+    // Altitude and airborne damage (tower stats, Rich's playtest 3 notes). Mult stats read 1 + bonus.
+    const p = game.player, alt = Math.min(60, Math.max(0, p.pos.y));
+    eff.positionalBonus = ((eff.altitudeDamage ?? 1) - 1) * alt / 10 + (p.grounded ? 0 : (eff.airDamage ?? 1) - 1);
+    eff.damageMult *= 1 + eff.positionalBonus;
   }
 
   // Damage scaling shared by damaging skills: the skill's own damage upgrade, times the
@@ -121,6 +129,28 @@ export class Skills {
       this.hackerMesh.scale.setScalar(r);
     } else this.hackerMesh.visible = false;
 
+    // Breakaway: leaving a crowd within `window` s of a jump or dash blows up the spot where the
+    // player was last surrounded (Rich, 2026-09-27), where most of the crowd still is.
+    this.breakCd -= dt;
+    if (has(game, 'breakaway')) {
+      const b = SKILLS.breakaway.base;
+      if (game.stats.near8 >= b.crowd) {
+        this.inCrowd = true;
+        (this.crowdAt ??= new THREE.Vector3()).set(player.pos.x, player.pos.y + 1, player.pos.z);
+      } else if (this.inCrowd) {
+        this.inCrowd = false;
+        if (player.sinceMove < b.window && this.breakCd <= 0) {
+          this.breakCd = b.cooldown * Math.max(0.25, 1 + this.own(game, 'breakaway', 'cooldown'));
+          const c = this.crowdAt, r = b.radius * (1 + this.own(game, 'breakaway', 'radius'));
+          const dmg = this.dmg(game, eff, 'breakaway', b.damage);
+          horde.forRadius(c.x, c.y, c.z, r, i => game.damageEnemy(i, dmg, 'breakaway'));
+          game.areaHit(c.x, c.y, c.z, r, dmg, 'breakaway');
+          game.stats.breakaways++;
+          this.wave(c.x, c.y - 0.9, c.z, r, 0xff7a3c);
+        }
+      }
+    } else this.inCrowd = false;
+
     // Impact shockwave visuals.
     for (const w of this.waves) {
       w.t += dt / 0.4;
@@ -158,8 +188,13 @@ export class Skills {
     const dmg = this.dmg(game, game.eff, 'impact', b.damage) * (1 + b.dmgPerM * over) * game.eff.impactDamage;
     game.horde.forRadius(p.pos.x, p.pos.y + 1, p.pos.z, r, i => game.damageEnemy(i, dmg, 'impact'));
     game.areaHit(p.pos.x, p.pos.y + 1, p.pos.z, r, dmg, 'impact');
-    const mesh = new THREE.Mesh(this.impactGeo, new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.7, side: THREE.DoubleSide, depthWrite: false }));
-    mesh.position.set(p.pos.x, p.pos.y + 0.1, p.pos.z);
+    this.wave(p.pos.x, p.pos.y + 0.1, p.pos.z, r, 0xffe08a);
+  }
+
+  // An expanding ring (Impact, Breakaway).
+  wave(x, y, z, r, color) {
+    const mesh = new THREE.Mesh(this.impactGeo, new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.7, side: THREE.DoubleSide, depthWrite: false }));
+    mesh.position.set(x, y, z);
     this.scene.add(mesh);
     this.waves.push({ mesh, t: 0, r });
   }

@@ -1,4 +1,4 @@
-import { RARITIES, RARITY_COLORS, FILLER, STATS, itemInfo, fmtNum } from './catalog.js';
+import { RARITIES, RARITY_COLORS, FILLER, STATS, itemInfo, fmtNum, fmtPct } from './catalog.js';
 import { makeOffer, shiftRarity } from './loot.js';
 import { fmtClock } from './metrics.js';
 
@@ -79,8 +79,8 @@ export class Choice {
     if (c.isNew) return `<small>New ${c.kind}</small><br>${itemInfo(c.item).desc}`;
     const bonus = this.game.build.bonus, effects = Object.entries(c.effects);
     const lv = c.item ? `<small>Level ${this.game.build.items[c.item]} → ${this.game.build.items[c.item] + 1}</small><br>` : '';
-    const pct = x => `${x > 0 ? '+' : '−'}${Math.round(Math.abs(x) * 100)}%`;
-    return lv + effects.map(([stat, v]) => {
+    const pct = fmtPct;
+    return (c.desc ? `${c.desc}<br>` : '') + lv + effects.map(([stat, v]) => {
       const s = STATS[stat], total = (bonus[stat] ?? 0) + v;
       const label = effects.length > 1 || c.item ? `${s.label} ` : ''; // single-stat tower cards already carry the name
       if (s.mode === 'add') return `${label}+${fmtNum(v)}${s.unit ?? ''} <small>(total +${fmtNum(total)})</small>`;
